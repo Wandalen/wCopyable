@@ -107,6 +107,8 @@ _.protoMake
   static : Static,
 });
 
+wCopyable.mixin( Self.prototype );
+
 _global_.Alpha = Parent;
 _global_.Betta = Self;
 
