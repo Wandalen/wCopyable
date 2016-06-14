@@ -4,9 +4,10 @@
   "description": "Copyable mixin. Makes any class able to be copied/cloned.",
   "author": "Kostiantyn Wandalen <wtory.net@domainsbyproxy.com>",
   "license": "MIT",
-  "main": "staging/mixin/Copyable.s",
+  "main": "staging/abase/mixin/Copyable.s",
   "files": [
-    "staging/mixin/Copyable.s",
+    "staging/abase/mixin/Copyable.s",
+    "staging/abase/component",
     "production"
   ],
   "scripts": {
