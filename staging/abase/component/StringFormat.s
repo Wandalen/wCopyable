@@ -201,7 +201,7 @@ var _toStrFine = function _toStrFine( src,options )
   {
     if( options.noRoutine )
     return;
-    result += '{ routine ' + ( src.name ) + ' }';
+    result += '{ routine ' + ( src.name || 'noname' ) + ' }';
   }
   else if( _.numberIs( src ) )
   {
@@ -830,8 +830,8 @@ var strInhalf = function( o )
 
   //logger.log( 'strInhalf.src :',o.src );
 
-  _.mapSupplement( o,strSplit.defaults );
-  _.assertMapOnly( o,strSplit.defaults );
+  _.mapSupplement( o,strInhalf.defaults );
+  _.assertMapOnly( o,strInhalf.defaults );
   _.assert( arguments.length === 1 );
   _.assert( _.strIs( o.src ) );
   _.assert( _.strIs( o.splitter ) || _.arrayIs( o.splitter ) );
@@ -862,7 +862,7 @@ var strInhalf = function( o )
 strInhalf.defaults =
 {
   src : null,
-  stripper : ' ',
+  splitter : ' ',
 }
 
 //
@@ -941,7 +941,7 @@ var strStrip = function( o )
 
   if( o.stripper === ' ' )
   {
-    return o.src.replace( /^\s+|\s+$/g,'' );
+    return o.src.replace( /^(\s|\n|\0)+|(\s|\n|\0)+$/gm,'' );
   }
   else
   {
@@ -1686,7 +1686,7 @@ _.mapExtend( Self, Proto );
 //
 
 var toStrFine = Self.toStrFine = Self.toStrFine_gen();
-var toStr = Self.toStr = toStrFine;
+var toStr = Self.toStr = Self.strFrom = toStrFine;
 
 //
 

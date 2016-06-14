@@ -21,7 +21,8 @@
     "url": "https://github.com/Wandalen/wCopyable/issues"
   },
   "dependencies": {
-    "wTools": ""
+    "wTools": "",
+    "wProto": ""
   },
   "devDependencies": {
     "wTesting": ""
@@ -30,6 +31,9 @@
     "wTools",
     "wCopyable",
     "copy",
+    "clone",
+    "copy mixin",
+    "clone mixin",
     "constructor",
     "destructor",
     "init",
