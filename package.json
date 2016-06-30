@@ -10,6 +10,7 @@
     "staging/abase/component",
     "production"
   ],
+
   "scripts": {
     "test": "node x",
     "make_doc": "./doc.sh"
