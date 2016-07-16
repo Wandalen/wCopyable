@@ -43,7 +43,7 @@ var mixin = function( dst )
   ({
     name : 'Copyable',
     dst : dst,
-    Proto : Proto,
+    proto : Proto,
   });
 
   //
@@ -80,6 +80,12 @@ var mixin = function( dst )
     strict : 0,
   });
 
+  if( Config.debug )
+  {
+    if( _.routineIs( dst.isSame ) )
+    _.assert( dst.isSame.length === 3 );
+  }
+
   if( dst.finit.name === 'finitEventHandler' )
   throw _.err( 'EventHandler mixin should goes after Copyable mixin.' );
 
@@ -105,7 +111,7 @@ var init = function( Prototype )
 
 /*
     _.mapExtendFiltering( _.filter.cloningSrcOwn(),self,Composes );
-    _.mapExtendFiltering( _.filter.cloningSrcOwn(),self,Aggregates );
+    _.mapExtendFiltering( _.filter.cloningSrcOwn(),self,Associates );
 
     if( options )
     self.copy( options );
@@ -127,7 +133,7 @@ var init = function( options )
   var self = this;
 
   _.mapExtendFiltering( _.filter.cloningSrcOwn(),self,Composes );
-  _.mapExtendFiltering( _.filter.cloningSrcOwn(),self,Aggregates );
+  _.mapExtendFiltering( _.filter.cloningSrcOwn(),self,Associates );
 
   if( options )
   self.copy( options );
@@ -141,7 +147,7 @@ var init = function( options )
   var self = this;
 
   _.mapExtendFiltering( _.filter.notAtomicCloningSrcOwn(),self,Composes );
-  _.mapExtendFiltering( _.filter.notAtomicCloningSrcOwn(),self,Aggregates );
+  _.mapExtendFiltering( _.filter.notAtomicCloningSrcOwn(),self,Associates );
 
   if( options )
   self.copy( options );
@@ -181,8 +187,6 @@ var copy = function( src )
   ({
 
     src : src,
-    /*constitutes : true,*/
-    copyAggregates : true,
     technique : 'object',
 
   });
@@ -198,81 +202,54 @@ var copy = function( src )
  * @param {object} o.src - src isntance.
  * @param {object} o.dst - dst isntance.
  * @param {object} o.constitutes - to constitute or not fields, should be off for serializing and on for deserializing.
- * @method copyCustom
+ * @method _copyCustom
  * @memberof wCopyable#
  */
 
-var copyCustom = function( o )
+var _empty = {};
+var _copyCustom = function( o )
 {
   var self = this;
-  var o = o || {};
 
-  /*_.assert( o.constitutes !== undefined );*/
-  /*_.assert( o.constitutes || o.copyAggregates !== undefined,'expects o.copyAggregates' )*/
-  _.assertMapNoUndefine( o );
-  _.assertMapOnly( o,copyCustom.defaults );
-  _.mapSupplement( o,copyCustom.defaults );
-  _.assert( arguments.length == 1 );
   _.assert( _.objectIs( o ) );
 
-  // var
+  /* var */
 
   var src = o.src;
   var dst = o.dst || self;
-  var drop = o.drop || {};
+  var dropFields = o.dropFields || _empty;
 
-  o.proto = o.proto || self.__proto__ || dst;
+  o.proto = o.proto || Object.getPrototypeOf( self ) || dst;
 
   var proto = o.proto;
-  var Composes = proto.Composes || {};
-  var Aggregates = proto.Aggregates || {};
-  var Restricts = proto.Restricts || {};
+  var Composes = proto.Composes || _empty;
+  var Aggregates = proto.Aggregates || _empty;
+  var Associates = proto.Associates || _empty;
+  var Restricts = proto.Restricts || _empty;
 
-  // verification
+  /* verification */
 
+  _.assertMapNoUndefine( o );
+  _.assert( arguments.length == 1 );
   _.assert( src );
   _.assert( dst );
   _.assert( _.objectIs( proto ) );
-  _.assert( drop );
-  /* _.assert( !o.drop || ( o.drop && !constitutes ),'Not implemented' ); */
+  _.assert( dropFields );
   _.assert( !o.copyCustomFields || _.objectIs( o.copyCustomFields ) );
-  /* _.assert( !proto.Constitutes ); */
-  _.assertMapOwnOnly( src, Composes, Aggregates, Restricts );
+  _.assertMapOwnOnly( src, Composes, Aggregates, Associates, Restricts );
 
-  //
+  /* copy facets */
 
   var copyFacets = function( screen,cloning )
   {
 
     var filter;
 
-/*
-    if( constitutes )
-    {
-      filter = _.routineJoin( undefined,_copyFieldConstituting,[ Constitutes, cloning ] );
-      filter.functionKind = 'field-mapper';
-    }
-    else
-
-    if( !cloning )
-    {
-      filter = _.filter.bypass();
-    }
-    else
-    {
-      filter = _.routineJoin( undefined,_copyFieldNotConstituting,[ Constitutes ] );
-      filter.functionKind = 'field-mapper';
-    }
-
-    if( o.drop )
-    filter = _.filter.and( _.filter.drop( drop ),filter );
-*/
-
     var filter = function( dstContainer,srcContainer,key )
     {
 
-      if( o.drop )
-      if( o.drop[ key ] )
+      if( o.dropFields )
+      if( o.dropFields[ key ] !== undefined )
       return;
 
       var srcElement;
@@ -280,17 +257,29 @@ var copyCustom = function( o )
       {
         var cloneOptions = _.mapExtend( {},o );
         cloneOptions.src = srcContainer[ key ];
+        cloneOptions.path = cloneOptions.path + '.' + key;
 
         delete cloneOptions.dst;
         delete cloneOptions.proto;
         delete cloneOptions.copyCustomFields;
-        delete cloneOptions.drop;
+        delete cloneOptions.dropFields;
 
         srcElement = _._entityClone( cloneOptions );
       }
       else
       {
+
         srcElement = srcContainer[ key ];
+
+        if( o.onString && _.strIs( srcElement ) )
+        srcElement = o.onString( srcElement );
+
+        if( o.onRoutine && _.routineIs( srcElement ) )
+        srcElement = o.onRoutine( srcElement );
+
+        if( o.onBuffer && _.bufferSomeIs( srcElement ) )
+        srcElement = o.onBuffer( srcElement );
+
       }
 
       dstContainer[ key ] = srcElement;
@@ -309,7 +298,7 @@ var copyCustom = function( o )
 
   }
 
-  // copy composes
+  /* copy composes */
 
   if( o.copyComposes || o.copyConstitutes || o.copyCustomFields )
   {
@@ -317,8 +306,6 @@ var copyCustom = function( o )
     var copySource = {};
     if( o.copyCustomFields )
     _.mapExtend( copySource,o.copyCustomFields )
-    if( o.Constitutes )
-    _.mapExtend( copySource,Constitutes )
     if( o.copyComposes )
     _.mapExtend( copySource,Composes )
 
@@ -326,7 +313,7 @@ var copyCustom = function( o )
 
   }
 
-  // copy aggregates
+  /* copy aggregates */
 
   if( o.copyAggregates )
   {
@@ -335,54 +322,100 @@ var copyCustom = function( o )
 
   }
 
-  // copy restricts
+  /* copy associates */
+
+  if( o.copyAssociates )
+  {
+
+    copyFacets( Associates,false );
+
+  }
+
+  /* copy restricts */
 
   if( o.copyRestricts )
   {
+
     copyFacets( Restricts,false );
     throw _.err( 'not tested' );
-  }
-
-  // constitutes
-
-/*
-  if( constitutes && Prototype.Constitutes )
-  for( var c in Prototype.Constitutes )
-  {
-
-    var constitution = Prototype.Constitutes[ c ];
-    self._constituteField( dst,c );
 
   }
-*/
 
   return dst;
+}
+
+//
+
+/**
+ * Copy data from one instance to another. Customizable static function.
+ * @param {object} o - options.
+ * @param {object} o.Prototype - prototype of the class.
+ * @param {object} o.src - src isntance.
+ * @param {object} o.dst - dst isntance.
+ * @param {object} o.constitutes - to constitute or not fields, should be off for serializing and on for deserializing.
+ * @method copyCustom
+ * @memberof wCopyable#
+ */
+
+var copyCustom = function( o )
+{
+  var self = this;
+
+  _.assertMapNoUndefine( o );
+  _.assertMapOnly( o,copyCustom.defaults );
+  _.mapSupplement( o,copyCustom.defaults );
+  _.assert( arguments.length == 1 );
+  _.assert( _.objectIs( o ) );
+
+  return self._copyCustom( o );
 }
 
 copyCustom.defaults =
 {
 
-  src : null,
-  rootSrc : null,
   dst : null,
   proto : null,
 
-  copyComposes : true,
-  copyAggregates : true,
-  copyRestricts : false,
-  copyConstitutes : false,
+}
 
-  drop : null,
-  copyCustomFields : null,
+copyCustom.defaults.__proto__ = _._entityClone.defaults;
 
-  /*constitutes : true,*/
+//
 
-  /**/
+var copyDeserializing = function( o )
+{
+  var self = this;
 
-  levels : 16,
-  path : '',
-  technique : null,
+/*
+  if( o.src === undefined )
+  o.src = self;
 
+  if( o.proto === undefined )
+  o.proto = self.prototype;
+*/
+
+  _.assertMapOnly( o,copyDeserializing.defaults )
+  _.assertMapNoUndefine( o );
+  _.assert( arguments.length == 1 );
+  _.assert( _.objectIs( o ) );
+
+  var optionsMerging = {};
+  optionsMerging.src = o;
+  optionsMerging.proto = Object.getPrototypeOf( self );
+  optionsMerging.dst = self;
+
+  debugger;
+  var result = _.entityCloneObjectMergingBuffers( optionsMerging );
+  debugger;
+
+  return result;
+}
+
+copyDeserializing.defaults =
+{
+  descriptorsMap : null,
+  buffer : null,
+  data : null,
 }
 
 //
@@ -406,6 +439,9 @@ var cloneObject = function( o )
   if( o.src === undefined )
   o.src = self;
 
+  if( o.proto === undefined )
+  o.proto = Object.getPrototypeOf( o.src );
+
   /**/
 
   if( !o.dst )
@@ -414,9 +450,10 @@ var cloneObject = function( o )
     var standard = 1;
     standard &= o.copyComposes;
     standard &= o.copyAggregates;
+    standard &= o.copyAssociates;
     standard &= !o.copyRestricts;
     standard &= !o.copyCustomFields || Object.keys( o.copyCustomFields ) === 0;
-    standard &= !o.drop || Object.keys( o.drop ) === 0;
+    standard &= !o.dropFields || Object.keys( o.dropFields ) === 0;
 
     if( !standard )
     {
@@ -428,6 +465,9 @@ var cloneObject = function( o )
 
   /**/
 
+  if( o.proto === undefined )
+  o.proto = Object.getPrototypeOf( self );
+
   if( !o.dst )
   {
 
@@ -435,18 +475,18 @@ var cloneObject = function( o )
     if( o.dst === self )
     {
       o.dst = new self.constructor();
-      o.dst.copyCustom( o );
+      o.dst._copyCustom( o );
     }
 
   }
   else
   {
 
-    o.dst.copyCustom( o );
+    o.dst._copyCustom( o );
 
   }
 
-  return self.copyCustom( o );
+  return self._copyCustom( o );
 }
 
 cloneObject.defaults =
@@ -475,27 +515,57 @@ var cloneData = function( o )
   if( o.src === undefined )
   o.src = self;
 
+  if( o.proto === undefined )
+  o.proto = Object.getPrototypeOf( o.src );
+
   _.mapComplement( o,cloneData.defaults );
   _.assertMapOnly( o,cloneData.defaults );
 
-  return self.copyCustom( o );
+  return self._copyCustom( o );
 }
 
 cloneData.defaults =
 {
 
   dst : {},
-
-  /*constitutes : false,*/
-  copyComposes : true,
-  copyAggregates : false,
-  copyConstitutes : true,
-
+  copyAssociates : false,
   technique : 'data',
 
 }
 
 cloneData.defaults.__proto__ = copyCustom.defaults;
+
+//
+
+/**
+ * Clone only data.
+ * @param {object} [options] - options.
+ * @method cloneSerializing
+ * @memberof wCopyable#
+ */
+
+var cloneSerializing = function( o )
+{
+  var self = this;
+  var o = o || {};
+
+  _.assert( arguments.length === 0 || arguments.length === 1 );
+
+  if( o.src === undefined )
+  o.src = self;
+
+  //debugger;
+  var result = _.entityCloneDataSeparatingBuffers( o );
+  //debugger;
+
+  return result;
+}
+
+cloneSerializing.defaults =
+{
+}
+
+cloneSerializing.defaults.__proto__ = _.entityCloneDataSeparatingBuffers.defaults;
 
 //
 
@@ -531,112 +601,6 @@ var clone = function( dst )
 
 //
 
-// var _copyFieldConstituting = function _copyFieldConstituting( Constitutes,cloning,dstContainer,srcContainer,key )
-// {
-// /*
-//   if( key === 'm_faceCellEnclosing' )
-//   debugger;
-// */
-//   if( Constitutes[ key ] /*&& _.objectIs( srcContainer[ key ] )*/ )
-//   {
-//
-//     throw _.err( 'constituting is deprecated, use getter for ' + key );
-//
-//     var constitute = Constitutes[ key ];
-//     if( _.objectIs( constitute ) || _.arrayIs( constitute ) || !_.routineIs( constitute ) )
-//     {
-//       throw _.err( 'expects routine as constitute, but got ' + _.typeOf( constitute ) );
-//     }
-//
-//     _.assert( constitute.length === 1,'constitute should take single argument' );
-//
-//     if( !_.objectIs( srcContainer[ key ] ) && key !== 'includePillarMapOnly' )
-//     debugger;
-//
-//     //if( key === 'includePillarMapOnly' )
-//     //debugger;
-//
-//     if( !dstContainer[ key ] )
-//     {
-//       dstContainer[ key ] = constitute.call( dstContainer,srcContainer[ key ],dstContainer );
-//     }
-//     else
-//     {
-//       debugger;
-//       dstContainer[ key ] = constitute.call( dstContainer,srcContainer[ key ],dstContainer );
-//     }
-//
-//   }
-//   else
-//   {
-//
-//     if( cloning )
-//     _.entityCopyField( dstContainer,srcContainer,key );
-//     else dstContainer[ key ] = srcContainer[ key ];
-//
-//   }
-//
-// }
-//
-// //
-//
-// var _copyFieldNotConstituting = function _copyFieldNotConstituting( Constitutes,dstContainer,srcContainer,key )
-// {
-//   var src = srcContainer[ key ];
-//
-// /*
-//   if( !cloning )
-//   {
-//     dstContainer[ key ] = srcContainer[ key ]
-//     return;
-//   }
-// */
-//
-// /*
-//   if( dropContainer[ key ] !== undefined )
-//   return;
-// */
-//
-//   if( _.atomicIs( src ) )
-//   {
-//
-//     dstContainer[ key ] = src;
-//
-//   }
-//   else if( src.copyCustom )
-//   dstContainer[ key ] = src.copyCustom
-//   ({
-//     dst : {},
-//     src : src,
-//
-//     constitutes : false,
-//     copyComposes : true,
-//     copyAggregates : false,
-//     copyConstitutes : true,
-//
-//   })
-//   else
-//   {
-//
-//     _.entityCopyField( dstContainer,srcContainer,key );
-//
-// /*
-//     var dst = src.constructor();
-//     _.each( src,function( e,k )
-//     {
-//
-//       _copyFieldNotConstituting( {},dst,src,k );
-//
-//     });
-//     dstContainer[ key ] = dst;
-// */
-//
-//   }
-//
-// }
-
-//
-
 /**
  * Gives descriptive string of the object.
  * @method toStr
@@ -652,7 +616,7 @@ var toStr = function()
 
   result += self.nickName + '\n';
 
-  var fields = _.mapScreens( self,self.Composes || {},self.Aggregates || {},self.Restricts || {} );
+  var fields = _.mapScreens( self,self.Composes || {},self.Associates || {},self.Restricts || {} );
   result += _.toStr( fields );
 
 }
@@ -672,8 +636,10 @@ var doesNotHaveRedundantFields = function( src )
 
   var Composes = self.Composes || {};
   var Aggregates = self.Aggregates || {};
+  var Associates = self.Associates || {};
   var Restricts = self.Restricts || {};
-  _.assertMapOwnOnly( src, Composes, Aggregates, Restricts );
+
+  _.assertMapOwnOnly( src, Composes, Aggregates, Associates, Restricts );
 
   return dst;
 }
@@ -690,7 +656,7 @@ var doesNotHaveRedundantFields = function( src )
 var _constituteField = function( dst,fieldName )
 {
   var self = this;
-  var Prototype = self.__proto__ || options.prototype;
+  var Prototype = Object.getPrototypeOf( self ) || options.prototype;
   var constitute = Prototype.Constitutes[ fieldName ];
 
   if( !constitute )
@@ -797,37 +763,98 @@ var isFinited = function()
 //
 
 /**
- * Is this instance identical with another one. Use composes and aggregates to compare.
+ * Is this instance same with another one. Use relation maps to compare.
+ * @method isSame
+ * @param {object} ins - another instance of the class
+ * @memberof wCopyable#
+ */
+
+var isSame = function( src1,src2,o )
+{
+  var self = this;
+
+  _.assert( arguments.length === 1 || arguments.length === 3 );
+
+  if( arguments.length === 1 )
+  {
+    src2 = self;
+    o = {};
+  }
+
+  if( !src1 )
+  return false;
+
+  if( !src2 )
+  return false;
+
+  if( src1.constructor !== src2.constructor )
+  return false;
+
+  for( var c in src1.Composes )
+  {
+    if( !_.entitySame( src1[ c ],src2[ c ],o ) )
+    return false;
+  }
+
+  for( var c in src1.Aggregates )
+  {
+    if( !_.entitySame( src1[ c ],src2[ c ],o ) )
+    return false;
+  }
+
+  return true;
+}
+
+//
+
+/**
+ * Is this instance same with another one. Use relation maps to compare.
  * @method isIdentical
  * @param {object} ins - another instance of the class
  * @memberof wCopyable#
  */
 
-var isIdentical = function( ins )
+var isIdentical = function( src1,src2,o )
 {
   var self = this;
 
-  _.assert( arguments.length <= 1 );
+  _.assert( arguments.length === 1 || arguments.length === 3 );
 
-  if( !ins )
-  return false;
-
-  if( ins.Composes !== self.Composes )
-  return false;
-
-  for( var c in self.Composes )
+  if( arguments.length === 1 )
   {
-    if( !_.entitySame( self[ c ],ins[ c ] ) )
-    return false;
+    src2 = self;
+    o = {};
   }
 
-  for( var c in self.Aggregates )
+  o.strict = 1;
+
+  return self.isSame( src1,src2,o );
+}
+
+//
+
+/**
+ * Is this instance same with another one. Use relation maps to compare.
+ * @method isEquivalent
+ * @param {object} ins - another instance of the class
+ * @memberof wCopyable#
+ */
+
+var isEquivalent = function( src1,src2,o )
+{
+  var self = this;
+
+  _.assert( arguments.length === 1 || arguments.length === 3 );
+
+  if( arguments.length === 1 )
   {
-    if( self[ c ] !== ins[ c ] )
-    return false;
+    src2 = self;
+    o = {};
   }
 
-  return true;
+  o.strict = 0;
+
+  return self.isSame( src1,src2,o );
 }
 
 //
@@ -854,7 +881,8 @@ var _nickNameGet = function()
 
 var _SelfGet = function _SelfGet()
 {
-  _.assert( !this.__proto__ || _hasOwnProperty.call( this.__proto__, 'constructor' ) );
+  var proto = Object.getPrototypeOf( this );
+  _.assert( !proto || _hasOwnProperty.call( proto, 'constructor' ) );
   return this.constructor;
 }
 
@@ -868,8 +896,10 @@ var _SelfGet = function _SelfGet()
 
 var _ParentGet = function _ParentGet()
 {
-  _.assert( !this.__proto__ || _hasOwnProperty.call( this.__proto__, 'constructor' ) );
-  return this.constructor.prototype.__proto__.constructor;
+  var proto = Object.getPrototypeOf( this );
+  _.assert( !proto || _hasOwnProperty.call( proto, 'constructor' ) );
+  var parentProto = Object.getPrototypeOf( this.constructor.prototype );
+  return parentProto ? parentProto.constructor : null;
 }
 
 //
@@ -907,7 +937,7 @@ var Composes =
 {
 }
 
-var Aggregates =
+var Associates =
 {
 }
 
@@ -923,23 +953,31 @@ var Proto =
 {
 
   finit : finit,
+
+  _copyCustom : _copyCustom,
   copyCustom : copyCustom,
+  copyDeserializing : copyDeserializing,
   copy : copy,
 
-  cloneData : cloneData,
   cloneObject : cloneObject,
+  cloneData : cloneData,
+  cloneSerializing : cloneSerializing,
   clone : clone,
 
   // _copyFieldConstituting : _copyFieldConstituting,
   // _copyFieldNotConstituting : _copyFieldNotConstituting,
 
   //toStr : toStr,
+
   doesNotHaveRedundantFields : doesNotHaveRedundantFields,
   _constituteField : _constituteField,
   classEachParent : classEachParent,
 
   isFinited : isFinited,
+
+  isSame : isSame,
   isIdentical : isIdentical,
+  isEquivalent : isEquivalent,
 
   '_SelfGet' : _SelfGet,
   '_ParentGet' : _ParentGet,
@@ -948,7 +986,7 @@ var Proto =
   '_nickNameGet' : _nickNameGet,
 
   Composes : Composes,
-  Aggregates : Aggregates,
+  Associates : Associates,
   Restricts : Restricts,
 
 }
