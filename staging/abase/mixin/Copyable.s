@@ -386,15 +386,7 @@ var copyDeserializing = function( o )
 {
   var self = this;
 
-/*
-  if( o.src === undefined )
-  o.src = self;
-
-  if( o.proto === undefined )
-  o.proto = self.prototype;
-*/
-
-  _.assertMapOnly( o,copyDeserializing.defaults )
+  _.assertMapAll( o,copyDeserializing.defaults )
   _.assertMapNoUndefine( o );
   _.assert( arguments.length == 1 );
   _.assert( _.objectIs( o ) );
@@ -404,9 +396,7 @@ var copyDeserializing = function( o )
   optionsMerging.proto = Object.getPrototypeOf( self );
   optionsMerging.dst = self;
 
-  debugger;
   var result = _.entityCloneObjectMergingBuffers( optionsMerging );
-  debugger;
 
   return result;
 }
@@ -512,11 +502,14 @@ var cloneData = function( o )
 
   _.assert( arguments.length === 0 || arguments.length === 1 );
 
-  if( o.src === undefined )
+  if( !o.src )
   o.src = self;
 
-  if( o.proto === undefined )
+  if( !o.proto )
   o.proto = Object.getPrototypeOf( o.src );
+
+  if( !o.dst )
+  o.dst = {};
 
   _.mapComplement( o,cloneData.defaults );
   _.assertMapOnly( o,cloneData.defaults );
@@ -606,7 +599,7 @@ var clone = function( dst )
  * @method toStr
  * @memberof wCopyable#
  */
-/*
+
 var toStr = function()
 {
   var self = this;
@@ -616,11 +609,12 @@ var toStr = function()
 
   result += self.nickName + '\n';
 
-  var fields = _.mapScreens( self,self.Composes || {},self.Associates || {},self.Restricts || {} );
-  result += _.toStr( fields );
+  var fields = _.mapScreens( self,self.Composes || {},self.Aggregates || {} );
+  result += _.toStr( fields,{} );
 
+  return result;
 }
-*/
+
 //
 
 /**
@@ -964,17 +958,13 @@ var Proto =
   cloneSerializing : cloneSerializing,
   clone : clone,
 
-  // _copyFieldConstituting : _copyFieldConstituting,
-  // _copyFieldNotConstituting : _copyFieldNotConstituting,
-
-  //toStr : toStr,
+  toStr : toStr,
 
   doesNotHaveRedundantFields : doesNotHaveRedundantFields,
   _constituteField : _constituteField,
   classEachParent : classEachParent,
 
   isFinited : isFinited,
-
   isSame : isSame,
   isIdentical : isIdentical,
   isEquivalent : isEquivalent,
