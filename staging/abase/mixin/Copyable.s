@@ -9,11 +9,11 @@ if( typeof module !== 'undefined' )
 {
   try
   {
-    require( 'wProto' );
+    require( '../component/Proto.s' );
   }
   catch( err )
   {
-    require( '../component/Proto.s' );
+    require( 'wProto' );
   }
 }
 
@@ -862,7 +862,12 @@ var isEquivalent = function( src1,src2,o )
 var _nickNameGet = function()
 {
   var self = this;
-  return self.className + '( ' + ( self.key || self.name || self.id || 0 ) + ' )';
+  var index = '';
+  if( _.numberIs( self.instanceIndex ) )
+  index = '#' + self.instanceIndex;
+  if( index === '' && _.numberIs( self.id ) )
+  index = '#' + self.id;
+  return self.className + '( ' + ( self.key || self.name || '' ) + ( index ) + ' )';
 }
 
 //

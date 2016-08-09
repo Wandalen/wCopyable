@@ -2,6 +2,17 @@
 
 'use strict';
 
+//
+
+if( typeof module !== 'undefined' )
+{
+
+  wTools.includeAny( __dirname + '/Proto.s','wProto','' );
+
+}
+
+//
+
 var Self = wTools;
 var _ = wTools;
 
@@ -98,13 +109,17 @@ var toStrFine_gen = function()
   Object.preventExtensions( optional );
   Object.preventExtensions( restricts );
 
-  var def = _.protoUnitedInterface([ primeFilter,composes,optional ]);
+  var def
+  if( _.protoUnitedInterface )
+  def = _.protoUnitedInterface([ primeFilter,composes,optional ]);
+  else
+  def = _.mapExtend( {},primeFilter,composes,optional );
 
   var routine = function toStrFine( src,options )
   {
 
     if( options !== undefined && !_.objectIs( options ) )
-    throw _.err( '_.toStrFine:','options must be object' );
+    throw _.err( '_.toStrFine :','options must be object' );
 
     var options = options || {};
 
@@ -632,7 +647,7 @@ var toStrForCall = function( nameOfRoutine,args,ret,options )
     result += ', ';
 
     if( _.objectIs( e ) )
-    result += k + ':' + _.toStr( e,options );
+    result += k + ' :' + _.toStr( e,options );
     else
     result += _.toStr( e,options );
 
@@ -774,7 +789,7 @@ var strSplitChunks = function( src,options )
     if( end === -1 )
     {
       result.lines = src.split( '\n' ).length;
-      result.error = _.err( 'Openning prefix',options.prefix,'of chunk #' + result.chunks.length,'at'+line,'line does not have closing tag:',options.postfix );
+      result.error = _.err( 'Openning prefix',options.prefix,'of chunk #' + result.chunks.length,'at'+line,'line does not have closing tag :',options.postfix );
       return result;
     }
 
@@ -1013,7 +1028,7 @@ t
     var argument = arguments[ a ];
 
     if( !_.strIs( argument ) && !_.objectIs( argument ) && !_.arrayIs( argument ) )
-    throw _.err( '_.strIron:','argument could be string, array or object' );
+    throw _.err( '_.strIron :','argument could be string, array or object' );
 
     if( _.strIs( argument ) )
     {
@@ -1343,7 +1358,7 @@ var _strHtmlEscapeMap =
   '<' : '&lt;',
   '>' : '&gt;',
   '"' : '&quot;',
-  '\'': '&#39;',
+  '\'' : '&#39;',
   '/' : '&#x2F;'
 };
 
@@ -1360,10 +1375,10 @@ var strHtmlEscape = function( str )
 var strToConfig = function( src,options ){
 
   var result = {};
-  if( !_.strIs( src ) ) throw _.err( '_.strToConfig:','require string' );
+  if( !_.strIs( src ) ) throw _.err( '_.strToConfig :','require string' );
 
   var options = options || {};
-  if( options.delimeter === undefined ) options.delimeter = ':';
+  if( options.delimeter === undefined ) options.delimeter = ' :';
 
   var src = src.split( '\n' );
 
@@ -1389,10 +1404,11 @@ var strToConfig = function( src,options ){
 var strIndentation = function( src,tab )
 {
 
-  _assert( _.strIs( src ),'strIndentation:','argument must be string' );
-  _assert( _.strIs( tab ),'strIndentation:','argument must be string' );
+  _assert( _.strIs( src ),'strIndentation : expects string src' );
+  _assert( _.strIs( tab ),'strIndentation : expects string tab' );
 
-  if( src.indexOf( '\n' ) === -1 ) return tab + src;
+  if( src.indexOf( '\n' ) === -1 )
+  return tab + src;
 
   var result = src.split( '\n' );
   result = tab + result.join( '\n' + tab );
@@ -1410,7 +1426,7 @@ var strNumberLines = function( srcStr )
   for( var l = 0; l < lines.length; l += 1 )
   {
 
-    lines[ l ] = ( l + 1 ) + ': ' + lines[ l ];
+    lines[ l ] = ( l + 1 ) + ' : ' + lines[ l ];
 
   }
 
@@ -1499,7 +1515,7 @@ var strMetricFormat = function( number,options )
   var options = options || {};
 
   if( _.strIs( number ) ) number = parseFloat( number );
-  if( !_.numberIs( number ) ) throw _.err( 'strMetricFormat:','"number" should be Number' );
+  if( !_.numberIs( number ) ) throw _.err( 'strMetricFormat :','"number" should be Number' );
 
   if( options.divisor === undefined ) options.divisor = 3;
   if( options.thousand === undefined ) options.thousand = 1000;
@@ -1656,7 +1672,7 @@ var strFilenameFor = function( srcStr,options )
   if( options.separator === undefined )
   options.separator = '_';
 
-  var regexp = /<|>|:|"|'|\/|\\|\||\&|\?|\*|\n|\s/g;
+  var regexp = /<|>| :|"|'|\/|\\|\||\&|\?|\*|\n|\s/g;
 
   var result = result.replace( regexp,function( match )
   {
@@ -1673,71 +1689,71 @@ var strFilenameFor = function( srcStr,options )
 var Proto =
 {
 
-  toStrMethods: toStrMethods,
-  toStrFields: toStrFields,
+  toStrMethods : toStrMethods,
+  toStrFields : toStrFields,
 
-  toStrFine_gen: toStrFine_gen,
-  _toStrFine: _toStrFine,
+  toStrFine_gen : toStrFine_gen,
+  _toStrFine : _toStrFine,
 
-  _toStrShort: _toStrShort,
-  _toStrFromNumber: _toStrFromNumber,
-  _toStrFromStr: _toStrFromStr,
-  _toStrFromArray: _toStrFromArray,
-  _toStrFromObject: _toStrFromObject,
-  _toStrFromContainer: _toStrFromContainer,
-  _toStrIsSimpleElement: _toStrIsSimpleElement,
+  _toStrShort : _toStrShort,
+  _toStrFromNumber : _toStrFromNumber,
+  _toStrFromStr : _toStrFromStr,
+  _toStrFromArray : _toStrFromArray,
+  _toStrFromObject : _toStrFromObject,
+  _toStrFromContainer : _toStrFromContainer,
+  _toStrIsSimpleElement : _toStrIsSimpleElement,
 
-  toStrForRange: toStrForRange,
-  toStrForCall: toStrForCall,
+  toStrForRange : toStrForRange,
+  toStrForCall : toStrForCall,
 
-  strCapitalize: strCapitalize,
-  strTimes: strTimes,
-  strLineCount: strLineCount,
-  strSplitStrNumber: strSplitStrNumber,
-  strSplitChunks: strSplitChunks,
+  strCapitalize : strCapitalize,
+  strTimes : strTimes,
+  strLineCount : strLineCount,
+  strSplitStrNumber : strSplitStrNumber,
+  strSplitChunks : strSplitChunks,
 
-  strInhalf: strInhalf,
-  strSplit: strSplit,
-  strStrip: strStrip,
-  strRemoveAllSpaces: strRemoveAllSpaces,
-  strStripEmptyLines: strStripEmptyLines,
+  strInhalf : strInhalf,
+  strSplit : strSplit,
+  strStrip : strStrip,
+  strRemoveAllSpaces : strRemoveAllSpaces,
+  strStripEmptyLines : strStripEmptyLines,
 
-  strIron: strIron,
+  strIron : strIron,
 
-  strReplaceAll: strReplaceAll,
-  strReplaceNames: strReplaceNames,
+  strReplaceAll : strReplaceAll,
+  strReplaceNames : strReplaceNames,
 
-  strJoin: strJoin,
-  strUnjoin: strUnjoin,
+  strJoin : strJoin,
+  strUnjoin : strUnjoin,
 
-  strDropPrefix: strDropPrefix,
-  strDropPostfix: strDropPostfix,
+  strDropPrefix : strDropPrefix,
+  strDropPostfix : strDropPostfix,
 
-  strDifference: strDifference,
-  strSimilarity: strSimilarity,
-  strLattersSpectre: strLattersSpectre,
-  lattersSpectreComparison: lattersSpectreComparison,
+  strDifference : strDifference,
+  strSimilarity : strSimilarity,
+  strLattersSpectre : strLattersSpectre,
+  lattersSpectreComparison : lattersSpectreComparison,
 
-  strToDom: strToDom,
-  strHtmlEscape: strHtmlEscape,
+  strToDom : strToDom,
+  strHtmlEscape : strHtmlEscape,
 
-  strToConfig: strToConfig,
+  strToConfig : strToConfig,
 
-  strIndentation: strIndentation,
-  strNumberLines: strNumberLines,
+  strIndentation : strIndentation,
+  strNumberLines : strNumberLines,
 
-  strCount: strCount,
+  strCount : strCount,
 
-  strToBytes: strToBytes,
+  strToBytes : strToBytes,
 
-  strTimeFormat: strTimeFormat,
-  strMetricFormat: strMetricFormat,
-  strMetricFormatBytes: strMetricFormatBytes,
+  strTimeFormat : strTimeFormat,
+  strMetricFormat : strMetricFormat,
+  strMetricFormatBytes : strMetricFormatBytes,
 
-  strCsvFrom: strCsvFrom,
+  strCsvFrom : strCsvFrom,
 
-  strCamelize: strCamelize,
-  strFilenameFor: strFilenameFor,
+  strCamelize : strCamelize,
+  strFilenameFor : strFilenameFor,
 
 }
 
