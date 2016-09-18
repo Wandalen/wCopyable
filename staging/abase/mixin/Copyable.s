@@ -1,4 +1,4 @@
-( function(){
+( function _Copyable_s_(){
 
 'use strict';
 
@@ -7,6 +7,8 @@ var _hasOwnProperty = Object.hasOwnProperty;
 
 if( typeof module !== 'undefined' )
 {
+
+  if( typeof wTools === 'undefined' || !wTools.mixin )
   try
   {
     require( '../component/Proto.s' );
@@ -15,70 +17,79 @@ if( typeof module !== 'undefined' )
   {
     require( 'wProto' );
   }
+
 }
 
 //
 
 /**
  * Mixin this into prototype of another object.
- * @param {object} dst - prototype of another object.
+ * @param {object} constructor - constructor of class to mixin.
  * @method mixin
  * @memberof wCopyable#
  */
 
-var mixin = function( dst )
+var mixin = function( constructor )
 {
 
+  var dst = constructor.prototype;
   var has =
   {
+    Composes : 'Composes',
     constructor : 'constructor',
   }
 
+  _.assert( arguments.length === 1 );
+  _.assert( _.routineIs( constructor ) );
   _.assertMapOwnAll( dst,has );
   _.assert( _hasOwnProperty.call( dst,'constructor' ),'prototype of object should has own constructor' );
 
-  //
+  /* */
 
   _.mixin
   ({
-    name : 'Copyable',
     dst : dst,
-    proto : Proto,
+    mixin : Self,
   });
 
-  //
+  /* */
 
-  var accessor =
+  var names =
   {
     className : 'className',
     classIs : 'classIs',
     nickName : 'nickName',
     Parent : 'Parent',
     Self : 'Self',
+    CopyableFields : 'CopyableFields',
   }
 
-  var forbid =
+  _.accessorReadOnly
+  ({
+    object : dst,
+    names : names,
+    preserveValues : 0,
+    strict : 0,
+  });
+
+  /* */
+
+  var names =
   {
     nickname : 'nickname',
     Type : 'Type',
     type : 'type',
   }
 
-  _.accessorReadOnly
+  _.accessorForbid
   ({
     object : dst,
-    names : accessor,
+    names : names,
     preserveValues : 0,
     strict : 0,
   });
 
-  _.accessorForbid
-  ({
-    object : dst,
-    names : forbid,
-    preserveValues : 0,
-    strict : 0,
-  });
+  /* */
 
   if( Config.debug )
   {
@@ -86,7 +97,12 @@ var mixin = function( dst )
     _.assert( dst.isSame.length === 3 );
   }
 
+  /* */
+
   if( dst.finit.name === 'finitEventHandler' )
+  throw _.err( 'EventHandler mixin should goes after Copyable mixin.' );
+
+  if( dst._mixins[ 'EventHandler' ] )
   throw _.err( 'EventHandler mixin should goes after Copyable mixin.' );
 
 }
@@ -117,7 +133,7 @@ var init = function( Prototype )
     self.copy( options );
 */
 
-    throw _.err( 'Not implemented' );
+    throw _.err( 'not implemented' );
 
     _.assert( _.objectIs( dst ) );
 
@@ -127,6 +143,7 @@ var init = function( Prototype )
 }
 
 //
+
 /*
 var init = function( options )
 {
@@ -157,18 +174,18 @@ var init = function( options )
 
 //
 
-  /**
-   * Object descturctor.
-   * @method finit
-   * @memberof wCopyable#
-   */
+/**
+ * Object descturctor.
+ * @method finit
+ * @memberof wCopyable#
+ */
 
-  var finit = function()
-  {
-    var self = this;
-    _.assert( !Object.isFrozen( self ) );
-    Object.freeze( self );
-  }
+var finit = function()
+{
+  var self = this;
+  _.assert( !Object.isFrozen( self ) );
+  Object.freeze( self );
+}
 
 //
 
@@ -215,13 +232,12 @@ var _copyCustom = function( o )
 
   /* var */
 
+  o.proto = o.proto || Object.getPrototypeOf( self );
+
+  var proto = o.proto;
   var src = o.src;
   var dst = o.dst || self;
   var dropFields = o.dropFields || _empty;
-
-  o.proto = o.proto || Object.getPrototypeOf( self ) || dst;
-
-  var proto = o.proto;
   var Composes = proto.Composes || _empty;
   var Aggregates = proto.Aggregates || _empty;
   var Associates = proto.Associates || _empty;
@@ -229,7 +245,7 @@ var _copyCustom = function( o )
 
   /* verification */
 
-  _.assertMapNoUndefine( o );
+  _.assertMapHasNoUndefine( o );
   _.assert( arguments.length == 1 );
   _.assert( src );
   _.assert( dst );
@@ -300,16 +316,10 @@ var _copyCustom = function( o )
 
   /* copy composes */
 
-  if( o.copyComposes || o.copyConstitutes || o.copyCustomFields )
+  if( o.copyComposes || o.copyCustomFields )
   {
 
-    var copySource = {};
-    if( o.copyCustomFields )
-    _.mapExtend( copySource,o.copyCustomFields )
-    if( o.copyComposes )
-    _.mapExtend( copySource,Composes )
-
-    copyFacets( copySource,true );
+    copyFacets( Composes,true );
 
   }
 
@@ -341,6 +351,17 @@ var _copyCustom = function( o )
 
   }
 
+  /* copyCustomFields */
+
+  if( o.copyCustomFields )
+  {
+
+    copyFacets( o.copyCustomFields,true );
+
+  }
+
+  /* done */
+
   return dst;
 }
 
@@ -361,8 +382,8 @@ var copyCustom = function( o )
 {
   var self = this;
 
-  _.assertMapNoUndefine( o );
-  _.assertMapOnly( o,copyCustom.defaults );
+  _.assertMapHasNoUndefine( o );
+  _.assertMapHasOnly( o,copyCustom.defaults );
   _.mapSupplement( o,copyCustom.defaults );
   _.assert( arguments.length == 1 );
   _.assert( _.objectIs( o ) );
@@ -386,8 +407,8 @@ var copyDeserializing = function( o )
 {
   var self = this;
 
-  _.assertMapAll( o,copyDeserializing.defaults )
-  _.assertMapNoUndefine( o );
+  _.assertMapHasAll( o,copyDeserializing.defaults )
+  _.assertMapHasNoUndefine( o );
   _.assert( arguments.length == 1 );
   _.assert( _.objectIs( o ) );
 
@@ -424,7 +445,7 @@ var cloneObject = function( o )
 
   _.assert( arguments.length === 0 || arguments.length === 1 );
   _.mapComplement( o,cloneObject.defaults );
-  _.assertMapOnly( o,cloneObject.defaults );
+  _.assertMapHasOnly( o,cloneObject.defaults );
 
   if( o.src === undefined )
   o.src = self;
@@ -512,7 +533,7 @@ var cloneData = function( o )
   o.dst = {};
 
   _.mapComplement( o,cloneData.defaults );
-  _.assertMapOnly( o,cloneData.defaults );
+  _.assertMapHasOnly( o,cloneData.defaults );
 
   return self._copyCustom( o );
 }
@@ -592,7 +613,9 @@ var clone = function( dst )
   return dst;
 }
 
-//
+// --
+// etc
+// --
 
 /**
  * Gives descriptive string of the object.
@@ -600,17 +623,17 @@ var clone = function( dst )
  * @memberof wCopyable#
  */
 
-var toStr = function()
+var toStr = function( o )
 {
   var self = this;
   var result = '';
 
-  _.assert( arguments.length === 0 );
+  _.assert( arguments.length === 0 || arguments.length === 1 );
 
   result += self.nickName + '\n';
 
   var fields = _.mapScreens( self,self.Composes || {},self.Aggregates || {} );
-  result += _.toStr( fields,{} );
+  result += _.toStr( fields,o || {} );
 
   return result;
 }
@@ -643,15 +666,17 @@ var doesNotHaveRedundantFields = function( src )
 /**
  * Constitutes field.
  * @param {object} fieldName - src isntance.
- * @method _constituteField
+ * @method _constituteField_deprecated
  * @memberof wCopyable#
  */
 
-var _constituteField = function( dst,fieldName )
+var _constituteField_deprecated = function( dst,fieldName )
 {
   var self = this;
   var Prototype = Object.getPrototypeOf( self ) || options.prototype;
   var constitute = Prototype.Constitutes[ fieldName ];
+
+  throw _.err( 'deprecated' );
 
   if( !constitute )
   return;
@@ -738,7 +763,9 @@ var classEachParent = function( classObject,onEach )
 
 }
 
-//
+// --
+// tester
+// --
 
 /**
  * Is this instance finited.
@@ -851,23 +878,29 @@ var isEquivalent = function( src1,src2,o )
   return self.isSame( src1,src2,o );
 }
 
-//
+// --
+// accessor
+// --
 
 /**
- * Nickname of the object.
- * @method _nickNameGet
+ * Get map of copyable fields.
+ * @method _CopyableFieldsGet
  * @memberof wCopyable#
  */
 
-var _nickNameGet = function()
+var _CopyableFieldsGet = function()
 {
   var self = this;
-  var index = '';
-  if( _.numberIs( self.instanceIndex ) )
-  index = '#' + self.instanceIndex;
-  if( index === '' && _.numberIs( self.id ) )
-  index = '#' + self.id;
-  return self.className + '( ' + ( self.key || self.name || '' ) + ( index ) + ' )';
+  var result = {};
+
+  if( self.Composes )
+  _.mapExtend( result,self.Composes );
+  if( self.Aggregates )
+  _.mapExtend( result,self.Aggregates );
+  if( self.Associates )
+  _.mapExtend( result,self.Associates );
+
+  return result;
 }
 
 //
@@ -881,7 +914,18 @@ var _nickNameGet = function()
 var _SelfGet = function _SelfGet()
 {
   var proto = Object.getPrototypeOf( this );
-  _.assert( !proto || _hasOwnProperty.call( proto, 'constructor' ) );
+
+  _.assert
+  (
+    !proto ||
+    _hasOwnProperty.call( proto, 'constructor' ) ||
+    (
+      !_hasOwnProperty.call( proto, 'Composes' ) &&
+      !_hasOwnProperty.call( proto, 'Aggregates' ) &&
+      !_hasOwnProperty.call( proto, 'Associsates' )
+    )
+  );
+
   return this.constructor;
 }
 
@@ -896,9 +940,33 @@ var _SelfGet = function _SelfGet()
 var _ParentGet = function _ParentGet()
 {
   var proto = Object.getPrototypeOf( this );
-  _.assert( !proto || _hasOwnProperty.call( proto, 'constructor' ) );
+
+  _.assert
+  (
+    !proto ||
+    _hasOwnProperty.call( proto, 'constructor' ) ||
+    (
+      !_hasOwnProperty.call( proto, 'Composes' ) &&
+      !_hasOwnProperty.call( proto, 'Aggregates' ) &&
+      !_hasOwnProperty.call( proto, 'Associsates' )
+    )
+  );
+
   var parentProto = Object.getPrototypeOf( this.constructor.prototype );
   return parentProto ? parentProto.constructor : null;
+}
+
+//
+
+/**
+ * Is this class prototype or instance.
+ * @method _classIsGet
+ * @memberof wCopyable#
+ */
+
+var _classIsGet = function _classIsGet()
+{
+  return _hasOwnProperty.call( this, 'constructor' );
 }
 
 //
@@ -918,14 +986,20 @@ var _classNameGet = function _classNameGet()
 //
 
 /**
- * Is this class prototype or instance.
- * @method _classIsGet
+ * Nickname of the object.
+ * @method _nickNameGet
  * @memberof wCopyable#
  */
 
-var _classIsGet = function _classIsGet()
+var _nickNameGet = function()
 {
-  return _hasOwnProperty.call( this, 'constructor' );
+  var self = this;
+  var index = '';
+  if( _.numberIs( self.instanceIndex ) )
+  index = '#' + self.instanceIndex;
+  if( index === '' && _.numberIs( self.id ) )
+  index = '#' + self.id;
+  return self.className + '( ' + ( self.key || self.name || '' ) + ( index ) + ' )';
 }
 
 // --
@@ -948,7 +1022,7 @@ var Restricts =
 // proto
 // --
 
-var Proto =
+var Supplement =
 {
 
   finit : finit,
@@ -963,22 +1037,34 @@ var Proto =
   cloneSerializing : cloneSerializing,
   clone : clone,
 
-  toStr : toStr,
 
+  // etc
+
+  toStr : toStr,
   doesNotHaveRedundantFields : doesNotHaveRedundantFields,
-  _constituteField : _constituteField,
+  _constituteField_deprecated : _constituteField_deprecated,
   classEachParent : classEachParent,
+
+
+  // tester
 
   isFinited : isFinited,
   isSame : isSame,
   isIdentical : isIdentical,
   isEquivalent : isEquivalent,
 
+
+  // accessor
+
+  '_CopyableFieldsGet' : _CopyableFieldsGet,
   '_SelfGet' : _SelfGet,
   '_ParentGet' : _ParentGet,
-  '_classNameGet' : _classNameGet,
   '_classIsGet' : _classIsGet,
+  '_classNameGet' : _classNameGet,
   '_nickNameGet' : _nickNameGet,
+
+
+  //
 
   Composes : Composes,
   Associates : Associates,
@@ -986,15 +1072,19 @@ var Proto =
 
 }
 
+//
+
 var Self =
 {
 
+  Supplement : Supplement,
+
   mixin : mixin,
-  Proto : Proto,
+  name : 'Copyable',
 
 }
 
-_.mapExtend( Self,Proto );
+Object.setPrototypeOf( Self, Supplement );
 
 if( typeof module !== 'undefined' )
 module[ 'exports' ] = Self;
