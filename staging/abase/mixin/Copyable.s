@@ -40,7 +40,7 @@ var mixin = function( constructor )
   }
 
   _.assert( arguments.length === 1 );
-  _.assert( _.routineIs( constructor ) );
+  _.assert( _.routineIs( constructor ),'expects constructor' );
   _.assertMapOwnAll( dst,has );
   _.assert( _hasOwnProperty.call( dst,'constructor' ),'prototype of object should has own constructor' );
 
@@ -183,6 +183,8 @@ var init = function( options )
 var finit = function()
 {
   var self = this;
+  // if( self.id === 6976 )
+  // debugger;
   _.assert( !Object.isFrozen( self ) );
   Object.freeze( self );
 }
@@ -994,12 +996,13 @@ var _classNameGet = function _classNameGet()
 var _nickNameGet = function()
 {
   var self = this;
+  var result = ( self.key || self.name || '' );
   var index = '';
   if( _.numberIs( self.instanceIndex ) )
-  index = '#' + self.instanceIndex;
-  if( index === '' && _.numberIs( self.id ) )
-  index = '#' + self.id;
-  return self.className + '( ' + ( self.key || self.name || '' ) + ( index ) + ' )';
+  result += '#in' + self.instanceIndex;
+  if( _.numberIs( self.id ) )
+  result += '#id' + self.id;
+  return self.className + '( ' + result + ' )';
 }
 
 // --
@@ -1013,6 +1016,8 @@ var Composes =
 var Associates =
 {
 }
+
+Object.freeze( Associates );
 
 var Restricts =
 {
