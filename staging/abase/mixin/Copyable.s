@@ -40,7 +40,7 @@ var mixin = function( constructor )
   }
 
   _.assert( arguments.length === 1 );
-  _.assert( _.routineIs( constructor ),'expects constructor' );
+  _.assert( _.routineIs( constructor ),'mixin expects constructor, but got',_.strPrimitiveTypeOf( constructor ) );
   _.assertMapOwnAll( dst,has );
   _.assert( _hasOwnProperty.call( dst,'constructor' ),'prototype of object should has own constructor' );
 
@@ -59,6 +59,7 @@ var mixin = function( constructor )
     className : 'className',
     classIs : 'classIs',
     nickName : 'nickName',
+    uniqueName : 'uniqueName',
     Parent : 'Parent',
     Self : 'Self',
     CopyableFields : 'CopyableFields',
@@ -988,7 +989,7 @@ var _classNameGet = function _classNameGet()
 //
 
 /**
- * Nickname of the object.
+ * Nick name of the object.
  * @method _nickNameGet
  * @memberof wCopyable#
  */
@@ -1005,6 +1006,26 @@ var _nickNameGet = function()
   return self.className + '( ' + result + ' )';
 }
 
+//
+
+/**
+ * Unique name of the object.
+ * @method _uniqueNameGet
+ * @memberof wCopyable#
+ */
+
+var _uniqueNameGet = function()
+{
+  var self = this;
+  var result = '';
+  var index = '';
+  if( _.numberIs( self.instanceIndex ) )
+  result += '#in' + self.instanceIndex;
+  if( _.numberIs( self.id ) )
+  result += '#id' + self.id;
+  return self.className + '( ' + result + ' )';
+}
+
 // --
 // relationships
 // --
@@ -1013,15 +1034,22 @@ var Composes =
 {
 }
 
+var Aggregates =
+{
+}
+
 var Associates =
 {
 }
 
-Object.freeze( Associates );
-
 var Restricts =
 {
 }
+
+Object.freeze( Composes );
+Object.freeze( Aggregates );
+Object.freeze( Associates );
+Object.freeze( Restricts );
 
 // --
 // proto
@@ -1067,11 +1095,13 @@ var Supplement =
   '_classIsGet' : _classIsGet,
   '_classNameGet' : _classNameGet,
   '_nickNameGet' : _nickNameGet,
+  '_uniqueNameGet' : _uniqueNameGet,
 
 
   //
 
   Composes : Composes,
+  Aggregates : Aggregates,
   Associates : Associates,
   Restricts : Restricts,
 
