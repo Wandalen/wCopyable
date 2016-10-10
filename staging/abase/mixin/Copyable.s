@@ -669,9 +669,10 @@ toStr_gen.defaults =
 var toStr = function( o )
 {
   var self = this;
-  var result = '';
+  var o = o || {};
 
-  self.toStr_gen({ fields : [ self.Composes,self.Aggregates ] })( o );
+  var result = self.toStr_gen({ fields : [ self.Composes,self.Aggregates ] }).call( self,o );
+  return result;
 }
 
 //
