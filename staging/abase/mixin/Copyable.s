@@ -645,7 +645,7 @@ var toStr_gen = function toStr_gen( gen )
 
     result += self.nickName + '\n';
 
-    var fields = _.mapScreen( o.fields,self );
+    var fields = _.mapScreen( gen.fields,self );
     result += _.toStr( fields,o );
 
     return result;
