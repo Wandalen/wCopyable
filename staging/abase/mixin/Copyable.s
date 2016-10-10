@@ -621,6 +621,46 @@ var clone = function( dst )
 // --
 
 /**
+ * Generate method to get descriptive string of the object.
+ * @method toStr_gen
+ * @memberof wCopyable#
+ */
+
+var toStr_gen = function toStr_gen( gen )
+{
+
+  _.assert( arguments.length === 1 );
+  _.assertMapHasOnly( gen,toStr_gen.defaults );
+
+  if( _.arrayIs( gen.fields ) )
+  gen.fields = _.mapsFlatten({ maps : gen.fields });
+
+  return function toStr( o )
+  {
+    var self = this;
+    var result = '';
+    var o = o || {};
+
+    _.assert( arguments.length === 0 || arguments.length === 1 );
+
+    result += self.nickName + '\n';
+
+    var fields = _.mapScreen( o.fields,self );
+    result += _.toStr( fields,o );
+
+    return result;
+  }
+
+}
+
+toStr_gen.defaults =
+{
+  fields : null,
+}
+
+//
+
+/**
  * Gives descriptive string of the object.
  * @method toStr
  * @memberof wCopyable#
@@ -631,14 +671,7 @@ var toStr = function( o )
   var self = this;
   var result = '';
 
-  _.assert( arguments.length === 0 || arguments.length === 1 );
-
-  result += self.nickName + '\n';
-
-  var fields = _.mapScreens( self,self.Composes || {},self.Aggregates || {} );
-  result += _.toStr( fields,o || {} );
-
-  return result;
+  self.toStr_gen({ fields : [ self.Composes,self.Aggregates ] })( o );
 }
 
 //
@@ -1073,6 +1106,7 @@ var Supplement =
 
   // etc
 
+  toStr_gen : toStr_gen,
   toStr : toStr,
   doesNotHaveRedundantFields : doesNotHaveRedundantFields,
   _constituteField_deprecated : _constituteField_deprecated,
