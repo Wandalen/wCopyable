@@ -176,16 +176,34 @@ var init = function( options )
 //
 
 /**
- * Object descturctor.
+ * Instance constructor.
+ * @method init
+ * @memberof wCopyable#
+ */
+
+var init = function init()
+{
+  var self = this;
+
+  _.protoComplementInstance( self );
+
+  Object.preventExtensions( self );
+
+  if( o )
+  self.copy( o );
+}
+
+//
+
+/**
+ * Instance descturctor.
  * @method finit
  * @memberof wCopyable#
  */
 
-var finit = function()
+var finit = function finit()
 {
   var self = this;
-  // if( self.id === 6976 )
-  // debugger;
   _.assert( !Object.isFrozen( self ) );
   Object.freeze( self );
 }
@@ -1092,6 +1110,7 @@ Object.freeze( Restricts );
 var Supplement =
 {
 
+  init : init,
   finit : finit,
 
   _copyCustom : _copyCustom,
