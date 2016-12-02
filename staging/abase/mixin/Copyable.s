@@ -185,7 +185,7 @@ var init = function init()
 {
   var self = this;
 
-  _.protoComplementInstance( self );
+  _.instanceInit( self );
 
   Object.preventExtensions( self );
 
@@ -640,15 +640,14 @@ var clone = function( dst )
 
 /**
  * Generate method to get descriptive string of the object.
- * @method toStr_gen
- * @memberof wCopyable#
+ * @method toStr * @memberof wCopyable#
  */
 
-var toStr_gen = function toStr_gen( gen )
+var toStr_functor = function toStr_functor( gen )
 {
 
   _.assert( arguments.length === 1 );
-  _.assertMapHasOnly( gen,toStr_gen.defaults );
+  _.assertMapHasOnly( gen,toStr_functor.defaults );
 
   if( _.arrayIs( gen.fields ) )
   gen.fields = _.mapsFlatten({ maps : gen.fields });
@@ -671,7 +670,7 @@ var toStr_gen = function toStr_gen( gen )
 
 }
 
-toStr_gen.defaults =
+toStr_functor.defaults =
 {
   fields : null,
 }
@@ -689,7 +688,8 @@ var toStr = function( o )
   var self = this;
   var o = o || {};
 
-  var result = self.toStr_gen({ fields : [ self.Composes,self.Aggregates ] }).call( self,o );
+  var result = self.toStr_functor({ fields : [ self.Composes,self.Aggregates ] }).call( self,o );
+
   return result;
 }
 
@@ -1126,7 +1126,7 @@ var Supplement =
 
   // etc
 
-  toStr_gen : toStr_gen,
+  toStr_functor : toStr_functor,
   toStr : toStr,
   doesNotHaveRedundantFields : doesNotHaveRedundantFields,
   _constituteField_deprecated : _constituteField_deprecated,
