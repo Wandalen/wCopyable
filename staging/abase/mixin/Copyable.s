@@ -95,7 +95,9 @@ var mixin = function( constructor )
   if( Config.debug )
   {
     if( _.routineIs( dst.isSame ) )
-    _.assert( dst.isSame.length === 3 );
+    _.assert( dst.isSame.length === 2 );
+    if( _.routineIs( dst._isSame ) )
+    _.assert( dst._isSame.length === 3 );
   }
 
   /* */
@@ -845,17 +847,10 @@ var isFinited = function()
  * @memberof wCopyable#
  */
 
-var isSame = function( src1,src2,o )
+var _isSame = function _isSame( src1,src2,o )
 {
-  var self = this;
 
-  _.assert( arguments.length === 1 || arguments.length === 3 );
-
-  if( arguments.length === 1 )
-  {
-    src2 = self;
-    o = {};
-  }
+  _.assert( arguments.length === 3 );
 
   if( !src1 )
   return false;
@@ -883,6 +878,20 @@ var isSame = function( src1,src2,o )
 
 //
 
+var isSame = function isSame( src,o )
+{
+  var self = this;
+
+  _.assert( arguments.length === 1 || arguments.length === 2 );
+
+  var o = o || {};
+  _._entitySameOptions( o );
+
+  return self._isSame( self,src,o );
+}
+
+//
+
 /**
  * Is this instance same with another one. Use relation maps to compare.
  * @method isIdentical
@@ -890,21 +899,17 @@ var isSame = function( src1,src2,o )
  * @memberof wCopyable#
  */
 
-var isIdentical = function( src1,src2,o )
+var isIdentical = function( src,o )
 {
   var self = this;
 
-  _.assert( arguments.length === 1 || arguments.length === 3 );
+  _.assert( arguments.length === 1 || arguments.length === 2 );
 
-  if( arguments.length === 1 )
-  {
-    src2 = self;
-    o = {};
-  }
-
+  var o = o || {};
   o.strict = 1;
+  _._entitySameOptions( o );
 
-  return self.isSame( src1,src2,o );
+  return self.isSame( src,o );
 }
 
 //
@@ -916,21 +921,17 @@ var isIdentical = function( src1,src2,o )
  * @memberof wCopyable#
  */
 
-var isEquivalent = function( src1,src2,o )
+var isEquivalent = function( src,o )
 {
   var self = this;
 
-  _.assert( arguments.length === 1 || arguments.length === 3 );
+  _.assert( arguments.length === 1 || arguments.length === 2 );
 
-  if( arguments.length === 1 )
-  {
-    src2 = self;
-    o = {};
-  }
-
+  var o = o || {};
   o.strict = 0;
+  _._entitySameOptions( o );
 
-  return self.isSame( src1,src2,o );
+  return self.isSame( src,o );
 }
 
 // --
@@ -1136,6 +1137,8 @@ var Supplement =
   // tester
 
   isFinited : isFinited,
+
+  _isSame : _isSame,
   isSame : isSame,
   isIdentical : isIdentical,
   isEquivalent : isEquivalent,
