@@ -1,4 +1,4 @@
-( function _Copyable_s_(){
+( function _Copyable_s_() {
 
 'use strict';
 
@@ -29,7 +29,7 @@ if( typeof module !== 'undefined' )
  * @memberof wCopyable#
  */
 
-var mixin = function( constructor )
+var mixin = function mixin( constructor )
 {
 
   var dst = constructor.prototype;
@@ -52,17 +52,17 @@ var mixin = function( constructor )
     mixin : Self,
   });
 
-  /* */
+  /* instance accessors */
 
   var names =
   {
+    Self : 'Self',
+    Parent : 'Parent',
     className : 'className',
-    classIs : 'classIs',
+    copyableFields : 'copyableFields',
+
     nickName : 'nickName',
     uniqueName : 'uniqueName',
-    Parent : 'Parent',
-    Self : 'Self',
-    CopyableFields : 'CopyableFields',
   }
 
   _.accessorReadOnly
@@ -71,13 +71,33 @@ var mixin = function( constructor )
     names : names,
     preserveValues : 0,
     strict : 0,
+    prime : 1,
+  });
+
+  /* static accessors */
+
+  var names =
+  {
+    Self : 'Self',
+    Parent : 'Parent',
+    className : 'className',
+    copyableFields : 'copyableFields',
+  }
+
+  _.accessorReadOnly
+  ({
+    object : constructor,
+    names : names,
+    preserveValues : 0,
+    strict : 0,
+    prime : 0,
   });
 
   /* */
 
   var names =
   {
-    nickname : 'nickname',
+    //nickname : 'nickname',
     Type : 'Type',
     type : 'type',
   }
@@ -95,9 +115,9 @@ var mixin = function( constructor )
   if( Config.debug )
   {
     if( _.routineIs( dst.isSame ) )
-    _.assert( dst.isSame.length === 2 );
+    _.assert( dst.isSame.length === 2 || dst.isSame.length === 0 );
     if( _.routineIs( dst._isSame ) )
-    _.assert( dst._isSame.length === 3 );
+    _.assert( dst._isSame.length === 3 || dst.isSame.length === 0 );
   }
 
   /* */
@@ -404,6 +424,9 @@ var _copyCustom = function( o )
 var copyCustom = function( o )
 {
   var self = this;
+
+  // if( o.dst === undefined )
+  // o.dst = null;
 
   _.assertMapHasNoUndefine( o );
   _.assertMapHasOnly( o,copyCustom.defaults );
@@ -899,7 +922,7 @@ var isSame = function isSame( src,o )
  * @memberof wCopyable#
  */
 
-var isIdentical = function( src,o )
+var isIdentical = function isIdentical( src,o )
 {
   var self = this;
 
@@ -921,7 +944,7 @@ var isIdentical = function( src,o )
  * @memberof wCopyable#
  */
 
-var isEquivalent = function( src,o )
+var isEquivalent = function isEquivalent( src,o )
 {
   var self = this;
 
@@ -934,17 +957,53 @@ var isEquivalent = function( src,o )
   return self.isSame( src,o );
 }
 
+//
+
+/**
+ * Is context instance.
+ * @method isInstance
+ * @param {object} ins - another instance of the class
+ * @memberof wCopyable#
+ */
+
+var isInstance = function isInstance()
+{
+  var self = this;
+
+  _.assert( arguments.length === 0 );
+
+  if( _hasOwnProperty.call( this,'constructor' ) )
+  return false;
+  else if( _hasOwnProperty.call( this,'prototype' ) && this.prototype )
+  return false;
+
+  return true;
+}
+
+//
+
+/**
+ * Is context prototype.
+ * @method isPrototype
+ * @memberof wCopyable#
+ */
+
+var isPrototype = function isPrototype()
+{
+  return _hasOwnProperty.call( this, 'constructor' );
+}
+
 // --
 // accessor
 // --
 
 /**
  * Get map of copyable fields.
- * @method _CopyableFieldsGet
+ * @method _copyableFieldsGet
  * @memberof wCopyable#
  */
 
-var _CopyableFieldsGet = function()
+var _copyableFieldsGet = function _copyableFieldsGet()
 {
   var self = this;
   var result = {};
@@ -969,20 +1028,57 @@ var _CopyableFieldsGet = function()
 
 var _SelfGet = function _SelfGet()
 {
-  var proto = Object.getPrototypeOf( this );
+  // var isInstance = this.isInstance();
+  var proto;
 
-  _.assert
-  (
-    !proto ||
-    _hasOwnProperty.call( proto, 'constructor' ) ||
-    (
-      !_hasOwnProperty.call( proto, 'Composes' ) &&
-      !_hasOwnProperty.call( proto, 'Aggregates' ) &&
-      !_hasOwnProperty.call( proto, 'Associsates' )
-    )
-  );
+  if( _hasOwnProperty.call( this,'constructor' ) )
+  {
+    proto = this; /* proto */
+  }
+  else if( _hasOwnProperty.call( this,'prototype' )  )
+  {
+    if( this.prototype )
+    proto = this.prototype; /* constructor */
+    else
+    proto = Object.getPrototypeOf( Object.getPrototypeOf( this ) ); /* instance behind ruotine */
+  }
+  else
+  {
+    proto = Object.getPrototypeOf( this ); /* instance */
+  }
 
-  return this.constructor;
+  // if( isInstance )
+  // {
+  //   proto = Object.getPrototypeOf( this );
+  // }
+  // else if( _.routineIs( this ) )
+  // {
+  //   proto = this.prototype;
+  // }
+  // else
+  // {
+  //   proto = this;
+  // }
+
+  _.assert( _hasOwnProperty.call( proto, 'constructor' ) );
+  _.assert( _hasOwnProperty.call( proto, 'Composes' ) );
+  _.assert( _hasOwnProperty.call( proto, 'Aggregates' ) );
+  _.assert( _hasOwnProperty.call( proto, 'Associates' ) );
+  _.assert( _hasOwnProperty.call( proto, 'Restricts' ) );
+
+  // _.assert
+  // (
+  //   !proto ||
+  //   _hasOwnProperty.call( proto, 'constructor' )
+  //   ||
+  //   (
+  //     !_hasOwnProperty.call( proto, 'Composes' ) &&
+  //     !_hasOwnProperty.call( proto, 'Aggregates' ) &&
+  //     !_hasOwnProperty.call( proto, 'Associsates' )
+  //   )
+  // );
+
+  return proto.constructor;
 }
 
 //
@@ -995,34 +1091,27 @@ var _SelfGet = function _SelfGet()
 
 var _ParentGet = function _ParentGet()
 {
-  var proto = Object.getPrototypeOf( this );
+  var c = _SelfGet.call( this );
 
-  _.assert
-  (
-    !proto ||
-    _hasOwnProperty.call( proto, 'constructor' ) ||
-    (
-      !_hasOwnProperty.call( proto, 'Composes' ) &&
-      !_hasOwnProperty.call( proto, 'Aggregates' ) &&
-      !_hasOwnProperty.call( proto, 'Associsates' )
-    )
-  );
+  var proto = Object.getPrototypeOf( c.prototype );
+  var result = proto ? proto.constructor : null;
 
-  var parentProto = Object.getPrototypeOf( this.constructor.prototype );
-  return parentProto ? parentProto.constructor : null;
-}
-
-//
-
-/**
- * Is this class prototype or instance.
- * @method _classIsGet
- * @memberof wCopyable#
- */
-
-var _classIsGet = function _classIsGet()
-{
-  return _hasOwnProperty.call( this, 'constructor' );
+  return result;
+  // var proto = Object.getPrototypeOf( this );
+  //
+  // _.assert
+  // (
+  //   !proto ||
+  //   _hasOwnProperty.call( proto, 'constructor' ) ||
+  //   (
+  //     !_hasOwnProperty.call( proto, 'Composes' ) &&
+  //     !_hasOwnProperty.call( proto, 'Aggregates' ) &&
+  //     !_hasOwnProperty.call( proto, 'Associsates' )
+  //   )
+  // );
+  //
+  // var parentProto = Object.getPrototypeOf( this.constructor.prototype );
+  // return parentProto ? parentProto.constructor : null;
 }
 
 //
@@ -1099,6 +1188,19 @@ var Restricts =
 {
 }
 
+var Statics =
+{
+
+  isInstance : isInstance,
+  isPrototype : isPrototype,
+
+  '_SelfGet' : _SelfGet,
+  '_ParentGet' : _ParentGet,
+  '_classNameGet' : _classNameGet,
+  '_copyableFieldsGet' : _copyableFieldsGet,
+
+}
+
 Object.freeze( Composes );
 Object.freeze( Aggregates );
 Object.freeze( Associates );
@@ -1146,11 +1248,11 @@ var Supplement =
 
   // accessor
 
-  '_CopyableFieldsGet' : _CopyableFieldsGet,
-  '_SelfGet' : _SelfGet,
-  '_ParentGet' : _ParentGet,
-  '_classIsGet' : _classIsGet,
-  '_classNameGet' : _classNameGet,
+  // '_copyableFieldsGet' : _copyableFieldsGet,
+  // '_SelfGet' : _SelfGet,
+  // '_ParentGet' : _ParentGet,
+  // '_classNameGet' : _classNameGet,
+
   '_nickNameGet' : _nickNameGet,
   '_uniqueNameGet' : _uniqueNameGet,
 
@@ -1161,6 +1263,7 @@ var Supplement =
   Aggregates : Aggregates,
   Associates : Associates,
   Restricts : Restricts,
+  Statics : Statics,
 
 }
 
