@@ -132,38 +132,38 @@ var mixin = function mixin( constructor )
 
 //
 
-/**
- * Init functor.
- * @param {object} options - options.
- * @method init
- * @memberof wCopyable#
- */
-
-var init = function( Prototype )
-{
-
-  var originalInit = Prototype.init;
-
-  return function init( options )
-  {
-    var self = this;
-
-/*
-    _.mapExtendFiltering( _.filter.cloningSrcOwn(),self,Composes );
-    _.mapExtendFiltering( _.filter.cloningSrcOwn(),self,Associates );
-
-    if( options )
-    self.copy( options );
-*/
-
-    throw _.err( 'not implemented' );
-
-    _.assert( _.objectIs( dst ) );
-
-    return originalInit.apply( self,arguments );
-  }
-
-}
+// /**
+//  * Init functor.
+//  * @param {object} options - options.
+//  * @method init
+//  * @memberof wCopyable#
+//  */
+//
+// var init = function( Prototype )
+// {
+//
+//   var originalInit = Prototype.init;
+//
+//   return function init( options )
+//   {
+//     var self = this;
+//
+// /*
+//     _.mapExtendFiltering( _.filter.cloningSrcOwn(),self,Composes );
+//     _.mapExtendFiltering( _.filter.cloningSrcOwn(),self,Associates );
+//
+//     if( options )
+//     self.copy( options );
+// */
+//
+//     throw _.err( 'not implemented' );
+//
+//     _.assert( _.objectIs( dst ) );
+//
+//     return originalInit.apply( self,arguments );
+//   }
+//
+// }
 
 //
 
@@ -203,16 +203,17 @@ var init = function( options )
  * @memberof wCopyable#
  */
 
-var init = function init()
+var init = function init( o )
 {
   var self = this;
 
+  _.assert( arguments.length === 0 || arguments.length === 1 );
   _.instanceInit( self );
 
   Object.preventExtensions( self );
 
-  if( o )
   self.copy( o );
+
 }
 
 //
@@ -356,6 +357,10 @@ var _copyCustom = function( o )
     });
 
   }
+
+  // console.log( 'clone',o.proto.constructor.name );
+  // if( o.proto.constructor.name === 'eFaceCellEnclosing' )
+  // debugger;
 
   /* copy composes */
 
