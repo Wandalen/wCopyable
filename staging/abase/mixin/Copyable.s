@@ -132,73 +132,8 @@ var mixin = function mixin( constructor )
 
 //
 
-// /**
-//  * Init functor.
-//  * @param {object} options - options.
-//  * @method init
-//  * @memberof wCopyable#
-//  */
-//
-// var init = function( Prototype )
-// {
-//
-//   var originalInit = Prototype.init;
-//
-//   return function init( options )
-//   {
-//     var self = this;
-//
-// /*
-//     _.mapExtendFiltering( _.filter.cloningSrcOwn(),self,Composes );
-//     _.mapExtendFiltering( _.filter.cloningSrcOwn(),self,Associates );
-//
-//     if( options )
-//     self.copy( options );
-// */
-//
-//     throw _.err( 'not implemented' );
-//
-//     _.assert( _.objectIs( dst ) );
-//
-//     return originalInit.apply( self,arguments );
-//   }
-//
-// }
-
-//
-
-/*
-var init = function( options )
-{
-  var self = this;
-
-  _.mapExtendFiltering( _.filter.cloningSrcOwn(),self,Composes );
-  _.mapExtendFiltering( _.filter.cloningSrcOwn(),self,Associates );
-
-  if( options )
-  self.copy( options );
-
-}
-
-//
-
-var init = function( options )
-{
-  var self = this;
-
-  _.mapExtendFiltering( _.filter.notAtomicCloningSrcOwn(),self,Composes );
-  _.mapExtendFiltering( _.filter.notAtomicCloningSrcOwn(),self,Associates );
-
-  if( options )
-  self.copy( options );
-
-}
-*/
-
-//
-
 /**
- * Instance constructor.
+ * Default instance constructor.
  * @method init
  * @memberof wCopyable#
  */
@@ -212,6 +147,7 @@ var init = function init( o )
 
   Object.preventExtensions( self );
 
+  if( o )
   self.copy( o );
 
 }
@@ -337,7 +273,7 @@ var _copyCustom = function( o )
         if( o.onRoutine && _.routineIs( srcElement ) )
         srcElement = o.onRoutine( srcElement );
 
-        if( o.onBuffer && _.bufferSomeIs( srcElement ) )
+        if( o.onBuffer && _.bufferAnyIs( srcElement ) )
         srcElement = o.onBuffer( srcElement );
 
       }
@@ -1280,7 +1216,8 @@ var Self =
   Supplement : Supplement,
 
   mixin : mixin,
-  name : 'Copyable',
+  name : 'wCopyable', 
+  nameShort : 'Copyable',
 
 }
 
