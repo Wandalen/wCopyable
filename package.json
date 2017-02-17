@@ -1,7 +1,7 @@
 {
   "name": "wCopyable",
   "version": "0.3.30",
-  "description": "Copyable mixin. Makes any class able to be copied/cloned.",
+  "description": "Copyable mixin. Makes objects of a class able to be copied/cloned.",
   "license": "MIT",
   "author": "Kostiantyn Wandalen <wtory.net@domainsbyproxy.com>",
   "contributors": [
@@ -36,6 +36,7 @@
     "wProto": ""
   },
   "devDependencies": {
+    "wCopyable": "",
     "wTesting": ""
   },
   "keywords": [

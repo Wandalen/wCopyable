@@ -1,6 +1,6 @@
 # wCopyable
 
-Copyable mixin. Makes any class able to be copied/cloned.
+Copyable mixin. Makes objects of a class able to be copied/cloned.
 
 ### Try out
 ```
@@ -11,4 +11,3 @@ node sample/Base.s
 npm install
 node sample/Descendant.s
 ```
-
