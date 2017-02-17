@@ -1,13 +1,9 @@
-( function _Consequence_s_(){
+( function _Simple_s_(){
 
 'use strict';
 
 if( typeof module !== 'undefined' )
-{
-  require( 'wTools' );
-  require( 'wProto' );
-  require( 'wCopyable' );
-}
+require( 'wCopyable' );
 
 //
 
@@ -19,13 +15,16 @@ Parent.prototype.methodOfAlpha = function(){ console.log( 'method of alpha' ); }
 var Self = function Betta()
 {
   if( !( this instanceof Self ) )
+  if( o instanceof Self )
+  return o;
+  else
   return new( _.routineJoin( Self, Self, arguments ) );
   return Self.prototype.init.apply( this,arguments );
 }
 
 //
 
-var init = function init( o )
+function init( o )
 {
   var self = this;
   Parent.prototype.init.call( this );
@@ -39,7 +38,7 @@ var init = function init( o )
 
 //
 
-var finit = function finit()
+function finit()
 {
   var self = this;
 
@@ -49,7 +48,7 @@ var finit = function finit()
 
 //
 
-var methodOfBetta = function methodOfBetta()
+function methodOfBetta()
 {
   var self = this;
 
@@ -59,7 +58,7 @@ var methodOfBetta = function methodOfBetta()
 
 //
 
-var staticFunction = function staticFunction()
+function staticFunction()
 {
 
   if( this === Self )
@@ -77,6 +76,13 @@ var Composes =
   b : 2,
 }
 
+var Statics =
+{
+
+  staticFunction : staticFunction,
+
+}
+
 //
 
 var Proto =
@@ -89,13 +95,7 @@ var Proto =
 
   constructor: Self,
   Composes: Composes,
-
-}
-
-var Static =
-{
-
-  staticFunction : staticFunction,
+  Statics : Statics,
 
 }
 
@@ -104,7 +104,6 @@ _.protoMake
   constructor : Self,
   parent : Parent,
   extend : Proto,
-  static : Static,
 });
 
 wCopyable.mixin( Self );
