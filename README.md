@@ -9,3 +9,4 @@ node sample/Base.s
 ```
 node sample/Descendant.s
 ```
+
