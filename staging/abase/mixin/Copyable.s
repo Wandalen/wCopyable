@@ -8,15 +8,17 @@ var _hasOwnProperty = Object.hasOwnProperty;
 if( typeof module !== 'undefined' )
 {
 
-  if( typeof wTools === 'undefined' || !wTools.mixin )
+  if( typeof wBase === 'undefined' )
   try
   {
-    require( '../component/Proto.s' );
+    require( '../../abase/wTools.s' );
   }
   catch( err )
   {
-    require( 'wProto' );
+    require( 'wTools' );
   }
+
+  wTools.include( 'wProto' );
 
 }
 
@@ -176,7 +178,7 @@ var finit = function finit()
  * @memberof wCopyable#
  */
 
-var copy = function( src )
+function copy( src )
 {
   var self = this;
 
@@ -204,7 +206,7 @@ var copy = function( src )
  */
 
 var _empty = {};
-var _copyCustom = function( o )
+function _copyCustom( o )
 {
   var self = this;
 
@@ -236,12 +238,12 @@ var _copyCustom = function( o )
 
   /* copy facets */
 
-  var copyFacets = function( screen,cloning )
+  function copyFacets( screen,cloning )
   {
 
     var filter;
 
-    var filter = function( dstContainer,srcContainer,key )
+    function filter( dstContainer,srcContainer,key )
     {
 
       if( o.dropFields )
@@ -362,7 +364,7 @@ var _copyCustom = function( o )
  * @memberof wCopyable#
  */
 
-var copyCustom = function( o )
+function copyCustom( o )
 {
   var self = this;
 
@@ -390,7 +392,7 @@ copyCustom.defaults.__proto__ = _._entityClone.defaults;
 
 //
 
-var copyDeserializing = function( o )
+function copyDeserializing( o )
 {
   var self = this;
 
@@ -425,7 +427,7 @@ copyDeserializing.defaults =
  * @memberof wCopyable#
  */
 
-var cloneObject = function( o )
+function cloneObject( o )
 {
   var self = this;
   var o = o || {};
@@ -503,7 +505,7 @@ cloneObject.defaults.__proto__ = copyCustom.defaults;
  * @memberof wCopyable#
  */
 
-var cloneData = function( o )
+function cloneData( o )
 {
   var self = this;
   var o = o || {};
@@ -545,7 +547,7 @@ cloneData.defaults.__proto__ = copyCustom.defaults;
  * @memberof wCopyable#
  */
 
-var cloneSerializing = function( o )
+function cloneSerializing( o )
 {
   var self = this;
   var o = o || {};
@@ -577,7 +579,7 @@ cloneSerializing.defaults.__proto__ = _.entityCloneDataSeparatingBuffers.default
  * @memberof wCopyable#
  */
 
-var clone = function( dst )
+function clone( dst )
 {
   var self = this;
 
@@ -649,7 +651,7 @@ toStr_functor.defaults =
  * @memberof wCopyable#
  */
 
-var toStr = function( o )
+function toStr( o )
 {
   var self = this;
   var o = o || {};
@@ -668,7 +670,7 @@ var toStr = function( o )
  * @memberof wCopyable#
  */
 
-var doesNotHaveRedundantFields = function( src )
+function doesNotHaveRedundantFields( src )
 {
   var self = this;
 
@@ -691,7 +693,7 @@ var doesNotHaveRedundantFields = function( src )
  * @memberof wCopyable#
  */
 
-var _constituteField_deprecated = function( dst,fieldName )
+function _constituteField_deprecated( dst,fieldName )
 {
   var self = this;
   var Prototype = Object.getPrototypeOf( self ) || options.prototype;
@@ -709,7 +711,7 @@ var _constituteField_deprecated = function( dst,fieldName )
 
   //
 
-  var constituteIt = function( constitute,src,dstContainer,key )
+  function constituteIt( constitute,src,dstContainer,key )
   {
 
     if( src.Composes )
@@ -764,7 +766,7 @@ var _constituteField_deprecated = function( dst,fieldName )
  * @memberof wCopyable#
  */
 
-var classEachParent = function( classObject,onEach )
+function classEachParent( classObject,onEach )
 {
 
   _.assert( arguments.length === 2 );
@@ -795,7 +797,7 @@ var classEachParent = function( classObject,onEach )
  * @memberof wCopyable#
  */
 
-var isFinited = function()
+function isFinited()
 {
   var self = this;
 
@@ -1077,7 +1079,7 @@ var _classNameGet = function _classNameGet()
  * @memberof wCopyable#
  */
 
-var _nickNameGet = function()
+function _nickNameGet()
 {
   var self = this;
   var result = ( self.key || self.name || '' );
@@ -1097,7 +1099,7 @@ var _nickNameGet = function()
  * @memberof wCopyable#
  */
 
-var _uniqueNameGet = function()
+function _uniqueNameGet()
 {
   var self = this;
   var result = '';
@@ -1216,7 +1218,7 @@ var Self =
   Supplement : Supplement,
 
   mixin : mixin,
-  name : 'wCopyable', 
+  name : 'wCopyable',
   nameShort : 'Copyable',
 
 }
