@@ -66,6 +66,7 @@ var mixin = function mixin( constructor )
     Parent : 'Parent',
     className : 'className',
     copyableFields : 'copyableFields',
+    fields : 'fields',
 
     nickName : 'nickName',
     uniqueName : 'uniqueName',
@@ -77,7 +78,7 @@ var mixin = function mixin( constructor )
     names : names,
     preserveValues : 0,
     strict : 0,
-    prime : 1,
+    prime : 0,
   });
 
   /* static accessors */
@@ -209,7 +210,7 @@ function copy( src )
  * @memberof wCopyable#
  */
 
-var _empty = {};
+var _empty = Object.create( null );
 function _copyCustom( o )
 {
   var self = this;
@@ -405,7 +406,7 @@ function copyDeserializing( o )
   _.assert( arguments.length == 1 );
   _.assert( _.objectIs( o ) );
 
-  var optionsMerging = {};
+  var optionsMerging = Object.create( null );
   optionsMerging.src = o;
   optionsMerging.proto = Object.getPrototypeOf( self );
   optionsMerging.dst = self;
@@ -523,7 +524,7 @@ function cloneData( o )
   o.proto = Object.getPrototypeOf( o.src );
 
   if( !o.dst )
-  o.dst = {};
+  o.dst = Object.create( null );
 
   _.mapComplement( o,cloneData.defaults );
   _.assertMapHasOnly( o,cloneData.defaults );
@@ -953,7 +954,7 @@ var isPrototype = function isPrototype()
 var _copyableFieldsGet = function _copyableFieldsGet()
 {
   var self = this;
-  var result = {};
+  var result = Object.create( null );
 
   if( self.Composes )
   _.mapExtend( result,self.Composes );
@@ -961,6 +962,31 @@ var _copyableFieldsGet = function _copyableFieldsGet()
   _.mapExtend( result,self.Aggregates );
   if( self.Associates )
   _.mapExtend( result,self.Associates );
+
+  return result;
+}
+
+//
+
+/**
+ * Get map of copyable fields.
+ * @method _fieldsGet
+ * @memberof wCopyable#
+ */
+
+var _fieldsGet = function _fieldsGet()
+{
+  var self = this;
+  var result = Object.create( null );
+
+  if( self.Composes )
+  _.mapExtend( result,self.Composes );
+  if( self.Aggregates )
+  _.mapExtend( result,self.Aggregates );
+  if( self.Associates )
+  _.mapExtend( result,self.Associates );
+  if( self.Restricts )
+  _.mapExtend( result,self.Restricts );
 
   return result;
 }
@@ -1145,6 +1171,7 @@ var Statics =
   '_ParentGet' : _ParentGet,
   '_classNameGet' : _classNameGet,
   '_copyableFieldsGet' : _copyableFieldsGet,
+  '_fieldsGet' : _fieldsGet,
 
 }
 
