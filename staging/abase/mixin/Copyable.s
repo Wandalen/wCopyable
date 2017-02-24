@@ -829,8 +829,19 @@ var _isSame = function _isSame( src1,src2,o )
   if( !src2 )
   return false;
 
+  if( o.strict && !o.contain )
   if( src1.constructor !== src2.constructor )
   return false;
+
+  if( o.contain )
+  {
+    for( var c in src2 )
+    {
+      if( !_.entitySame( src1[ c ],src2[ c ],o ) )
+      return false;
+    }
+    return true;
+  }
 
   for( var c in src1.Composes )
   {
