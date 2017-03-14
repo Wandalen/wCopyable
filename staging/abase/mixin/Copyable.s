@@ -35,7 +35,7 @@ var _hasOwnProperty = Object.hasOwnProperty;
  * @memberof wCopyable#
  */
 
-var mixin = function mixin( constructor )
+function mixin( constructor )
 {
 
   var dst = constructor.prototype;
@@ -145,7 +145,7 @@ var mixin = function mixin( constructor )
  * @memberof wCopyable#
  */
 
-var init = function init( o )
+function init( o )
 {
   var self = this;
 
@@ -167,7 +167,7 @@ var init = function init( o )
  * @memberof wCopyable#
  */
 
-var finit = function finit()
+function finit()
 {
   var self = this;
   _.assert( !Object.isFrozen( self ) );
@@ -616,7 +616,7 @@ function clone( dst )
  * @method toStr * @memberof wCopyable#
  */
 
-var toStr_functor = function toStr_functor( gen )
+function toStr_functor( gen )
 {
 
   _.assert( arguments.length === 1 );
@@ -818,7 +818,7 @@ function isFinited()
  * @memberof wCopyable#
  */
 
-var _isSame = function _isSame( src1,src2,o )
+function _isSame( src1,src2,o )
 {
 
   _.assert( arguments.length === 3 );
@@ -860,7 +860,7 @@ var _isSame = function _isSame( src1,src2,o )
 
 //
 
-var isSame = function isSame( src,o )
+function isSame( src,o )
 {
   var self = this;
 
@@ -881,7 +881,7 @@ var isSame = function isSame( src,o )
  * @memberof wCopyable#
  */
 
-var isIdentical = function isIdentical( src,o )
+function isIdentical( src,o )
 {
   var self = this;
 
@@ -903,7 +903,7 @@ var isIdentical = function isIdentical( src,o )
  * @memberof wCopyable#
  */
 
-var isEquivalent = function isEquivalent( src,o )
+function isEquivalent( src,o )
 {
   var self = this;
 
@@ -925,7 +925,7 @@ var isEquivalent = function isEquivalent( src,o )
  * @memberof wCopyable#
  */
 
-var isInstance = function isInstance()
+function isInstance()
 {
   var self = this;
 
@@ -947,7 +947,7 @@ var isInstance = function isInstance()
  * @memberof wCopyable#
  */
 
-var isPrototype = function isPrototype()
+function isPrototype()
 {
   return _hasOwnProperty.call( this, 'constructor' );
 }
@@ -962,7 +962,7 @@ var isPrototype = function isPrototype()
  * @memberof wCopyable#
  */
 
-var _copyableFieldsGet = function _copyableFieldsGet()
+function _copyableFieldsGet()
 {
   var self = this;
   var result = Object.create( null );
@@ -985,7 +985,7 @@ var _copyableFieldsGet = function _copyableFieldsGet()
  * @memberof wCopyable#
  */
 
-var _fieldsGet = function _fieldsGet()
+function _fieldsGet()
 {
   var self = this;
   var result = Object.create( null );
@@ -1010,7 +1010,7 @@ var _fieldsGet = function _fieldsGet()
  * @memberof wCopyable#
  */
 
-var _SelfGet = function _SelfGet()
+function _SelfGet()
 {
   // var isInstance = this.isInstance();
   var proto;
@@ -1073,7 +1073,7 @@ var _SelfGet = function _SelfGet()
  * @memberof wCopyable#
  */
 
-var _ParentGet = function _ParentGet()
+function _ParentGet()
 {
   var c = _SelfGet.call( this );
 
@@ -1106,7 +1106,7 @@ var _ParentGet = function _ParentGet()
  * @memberof wCopyable#
  */
 
-var _classNameGet = function _classNameGet()
+function _classNameGet()
 {
   _.assert( this.constructor === null || this.constructor.name || this.constructor._name );
   return this.constructor ? this.constructor.name || this.constructor._name : '';
