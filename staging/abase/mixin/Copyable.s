@@ -186,8 +186,8 @@ function copy( src )
 {
   var self = this;
 
-  return self.copyCustom
-  ({
+  return ( self.copyCustom || copyCustom ).call( self,
+  {
 
     src : src,
     technique : 'object',
@@ -235,7 +235,7 @@ function _copyCustom( o )
   _.assert( arguments.length == 1 );
   _.assert( src );
   _.assert( dst );
-  _.assert( _.objectIs( proto ) );
+  _.assert( _.objectIs( proto ),'expects object ( proto ), but got',_.strTypeOf( proto ) );
   _.assert( dropFields );
   _.assert( !o.copyCustomFields || _.objectIs( o.copyCustomFields ) );
   _.assertMapOwnOnly( src, Composes, Aggregates, Associates, Restricts );
@@ -372,16 +372,13 @@ function copyCustom( o )
 {
   var self = this;
 
-  // if( o.dst === undefined )
-  // o.dst = null;
-
   _.assertMapHasNoUndefine( o );
   _.assertMapHasOnly( o,copyCustom.defaults );
   _.mapSupplement( o,copyCustom.defaults );
   _.assert( arguments.length == 1 );
   _.assert( _.objectIs( o ) );
 
-  return self._copyCustom( o );
+  return ( self._copyCustom || _copyCustom ).call( self,o );
 }
 
 copyCustom.defaults =
