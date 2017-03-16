@@ -104,7 +104,6 @@ function mixin( constructor )
 
   var names =
   {
-    //nickname : 'nickname',
     Type : 'Type',
     type : 'type',
   }
@@ -130,10 +129,10 @@ function mixin( constructor )
   /* */
 
   if( dst.finit.name === 'finitEventHandler' )
-  throw _.err( 'EventHandler mixin should goes after Copyable mixin.' );
+  throw _.err( 'wEventHandler mixin should goes after wCopyable mixin.' );
 
-  if( dst._mixins[ 'EventHandler' ] )
-  throw _.err( 'EventHandler mixin should goes after Copyable mixin.' );
+  if( dst._mixins[ 'wEventHandler' ] )
+  throw _.err( 'wEventHandler mixin should goes after wCopyable mixin.' );
 
 }
 
