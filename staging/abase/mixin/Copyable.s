@@ -245,8 +245,6 @@ function _copyCustom( o )
   function copyFacets( screen,cloning )
   {
 
-    var filter;
-
     function filter( dstContainer,srcContainer,key )
     {
 
@@ -254,10 +252,13 @@ function _copyCustom( o )
       if( o.dropFields[ key ] !== undefined )
       return;
 
+      // if( key === 'rootName' )
+      // debugger;
+
       var srcElement;
       if( cloning )
       {
-        var cloneOptions = _.mapExtend( {},o );
+        var cloneOptions = _.mapExtend( Object.create( null ),o );
         cloneOptions.src = srcContainer[ key ];
         cloneOptions.path = cloneOptions.path + '.' + key;
 
@@ -431,7 +432,7 @@ copyDeserializing.defaults =
 function cloneObject( o )
 {
   var self = this;
-  var o = o || {};
+  var o = o || Object.create( null );
 
   _.assert( arguments.length === 0 || arguments.length === 1 );
   _.mapComplement( o,cloneObject.defaults );
@@ -509,7 +510,7 @@ cloneObject.defaults.__proto__ = copyCustom.defaults;
 function cloneData( o )
 {
   var self = this;
-  var o = o || {};
+  var o = o || Object.create( null );
 
   _.assert( arguments.length === 0 || arguments.length === 1 );
 
@@ -531,7 +532,7 @@ function cloneData( o )
 cloneData.defaults =
 {
 
-  dst : {},
+  dst : Object.create( null ),
   copyAssociates : false,
   technique : 'data',
 
@@ -551,7 +552,7 @@ cloneData.defaults.__proto__ = copyCustom.defaults;
 function cloneSerializing( o )
 {
   var self = this;
-  var o = o || {};
+  var o = o || Object.create( null );
 
   _.assert( arguments.length === 0 || arguments.length === 1 );
 
@@ -625,7 +626,7 @@ function toStr_functor( gen )
   {
     var self = this;
     var result = '';
-    var o = o || {};
+    var o = o || Object.create( null );
 
     _.assert( arguments.length === 0 || arguments.length === 1 );
 
@@ -655,7 +656,7 @@ toStr_functor.defaults =
 function toStr( o )
 {
   var self = this;
-  var o = o || {};
+  var o = o || Object.create( null );
 
   var result = self.toStr_functor({ fields : [ self.Composes,self.Aggregates ] }).call( self,o );
 
@@ -675,10 +676,10 @@ function doesNotHaveRedundantFields( src )
 {
   var self = this;
 
-  var Composes = self.Composes || {};
-  var Aggregates = self.Aggregates || {};
-  var Associates = self.Associates || {};
-  var Restricts = self.Restricts || {};
+  var Composes = self.Composes || Object.create( null );
+  var Aggregates = self.Aggregates || Object.create( null );
+  var Associates = self.Associates || Object.create( null );
+  var Restricts = self.Restricts || Object.create( null );
 
   _.assertMapOwnOnly( src, Composes, Aggregates, Associates, Restricts );
 
@@ -862,7 +863,7 @@ function isSame( src,o )
 
   _.assert( arguments.length === 1 || arguments.length === 2 );
 
-  var o = o || {};
+  var o = o || Object.create( null );
   _._entitySameOptions( o );
 
   return self._isSame( self,src,o );
@@ -883,7 +884,7 @@ function isIdentical( src,o )
 
   _.assert( arguments.length === 1 || arguments.length === 2 );
 
-  var o = o || {};
+  var o = o || Object.create( null );
   o.strict = 1;
   _._entitySameOptions( o );
 
@@ -905,7 +906,7 @@ function isEquivalent( src,o )
 
   _.assert( arguments.length === 1 || arguments.length === 2 );
 
-  var o = o || {};
+  var o = o || Object.create( null );
   o.strict = 0;
   _._entitySameOptions( o );
 
