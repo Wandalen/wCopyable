@@ -34,7 +34,8 @@
   },
   "dependencies": {
     "wTools": "",
-    "wProto": ""
+    "wProto": "",
+    "wcloner": ""
   },
   "devDependencies": {
     "wCopyable": "",
