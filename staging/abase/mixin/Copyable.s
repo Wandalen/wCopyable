@@ -18,6 +18,7 @@ if( typeof module !== 'undefined' )
   var _ = wTools;
 
   wTools.include( 'wProto' );
+  wTools.include( 'wCloner' );
 
 }
 
