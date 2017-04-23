@@ -1,6 +1,7 @@
 {
   "name": "wCopyable",
   "version": "0.3.36",
+  "engine" : "node >= 5.0.0",
   "description": "Copyable mixin. Makes objects of a class able to be copied/cloned.",
   "license": "MIT",
   "author": "Kostiantyn Wandalen <wtory.net@domainsbyproxy.com>",

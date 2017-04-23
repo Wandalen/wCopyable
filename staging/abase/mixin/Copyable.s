@@ -79,6 +79,7 @@ function mixin( constructor )
     preserveValues : 0,
     strict : 0,
     prime : 0,
+    enumerable : 0,
   });
 
   /* static accessors */
@@ -98,6 +99,7 @@ function mixin( constructor )
     preserveValues : 0,
     strict : 0,
     prime : 0,
+    enumerable : 0,
   });
 
   /* */
@@ -210,20 +212,18 @@ function copy( src )
  */
 
 var _empty = Object.create( null );
-function _copyCustom( o )
+function _copyCustom( iteration,iterator )
 {
   var self = this;
 
-  _.assert( _.objectIs( o ) );
-
   /* var */
 
-  o.proto = o.proto || Object.getPrototypeOf( self );
+  iteration.proto = iteration.proto || Object.getPrototypeOf( self );
 
-  var proto = o.proto;
-  var src = o.src;
-  var dst = o.dst || self;
-  var dropFields = o.dropFields || _empty;
+  var proto = iteration.proto;
+  var src = iteration.src;
+  var dst = iteration.dst = iteration.dst || self;
+  var dropFields = iteration.dropFields || _empty;
   var Composes = proto.Composes || _empty;
   var Aggregates = proto.Aggregates || _empty;
   var Associates = proto.Associates || _empty;
@@ -231,125 +231,94 @@ function _copyCustom( o )
 
   /* verification */
 
-  _.assertMapHasNoUndefine( o );
-  _.assert( arguments.length == 1 );
+  _.assertMapHasNoUndefine( iteration );
+  _.assertMapHasNoUndefine( iterator );
+  _.assert( arguments.length === 2 );
   _.assert( src );
   _.assert( dst );
+  _.assert( proto );
+  _.assert( _.strIs( iteration.path ) );
   _.assert( _.objectIs( proto ),'expects object ( proto ), but got',_.strTypeOf( proto ) );
-  _.assert( dropFields );
-  _.assert( !o.copyCustomFields || _.objectIs( o.copyCustomFields ) );
+  _.assert( !iteration.customFields || _.objectIs( iteration.customFields ) );
+  _.assert( iteration.level >= 0 );
   _.assertMapOwnOnly( src, Composes, Aggregates, Associates, Restricts );
+  _.assert( _.numberIs( iteration.copyDegree ) );
+
+  // if( iteration.src.nickName && iteration.src.nickName.indexOf( 'Matrix4' ) !== -1 )
+  // debugger;
+
+  // if( iteration.src.name === 'Abc' )
+  // debugger;
+  //
+  // if( iteration.src.name === 'nothing' )
+  // debugger;
+
+  var newIteration = _.mapExtend( null,iteration );
 
   /* copy facets */
 
-  function copyFacets( screen,cloning )
+  function copyFacets( screen,copyDegree )
   {
 
-    function filter( dstContainer,srcContainer,key )
-    {
+    // if( screen && screen.m_state )
+    // debugger;
 
-      if( o.dropFields )
-      if( o.dropFields[ key ] !== undefined )
-      return;
+    _.assert( _.numberIs( copyDegree ) );
+    _.assert( iteration.dst === dst );
+    _.assert( _.objectIs( screen ) || !copyDegree );
 
-      // if( key === 'rootName' )
-      // debugger;
+    if( !copyDegree )
+    return;
 
-      var srcElement;
-      if( cloning )
-      {
-        var cloneOptions = _.mapExtend( Object.create( null ),o );
-        cloneOptions.src = srcContainer[ key ];
-        cloneOptions.path = cloneOptions.path + '.' + key;
+    newIteration.screenFields = screen;
+    newIteration.copyDegree = Math.min( copyDegree,iteration.copyDegree );
+    newIteration.instanceAsMap = 1;
 
-        delete cloneOptions.dst;
-        delete cloneOptions.proto;
-        delete cloneOptions.copyCustomFields;
-        delete cloneOptions.dropFields;
+    _.assert( iteration.copyDegree === 3,'not tested' );
+    _.assert( newIteration.copyDegree === 1 || newIteration.copyDegree === 3,'not tested' );
 
-        srcElement = _._entityClone( cloneOptions );
-      }
-      else
-      {
+    if( copyDegree === 1 )
+    newIteration.copyDegree += 1;
 
-        srcElement = srcContainer[ key ];
-
-        if( o.onString && _.strIs( srcElement ) )
-        srcElement = o.onString( srcElement );
-
-        if( o.onRoutine && _.routineIs( srcElement ) )
-        srcElement = o.onRoutine( srcElement );
-
-        if( o.onBuffer && _.bufferAnyIs( srcElement ) )
-        srcElement = o.onBuffer( srcElement );
-
-      }
-
-      dstContainer[ key ] = srcElement;
-
-    }
-
-    filter.functionKind = 'field-mapper';
-
-    _._mapScreen
-    ({
-      filter : filter,
-      screenObjects : screen,
-      dstObject : dst,
-      srcObjects : src,
-    });
+    _._cloneMap( newIteration,iterator );
 
   }
 
-  // console.log( 'clone',o.proto.constructor.name );
-  // if( o.proto.constructor.name === 'eFaceCellEnclosing' )
-  // debugger;
+  /* */
 
-  /* copy composes */
+  copyFacets( Composes,iterator.copyingComposes );
+  copyFacets( Aggregates,iterator.copyingAggregates );
+  copyFacets( Associates,iterator.copyingAssociates );
+  copyFacets( Restricts,iterator.copyingRestricts );
+  copyFacets( iterator.customFields,iterator.copyingCustomFields );
 
-  if( o.copyComposes || o.copyCustomFields )
-  {
-
-    copyFacets( Composes,true );
-
-  }
-
-  /* copy aggregates */
-
-  if( o.copyAggregates )
-  {
-
-    copyFacets( Aggregates,false );
-
-  }
-
-  /* copy associates */
-
-  if( o.copyAssociates )
-  {
-
-    copyFacets( Associates,false );
-
-  }
-
-  /* copy restricts */
-
-  if( o.copyRestricts )
-  {
-
-    copyFacets( Restricts,false );
-    throw _.err( 'not tested' );
-
-  }
-
-  /* copyCustomFields */
-
-  if( o.copyCustomFields )
-  {
-
-    copyFacets( o.copyCustomFields,true );
-
-  }
+  // /* copy composes */
+  //
+  // if( iterator.copyingComposes )
+  // copyFacets( Composes,true );
+  //
+  // /* copy aggregates */
+  //
+  // if( iterator.copyingAggregates )
+  // copyFacets( Aggregates,false );
+  //
+  // /* copy associates */
+  //
+  // if( iterator.copyingAssociates )
+  // copyFacets( Associates,false );
+  //
+  // /* copy restricts */
+  //
+  // if( iterator.copyingRestricts )
+  // {
+  //   copyFacets( Restricts,false );
+  //   throw _.err( 'not tested' );
+  // }
+  //
+  // /* customFields */
+  //
+  // if( iterator.customFields )
+  // copyFacets( iterator.customFields,true );
 
   /* done */
 
@@ -374,23 +343,55 @@ function copyCustom( o )
   var self = this;
 
   _.assertMapHasNoUndefine( o );
-  _.assertMapHasOnly( o,copyCustom.defaults );
-  _.mapSupplement( o,copyCustom.defaults );
+  _.routineOptions( copyCustom,o );
   _.assert( arguments.length == 1 );
   _.assert( _.objectIs( o ) );
 
-  return ( self._copyCustom || _copyCustom ).call( self,o );
+  var r = _._cloneOptions( copyCustom,o );
+
+  return ( self._copyCustom || _copyCustom ).call( self,r.iteration,r.iterator );
 }
 
 copyCustom.defaults =
 {
-
   dst : null,
   proto : null,
-
 }
 
-copyCustom.defaults.__proto__ = _._entityClone.defaults;
+copyCustom.defaults.__proto__ = _._cloneOptions.defaults;
+
+/*
+{
+
+  src : null,
+  key : null,
+  dst : null,
+  proto : null,
+  level : 0,
+  path : '',
+  customFields : null,
+  dropFields : null,
+  screenFields : null,
+  instanceAsMap : 0,
+  copyDegree : 3,
+
+  copyingComposes : 3,
+  copyingAggregates : 1,
+  copyingAssociates : 1,
+  copyingRestricts : 0,
+  copyingBuffers : 0,
+  copyingCustomFields : 0,
+
+  rootSrc : null,
+  levels : 999,
+  technique : null,
+
+  onString : null,
+  onRoutine : null,
+  onBuffer : null,
+
+}
+*/
 
 //
 
@@ -408,7 +409,7 @@ function copyDeserializing( o )
   optionsMerging.proto = Object.getPrototypeOf( self );
   optionsMerging.dst = self;
 
-  var result = _.entityCloneObjectMergingBuffers( optionsMerging );
+  var result = _.cloneObjectMergingBuffers( optionsMerging );
 
   return result;
 }
@@ -435,60 +436,62 @@ function cloneObject( o )
   var o = o || Object.create( null );
 
   _.assert( arguments.length === 0 || arguments.length === 1 );
-  _.mapComplement( o,cloneObject.defaults );
-  _.assertMapHasOnly( o,cloneObject.defaults );
+  _.routineOptions( cloneObject,o );
 
-  if( o.src === undefined )
-  o.src = self;
+  // if( o.src === undefined )
+  // o.src = self;
+  //
+  // if( iteration.proto === undefined )
+  // iteration.proto = Object.getPrototypeOf( o.src );
+  //
+  // /* */
+  //
+  // if( !o.dst )
+  // {
+  //
+  //   var standard = 1;
+  //   standard &= o.copyingComposes;
+  //   standard &= o.copyingAggregates;
+  //   standard &= o.copyingAssociates;
+  //   standard &= !o.copyingRestricts;
+  //   standard &= !o.customFields || Object.keys( o.customFields ) === 0;
+  //   standard &= !o.dropFields || Object.keys( o.dropFields ) === 0;
+  //
+  //   if( !standard )
+  //   {
+  //     debugger;
+  //     o.dst = new self.constructor();
+  //   }
+  //
+  // }
+  //
+  // /* */
+  //
+  // if( !iteration.proto )
+  // iteration.proto = Object.getPrototypeOf( self );
+  //
+  // if( !o.dst )
+  // {
+  //
+  //   o.dst = new self.constructor( self );
+  //   if( o.dst === self )
+  //   {
+  //     o.dst = new self.constructor();
+  //     o.dst._copyCustom( o );
+  //   }
+  //
+  // }
+  // else
+  // {
+  //
+  //   o.dst._copyCustom( o );
+  //
+  // }
+  // return self._copyCustom( o );
 
-  if( o.proto === undefined )
-  o.proto = Object.getPrototypeOf( o.src );
+  var r = _._cloneOptions( cloneObject,o );
 
-  /**/
-
-  if( !o.dst )
-  {
-
-    var standard = 1;
-    standard &= o.copyComposes;
-    standard &= o.copyAggregates;
-    standard &= o.copyAssociates;
-    standard &= !o.copyRestricts;
-    standard &= !o.copyCustomFields || Object.keys( o.copyCustomFields ) === 0;
-    standard &= !o.dropFields || Object.keys( o.dropFields ) === 0;
-
-    if( !standard )
-    {
-      debugger;
-      o.dst = new self.constructor();
-    }
-
-  }
-
-  /**/
-
-  if( o.proto === undefined )
-  o.proto = Object.getPrototypeOf( self );
-
-  if( !o.dst )
-  {
-
-    o.dst = new self.constructor( self );
-    if( o.dst === self )
-    {
-      o.dst = new self.constructor();
-      o.dst._copyCustom( o );
-    }
-
-  }
-  else
-  {
-
-    o.dst._copyCustom( o );
-
-  }
-
-  return self._copyCustom( o );
+  return self._cloneObject( r.iteration,r.iterator );
 }
 
 cloneObject.defaults =
@@ -497,6 +500,74 @@ cloneObject.defaults =
 }
 
 cloneObject.defaults.__proto__ = copyCustom.defaults;
+
+//
+
+/**
+ * Clone only data.
+ * @param {object} [options] - options.
+ * @method _cloneObject
+ * @memberof wCopyable#
+ */
+
+function _cloneObject( iteration,iterator )
+{
+  var self = this;
+
+  _.assert( arguments.length === 2 );
+
+  if( !iteration.src )
+  iteration.src = self;
+
+  if( !iteration.proto )
+  iteration.proto = Object.getPrototypeOf( iteration.src );
+
+  /* */
+
+  if( !iteration.dst )
+  {
+
+    var standard = 1;
+    standard = standard && iterator.copyingComposes;
+    standard = standard && iterator.copyingAggregates;
+    standard = standard && iterator.copyingAssociates;
+    standard = standard && !iterator.copyingRestricts;
+    standard = standard && ( !iterator.customFields || Object.keys( iterator.customFields ) === 0 );
+    standard = standard && ( !iterator.dropFields || Object.keys( iterator.dropFields ) === 0 );
+
+    if( !standard )
+    {
+      debugger;
+      iteration.dst = new self.constructor();
+    }
+
+  }
+
+  /* */
+
+  if( !iteration.dst )
+  {
+
+    iteration.dst = new self.constructor( self );
+    if( iteration.dst === self )
+    {
+      debugger;
+      iteration.dst = new self.constructor();
+      iteration.dst._copyCustom( iteration,iterator );
+    }
+
+  }
+  else
+  {
+
+    debugger;
+    iteration.dst._copyCustom( iteration,iterator );
+
+  }
+
+  return iteration.dst;
+  // return self._copyCustom( iteration,iterator );
+}
 
 //
 
@@ -514,31 +585,61 @@ function cloneData( o )
 
   _.assert( arguments.length === 0 || arguments.length === 1 );
 
-  if( !o.src )
-  o.src = self;
+  // if( !o.src )
+  // o.src = self;
+  //
+  // if( !iteration.proto )
+  // iteration.proto = Object.getPrototypeOf( o.src );
+  //
+  // if( !o.dst )
+  // o.dst = Object.create( null );
+  //
+  // _.routineOptions( cloneData,o );
 
-  if( !o.proto )
-  o.proto = Object.getPrototypeOf( o.src );
+  var r = _._cloneOptions( cloneData,o );
 
-  if( !o.dst )
-  o.dst = Object.create( null );
-
-  _.mapComplement( o,cloneData.defaults );
-  _.assertMapHasOnly( o,cloneData.defaults );
-
-  return self._copyCustom( o );
+  return self._cloneData( r.iteration,r.iterator );
 }
 
 cloneData.defaults =
 {
 
   dst : Object.create( null ),
-  copyAssociates : false,
+  copyingAggregates : 3,
+  copyingAssociates : 0,
   technique : 'data',
 
 }
 
 cloneData.defaults.__proto__ = copyCustom.defaults;
+
+//
+
+/**
+ * Clone only data.
+ * @param {object} [options] - options.
+ * @method _cloneData
+ * @memberof wCopyable#
+ */
+
+function _cloneData( iteration,iterator )
+{
+  var self = this;
+  // var o = o || Object.create( null );
+
+  _.assert( arguments.length === 2 );
+
+  if( !iteration.src )
+  iteration.src = self;
+
+  if( !iteration.proto )
+  iteration.proto = Object.getPrototypeOf( iteration.src );
+
+  if( !iteration.dst )
+  iteration.dst = Object.create( null );
+
+  return self._copyCustom( iteration,iterator );
+}
 
 //
 
@@ -560,7 +661,7 @@ function cloneSerializing( o )
   o.src = self;
 
   //debugger;
-  var result = _.entityCloneDataSeparatingBuffers( o );
+  var result = _.cloneDataSeparatingBuffers( o );
   //debugger;
 
   return result;
@@ -570,7 +671,7 @@ cloneSerializing.defaults =
 {
 }
 
-cloneSerializing.defaults.__proto__ = _.entityCloneDataSeparatingBuffers.defaults;
+cloneSerializing.defaults.__proto__ = _.cloneDataSeparatingBuffers.defaults;
 
 //
 
@@ -1204,7 +1305,11 @@ var Supplement =
   copy : copy,
 
   cloneObject : cloneObject,
+  _cloneObject : _cloneObject,
+
   cloneData : cloneData,
+  _cloneData : _cloneData,
+
   cloneSerializing : cloneSerializing,
   clone : clone,
 
