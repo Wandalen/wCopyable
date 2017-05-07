@@ -66,8 +66,9 @@ function mixin( constructor )
     Self : 'Self',
     Parent : 'Parent',
     className : 'className',
+
     copyableFields : 'copyableFields',
-    fields : 'fields',
+    allFields : 'allFields',
 
     nickName : 'nickName',
     uniqueName : 'uniqueName',
@@ -91,6 +92,7 @@ function mixin( constructor )
     Parent : 'Parent',
     className : 'className',
     copyableFields : 'copyableFields',
+    allFields : 'allFields',
   }
 
   _.accessorReadOnly
@@ -109,6 +111,7 @@ function mixin( constructor )
   {
     Type : 'Type',
     type : 'type',
+    fields : 'fields',
   }
 
   _.accessorForbid
@@ -123,10 +126,15 @@ function mixin( constructor )
 
   if( Config.debug )
   {
+
     if( _.routineIs( dst.isSame ) )
     _.assert( dst.isSame.length === 2 || dst.isSame.length === 0 );
     if( _.routineIs( dst._isSame ) )
     _.assert( dst._isSame.length === 3 || dst.isSame.length === 0 );
+
+    _.assert( dst._copyableFieldsGet !== _copyableFieldsStaticGet );
+    _.assert( dst._allFieldsGet !== _allFieldsStaticGet );
+
   }
 
   /* */
@@ -683,27 +691,68 @@ cloneSerializing.defaults.__proto__ = _.cloneDataSeparatingBuffers.defaults;
  * @memberof wCopyable#
  */
 
-function clone( dst )
+function clone()
+{
+  var self = this;
+
+  _.assert( arguments.length === 0 );
+  // _.assert( arguments.length <= 1 );
+
+  // if( !dst )
+  // {
+    var dst = new self.constructor( self );
+    _.assert( dst !== self );
+    // if( dst === self )
+    // {
+    //   dst = new self.constructor();
+    //   dst.copy( self );
+    // }
+  // }
+  // else
+  // {
+  //   dst.copy( self );
+  // }
+
+  return dst;
+}
+
+//
+
+function cloneOverriding( override )
 {
   var self = this;
 
   _.assert( arguments.length <= 1 );
 
-  if( !dst )
+  if( !override )
   {
-    dst = new self.constructor( self );
-    if( dst === self )
-    {
-      dst = new self.constructor();
-      dst.copy( self );
-    }
+    debugger;
+    var dst = new self.constructor( self );
+    _.assert( dst !== self );
+    // if( dst === self )
+    // {
+    //   dst = new self.constructor();
+    //   dst.copy( self );
+    // }
+    return dst;
   }
   else
   {
-    dst.copy( self );
+    var src = _.mapScreen( self.Self.copyableFields,self );
+    _.mapExtend( src,override );
+    var dst = new self.constructor( src );
+    _.assert( dst !== self && dst !== src );
+    return dst;
   }
 
-  return dst;
+}
+
+//
+
+function cloneEmpty()
+{
+  var self = this;
+  return self.clone();
 }
 
 // --
@@ -767,128 +816,76 @@ function toStr( o )
 
 //
 
-/**
- * Make sure src does not have redundant fields.
- * @param {object} src - source object of the class.
- * @method doesNotHaveRedundantFields
- * @memberof wCopyable#
- */
-
-function doesNotHaveRedundantFields( src )
-{
-  var self = this;
-
-  var Composes = self.Composes || Object.create( null );
-  var Aggregates = self.Aggregates || Object.create( null );
-  var Associates = self.Associates || Object.create( null );
-  var Restricts = self.Restricts || Object.create( null );
-
-  _.assertMapOwnOnly( src, Composes, Aggregates, Associates, Restricts );
-
-  return dst;
-}
-
+// /**
+//  * Constitutes field.
+//  * @param {object} fieldName - src isntance.
+//  * @method _constituteField_deprecated
+//  * @memberof wCopyable#
+//  */
 //
-
-/**
- * Constitutes field.
- * @param {object} fieldName - src isntance.
- * @method _constituteField_deprecated
- * @memberof wCopyable#
- */
-
-function _constituteField_deprecated( dst,fieldName )
-{
-  var self = this;
-  var Prototype = Object.getPrototypeOf( self ) || options.prototype;
-  var constitute = Prototype.Constitutes[ fieldName ];
-
-  throw _.err( 'deprecated' );
-
-  if( !constitute )
-  return;
-
-  if( dst[ fieldName ] === undefined || dst[ fieldName ] === null )
-  return;
-
-  throw _.err( 'constituting is deprecated, use getter for ' + fieldName );
-
-  //
-
-  function constituteIt( constitute,src,dstContainer,key )
-  {
-
-    if( src.Composes )
-    {
-      debugger;
-      return;
-    }
-
-    debugger;
-    _.assert( constitute.length === 1,'constitute should take single argument' );
-
-    var n = constitute( src,self );
-    if( n !== undefined )
-    dstContainer[ key ] = n;
-    else throw _.err( 'not tested' );
-
-  }
-
-  //
-
-  if( _.objectIs( constitute ) )
-  {
-    throw _.err( 'deprecated' );
-
-    for( var a in dst[ fieldName ] )
-    constituteIt( constitute[ 0 ],dst[ fieldName ][ a ],dst[ fieldName ],a );
-
-  }
-  else if( _.arrayIs( constitute ) )
-  {
-    throw _.err( 'deprecated' );
-
-    for( var a = 0 ; a < dst[ fieldName ].length ; a++ )
-    constituteIt( constitute[ 0 ],dst[ fieldName ][ a ],dst[ fieldName ],a );
-
-  }
-  else
-  {
-
-    constituteIt( constitute,dst[ fieldName ],dst,fieldName );
-
-  }
-
-}
-
+// function _constituteField_deprecated( dst,fieldName )
+// {
+//   var self = this;
+//   var Prototype = Object.getPrototypeOf( self ) || options.prototype;
+//   var constitute = Prototype.Constitutes[ fieldName ];
 //
-
-/**
- * Iterate through classes.
- * @param {object} classObject - class object
- * @method classEachParent
- * @memberof wCopyable#
- */
-
-function classEachParent( classObject,onEach )
-{
-
-  _.assert( arguments.length === 2 );
-
-  do
-  {
-
-    onEach.call( this,classObject );
-
-    classObject = classObject.Parent ? classObject.Parent.prototype : null;
-
-    if( classObject.constructor === Object )
-    classObject = null;
-
-  }
-  while( classObject );
-
-}
+//   throw _.err( 'deprecated' );
+//
+//   if( !constitute )
+//   return;
+//
+//   if( dst[ fieldName ] === undefined || dst[ fieldName ] === null )
+//   return;
+//
+//   throw _.err( 'constituting is deprecated, use getter for ' + fieldName );
+//
+//   //
+//
+//   function constituteIt( constitute,src,dstContainer,key )
+//   {
+//
+//     if( src.Composes )
+//     {
+//       debugger;
+//       return;
+//     }
+//
+//     debugger;
+//     _.assert( constitute.length === 1,'constitute should take single argument' );
+//
+//     var n = constitute( src,self );
+//     if( n !== undefined )
+//     dstContainer[ key ] = n;
+//     else throw _.err( 'not tested' );
+//
+//   }
+//
+//   //
+//
+//   if( _.objectIs( constitute ) )
+//   {
+//     throw _.err( 'deprecated' );
+//
+//     for( var a in dst[ fieldName ] )
+//     constituteIt( constitute[ 0 ],dst[ fieldName ][ a ],dst[ fieldName ],a );
+//
+//   }
+//   else if( _.arrayIs( constitute ) )
+//   {
+//     throw _.err( 'deprecated' );
+//
+//     for( var a = 0 ; a < dst[ fieldName ].length ; a++ )
+//     constituteIt( constitute[ 0 ],dst[ fieldName ][ a ],dst[ fieldName ],a );
+//
+//   }
+//   else
+//   {
+//
+//     constituteIt( constitute,dst[ fieldName ],dst,fieldName );
+//
+//   }
+//
+// }
 
 // --
 // tester
@@ -1017,38 +1014,26 @@ function isEquivalent( src,o )
 
 //
 
-/**
- * Is context instance.
- * @method isInstance
- * @param {object} ins - another instance of the class
- * @memberof wCopyable#
- */
-
-function isInstance()
+function instanceIs()
 {
-  var self = this;
-
   _.assert( arguments.length === 0 );
-
-  if( _hasOwnProperty.call( this,'constructor' ) )
-  return false;
-  else if( _hasOwnProperty.call( this,'prototype' ) && this.prototype )
-  return false;
-
-  return true;
+  return _.instanceIs( this );
 }
 
 //
 
-/**
- * Is context prototype.
- * @method isPrototype
- * @memberof wCopyable#
- */
-
-function isPrototype()
+function prototypeIs()
 {
-  return _hasOwnProperty.call( this, 'constructor' );
+  _.assert( arguments.length === 0 );
+  return _.prototypeIs( this );
+}
+
+//
+
+function constructorIs()
+{
+  _.assert( arguments.length === 0 );
+  return _.constructorIs( this );
 }
 
 // --
@@ -1057,37 +1042,16 @@ function isPrototype()
 
 /**
  * Get map of copyable fields.
- * @method _copyableFieldsGet
+ * @method _allFieldsGet
  * @memberof wCopyable#
  */
 
-function _copyableFieldsGet()
+function _allFieldsStaticGet()
 {
-  var self = this;
+  var self = this.Self.prototype;
   var result = Object.create( null );
 
-  if( self.Composes )
-  _.mapExtend( result,self.Composes );
-  if( self.Aggregates )
-  _.mapExtend( result,self.Aggregates );
-  if( self.Associates )
-  _.mapExtend( result,self.Associates );
-
-  return result;
-}
-
-//
-
-/**
- * Get map of copyable fields.
- * @method _fieldsGet
- * @memberof wCopyable#
- */
-
-function _fieldsGet()
-{
-  var self = this;
-  var result = Object.create( null );
+  _.assert( this.prototypeIs() || this.constructorIs() );
 
   if( self.Composes )
   _.mapExtend( result,self.Composes );
@@ -1104,6 +1068,73 @@ function _fieldsGet()
 //
 
 /**
+ * Get map of copyable fields.
+ * @method _copyableFieldsGet
+ * @memberof wCopyable#
+ */
+
+function _copyableFieldsStaticGet()
+{
+  var self = this.Self.prototype;
+  var result = Object.create( null );
+
+  _.assert( this.prototypeIs() || this.constructorIs() );
+
+  if( self.Composes )
+  _.mapExtend( result,self.Composes );
+  if( self.Aggregates )
+  _.mapExtend( result,self.Aggregates );
+  if( self.Associates )
+  _.mapExtend( result,self.Associates );
+
+  return result;
+}
+
+//
+
+/**
+ * Get map of copyable fields.
+ * @method _allFieldsGet
+ * @memberof wCopyable
+ */
+
+function _allFieldsGet()
+{
+  var self = this;
+
+  if( !self.instanceIs() )
+  return _allFieldsStaticGet.call( self );
+
+  _.assert( self.instanceIs() ); debugger;
+
+  var result = _.mapScreen( self.Self.allFields,self );
+  return result;
+}
+
+//
+
+/**
+ * Get map of copyable fields.
+ * @method _copyableFieldsGet
+ * @memberof wCopyable
+ */
+
+function _copyableFieldsGet()
+{
+  var self = this;
+
+  if( !self.instanceIs() )
+  return _copyableFieldsStaticGet.call( self );
+
+  _.assert( self.instanceIs() ); debugger;
+
+  var result = _.mapScreen( self.Self.copyableFields,self );
+  return result;
+}
+
+//
+
+/**
  * Return own constructor.
  * @method _SelfGet
  * @memberof wCopyable#
@@ -1111,57 +1142,8 @@ function _fieldsGet()
 
 function _SelfGet()
 {
-  // var isInstance = this.isInstance();
-  var proto;
-
-  if( _hasOwnProperty.call( this,'constructor' ) )
-  {
-    proto = this; /* proto */
-  }
-  else if( _hasOwnProperty.call( this,'prototype' )  )
-  {
-    if( this.prototype )
-    proto = this.prototype; /* constructor */
-    else
-    proto = Object.getPrototypeOf( Object.getPrototypeOf( this ) ); /* instance behind ruotine */
-  }
-  else
-  {
-    proto = Object.getPrototypeOf( this ); /* instance */
-  }
-
-  // if( isInstance )
-  // {
-  //   proto = Object.getPrototypeOf( this );
-  // }
-  // else if( _.routineIs( this ) )
-  // {
-  //   proto = this.prototype;
-  // }
-  // else
-  // {
-  //   proto = this;
-  // }
-
-  _.assert( _hasOwnProperty.call( proto, 'constructor' ) );
-  _.assert( _hasOwnProperty.call( proto, 'Composes' ) );
-  _.assert( _hasOwnProperty.call( proto, 'Aggregates' ) );
-  _.assert( _hasOwnProperty.call( proto, 'Associates' ) );
-  _.assert( _hasOwnProperty.call( proto, 'Restricts' ) );
-
-  // _.assert
-  // (
-  //   !proto ||
-  //   _hasOwnProperty.call( proto, 'constructor' )
-  //   ||
-  //   (
-  //     !_hasOwnProperty.call( proto, 'Composes' ) &&
-  //     !_hasOwnProperty.call( proto, 'Aggregates' ) &&
-  //     !_hasOwnProperty.call( proto, 'Associsates' )
-  //   )
-  // );
-
-  return proto.constructor;
+  var result = _.constructorGet( this );
+  return result;
 }
 
 //
@@ -1174,27 +1156,8 @@ function _SelfGet()
 
 function _ParentGet()
 {
-  var c = _SelfGet.call( this );
-
-  var proto = Object.getPrototypeOf( c.prototype );
-  var result = proto ? proto.constructor : null;
-
+  var result = _.parentGet( this );
   return result;
-  // var proto = Object.getPrototypeOf( this );
-  //
-  // _.assert
-  // (
-  //   !proto ||
-  //   _hasOwnProperty.call( proto, 'constructor' ) ||
-  //   (
-  //     !_hasOwnProperty.call( proto, 'Composes' ) &&
-  //     !_hasOwnProperty.call( proto, 'Aggregates' ) &&
-  //     !_hasOwnProperty.call( proto, 'Associsates' )
-  //   )
-  // );
-  //
-  // var parentProto = Object.getPrototypeOf( this.constructor.prototype );
-  // return parentProto ? parentProto.constructor : null;
 }
 
 //
@@ -1274,14 +1237,16 @@ var Restricts =
 var Statics =
 {
 
-  isInstance : isInstance,
-  isPrototype : isPrototype,
+  instanceIs : instanceIs,
+  prototypeIs : prototypeIs,
+  constructorIs : constructorIs,
+
+  '_allFieldsGet' : _allFieldsStaticGet,
+  '_copyableFieldsGet' : _copyableFieldsStaticGet,
 
   '_SelfGet' : _SelfGet,
   '_ParentGet' : _ParentGet,
   '_classNameGet' : _classNameGet,
-  '_copyableFieldsGet' : _copyableFieldsGet,
-  '_fieldsGet' : _fieldsGet,
 
 }
 
@@ -1289,6 +1254,7 @@ Object.freeze( Composes );
 Object.freeze( Aggregates );
 Object.freeze( Associates );
 Object.freeze( Restricts );
+Object.freeze( Statics );
 
 // --
 // proto
@@ -1313,15 +1279,17 @@ var Supplement =
 
   cloneSerializing : cloneSerializing,
   clone : clone,
+  cloneOverriding : cloneOverriding,
+  cloneEmpty : cloneEmpty,
 
 
   // etc
 
-  toStr_functor : toStr_functor,
+  toStr_functor : toStr_functor, /* deprecated */
   toStr : toStr,
-  doesNotHaveRedundantFields : doesNotHaveRedundantFields,
-  _constituteField_deprecated : _constituteField_deprecated,
-  classEachParent : classEachParent,
+
+  /*assertDoesNotHaveReduntantFields : assertDoesNotHaveReduntantFields,*/
+  /*_constituteField_deprecated : _constituteField_deprecated,*/
 
 
   // tester
@@ -1333,14 +1301,20 @@ var Supplement =
   isIdentical : isIdentical,
   isEquivalent : isEquivalent,
 
+  instanceIs : instanceIs,
+  prototypeIs : prototypeIs,
+  constructorIs : constructorIs,
+
 
   // accessor
 
-  // '_copyableFieldsGet' : _copyableFieldsGet,
-  // '_SelfGet' : _SelfGet,
-  // '_ParentGet' : _ParentGet,
-  // '_classNameGet' : _classNameGet,
+  '_allFieldsGet' : _allFieldsGet,
+  '_copyableFieldsGet' : _copyableFieldsGet,
 
+  '_SelfGet' : _SelfGet,
+  '_ParentGet' : _ParentGet,
+
+  '_classNameGet' : _classNameGet,
   '_nickNameGet' : _nickNameGet,
   '_uniqueNameGet' : _uniqueNameGet,
 
@@ -1361,7 +1335,6 @@ var Self =
 {
 
   Supplement : Supplement,
-
   mixin : mixin,
   name : 'wCopyable',
   nameShort : 'Copyable',
@@ -1370,11 +1343,11 @@ var Self =
 
 Object.setPrototypeOf( Self, Supplement );
 
+//
+
 if( typeof module !== 'undefined' )
 module[ 'exports' ] = Self;
 
-_global_.wCopyable = wTools.Copyable = Self;
-
-return Self;
+_global_[ Self.name ] = wTools[ Self.nameShort ] = Self;
 
 })();
