@@ -31,15 +31,15 @@ var _hasOwnProperty = Object.hasOwnProperty;
 
 /**
  * Mixin this into prototype of another object.
- * @param {object} constructor - constructor of class to mixin.
- * @method mixin
+ * @param {object} cls - constructor of class to mixin.
+ * @method _mixin
  * @memberof wCopyable#
  */
 
-function mixin( constructor )
+function _mixin( cls )
 {
 
-  var dst = constructor.prototype;
+  var dstProto = cls.prototype;
   var has =
   {
     Composes : 'Composes',
@@ -47,16 +47,16 @@ function mixin( constructor )
   }
 
   _.assert( arguments.length === 1 );
-  _.assert( _.routineIs( constructor ),'mixin expects constructor, but got',_.strPrimitiveTypeOf( constructor ) );
-  _.assertMapOwnAll( dst,has );
-  _.assert( _hasOwnProperty.call( dst,'constructor' ),'prototype of object should has own constructor' );
+  _.assert( _.routineIs( cls ),'mixin expects constructor, but got',_.strPrimitiveTypeOf( cls ) );
+  _.assertMapOwnAll( dstProto,has );
+  _.assert( _hasOwnProperty.call( dstProto,'constructor' ),'prototype of object should has own constructor' );
 
   /* */
 
-  _.mixin
+  _.mixinApply
   ({
-    dst : dst,
-    mixin : Self,
+    dstProto : dstProto,
+    descriptor : Self,
   });
 
   /* instance accessors */
@@ -76,7 +76,7 @@ function mixin( constructor )
 
   _.accessorReadOnly
   ({
-    object : dst,
+    object : dstProto,
     names : names,
     preserveValues : 0,
     strict : 0,
@@ -97,7 +97,7 @@ function mixin( constructor )
 
   _.accessorReadOnly
   ({
-    object : constructor,
+    object : cls,
     names : names,
     preserveValues : 0,
     strict : 0,
@@ -116,7 +116,7 @@ function mixin( constructor )
 
   _.accessorForbid
   ({
-    object : dst,
+    object : dstProto,
     names : names,
     preserveValues : 0,
     strict : 0,
@@ -127,22 +127,23 @@ function mixin( constructor )
   if( Config.debug )
   {
 
-    if( _.routineIs( dst.isSame ) )
-    _.assert( dst.isSame.length === 2 || dst.isSame.length === 0 );
-    if( _.routineIs( dst._isSame ) )
-    _.assert( dst._isSame.length === 3 || dst.isSame.length === 0 );
+    if( _.routineIs( dstProto._equalAre ) )
+    _.assert( dstProto._equalAre.length === 3 || dstProto._equalAre.length === 0 );
 
-    _.assert( dst._copyableFieldsGet !== _copyableFieldsStaticGet );
-    _.assert( dst._allFieldsGet !== _allFieldsStaticGet );
+    if( _.routineIs( dstProto.equalWith ) )
+    _.assert( dstProto.equalWith.length <= 2 );
+
+    _.assert( dstProto._copyableFieldsGet !== _copyableFieldsStaticGet );
+    _.assert( dstProto._allFieldsGet !== _allFieldsStaticGet );
 
   }
 
   /* */
 
-  if( dst.finit.name === 'finitEventHandler' )
+  if( dstProto.finit.name === 'finitEventHandler' )
   throw _.err( 'wEventHandler mixin should goes after wCopyable mixin.' );
 
-  if( dst._mixins[ 'wEventHandler' ] )
+  if( dstProto._mixins[ 'wEventHandler' ] )
   throw _.err( 'wEventHandler mixin should goes after wCopyable mixin.' );
 
 }
@@ -180,8 +181,22 @@ function init( o )
 function finit()
 {
   var self = this;
-  _.assert( !Object.isFrozen( self ) );
-  Object.freeze( self );
+  _.instanceFinit( self );
+}
+
+//
+
+/**
+ * Is this instance finited.
+ * @method finitedIs
+ * @param {object} ins - another instance of the class
+ * @memberof wCopyable#
+ */
+
+function finitedIs()
+{
+  var self = this;
+  return _.instanceIsFinited( self );
 }
 
 //
@@ -253,24 +268,12 @@ function _copyCustom( iteration,iterator )
   _.assertMapOwnOnly( src, Composes, Aggregates, Associates, Restricts );
   _.assert( _.numberIs( iteration.copyDegree ) );
 
-  // if( iteration.src.nickName && iteration.src.nickName.indexOf( 'Matrix4' ) !== -1 )
-  // debugger;
-
-  // if( iteration.src.name === 'Abc' )
-  // debugger;
-  //
-  // if( iteration.src.name === 'nothing' )
-  // debugger;
-
   var newIteration = _.mapExtend( null,iteration );
 
   /* copy facets */
 
   function copyFacets( screen,copyDegree )
   {
-
-    // if( screen && screen.m_state )
-    // debugger;
 
     _.assert( _.numberIs( copyDegree ) );
     _.assert( iteration.dst === dst );
@@ -300,34 +303,6 @@ function _copyCustom( iteration,iterator )
   copyFacets( Associates,iterator.copyingAssociates );
   copyFacets( Restricts,iterator.copyingRestricts );
   copyFacets( iterator.customFields,iterator.copyingCustomFields );
-
-  // /* copy composes */
-  //
-  // if( iterator.copyingComposes )
-  // copyFacets( Composes,true );
-  //
-  // /* copy aggregates */
-  //
-  // if( iterator.copyingAggregates )
-  // copyFacets( Aggregates,false );
-  //
-  // /* copy associates */
-  //
-  // if( iterator.copyingAssociates )
-  // copyFacets( Associates,false );
-  //
-  // /* copy restricts */
-  //
-  // if( iterator.copyingRestricts )
-  // {
-  //   copyFacets( Restricts,false );
-  //   throw _.err( 'not tested' );
-  // }
-  //
-  // /* customFields */
-  //
-  // if( iterator.customFields )
-  // copyFacets( iterator.customFields,true );
 
   /* done */
 
@@ -446,57 +421,6 @@ function cloneObject( o )
 
   _.assert( arguments.length === 0 || arguments.length === 1 );
   _.routineOptions( cloneObject,o );
-
-  // if( o.src === undefined )
-  // o.src = self;
-  //
-  // if( iteration.proto === undefined )
-  // iteration.proto = Object.getPrototypeOf( o.src );
-  //
-  // /* */
-  //
-  // if( !o.dst )
-  // {
-  //
-  //   var standard = 1;
-  //   standard &= o.copyingComposes;
-  //   standard &= o.copyingAggregates;
-  //   standard &= o.copyingAssociates;
-  //   standard &= !o.copyingRestricts;
-  //   standard &= !o.customFields || Object.keys( o.customFields ) === 0;
-  //   standard &= !o.dropFields || Object.keys( o.dropFields ) === 0;
-  //
-  //   if( !standard )
-  //   {
-  //     debugger;
-  //     o.dst = new self.constructor();
-  //   }
-  //
-  // }
-  //
-  // /* */
-  //
-  // if( !iteration.proto )
-  // iteration.proto = Object.getPrototypeOf( self );
-  //
-  // if( !o.dst )
-  // {
-  //
-  //   o.dst = new self.constructor( self );
-  //   if( o.dst === self )
-  //   {
-  //     o.dst = new self.constructor();
-  //     o.dst._copyCustom( o );
-  //   }
-  //
-  // }
-  // else
-  // {
-  //
-  //   o.dst._copyCustom( o );
-  //
-  // }
-  // return self._copyCustom( o );
 
   var r = _._cloneOptions( cloneObject,o );
 
@@ -891,93 +815,96 @@ function toStr( o )
 // tester
 // --
 
-/**
- * Is this instance finited.
- * @method isFinited
- * @param {object} ins - another instance of the class
- * @memberof wCopyable#
- */
-
-function isFinited()
+function _equalAre_functor( functorOptions )
 {
-  var self = this;
+  _.assert( arguments.length <= 1 );
 
-  return Object.isFrozen( self );
+  functorOptions = _.routineOptions( _equalAre_functor,functorOptions || Object.create( null ) );
+
+  return function _equalAre( src1,src2,o )
+  {
+
+    _.assert( arguments.length === 3 );
+
+    if( !src1 )
+    return false;
+
+    if( !src2 )
+    return false;
+
+    if( o.strict && !o.contain )
+    if( src1.constructor !== src2.constructor )
+    return false;
+
+    if( o.contain )
+    {
+      for( var c in src2 )
+      {
+        if( !_.entityEqual( src1[ c ],src2[ c ],o ) )
+        return false;
+      }
+      return true;
+    }
+
+    /* */
+
+    for( var f in functorOptions )
+    if( functorOptions[ f ] )
+    for( var c in src1[ f ] )
+    {
+      if( !_.entityEqual( src1[ c ],src2[ c ],o ) )
+      return false;
+    }
+
+    return true;
+  }
+
+}
+
+_equalAre_functor.defaults =
+{
+  Composes : 1,
+  Aggregates : 1,
+  Associates : 1,
+  Restricts : 0,
 }
 
 //
 
 /**
  * Is this instance same with another one. Use relation maps to compare.
- * @method isSame
+ * @method equalWith
  * @param {object} ins - another instance of the class
  * @memberof wCopyable#
  */
 
-function _isSame( src1,src2,o )
-{
-
-  _.assert( arguments.length === 3 );
-
-  if( !src1 )
-  return false;
-
-  if( !src2 )
-  return false;
-
-  if( o.strict && !o.contain )
-  if( src1.constructor !== src2.constructor )
-  return false;
-
-  if( o.contain )
-  {
-    for( var c in src2 )
-    {
-      if( !_.entitySame( src1[ c ],src2[ c ],o ) )
-      return false;
-    }
-    return true;
-  }
-
-  for( var c in src1.Composes )
-  {
-    if( !_.entitySame( src1[ c ],src2[ c ],o ) )
-    return false;
-  }
-
-  for( var c in src1.Aggregates )
-  {
-    if( !_.entitySame( src1[ c ],src2[ c ],o ) )
-    return false;
-  }
-
-  return true;
-}
+var _equalAre = _equalAre_functor();
 
 //
 
-function isSame( src,o )
+function equalWith( ins,o )
 {
   var self = this;
 
   _.assert( arguments.length === 1 || arguments.length === 2 );
+  _.assert( self._equalAre );
 
   var o = o || Object.create( null );
-  _._entitySameOptions( o );
+  _._entityEqualOptions( o );
 
-  return self._isSame( self,src,o );
+  return self._equalAre( self,ins,o );
 }
 
 //
 
 /**
  * Is this instance same with another one. Use relation maps to compare.
- * @method isIdentical
+ * @method identicalWith
  * @param {object} ins - another instance of the class
  * @memberof wCopyable#
  */
 
-function isIdentical( src,o )
+function identicalWith( src,o )
 {
   var self = this;
 
@@ -985,21 +912,21 @@ function isIdentical( src,o )
 
   var o = o || Object.create( null );
   o.strict = 1;
-  _._entitySameOptions( o );
+  _._entityEqualOptions( o );
 
-  return self.isSame( src,o );
+  return self.equalWith( src,o );
 }
 
 //
 
 /**
  * Is this instance same with another one. Use relation maps to compare.
- * @method isEquivalent
+ * @method equivalentWith
  * @param {object} ins - another instance of the class
  * @memberof wCopyable#
  */
 
-function isEquivalent( src,o )
+function equivalentWith( src,o )
 {
   var self = this;
 
@@ -1007,9 +934,9 @@ function isEquivalent( src,o )
 
   var o = o || Object.create( null );
   o.strict = 0;
-  _._entitySameOptions( o );
+  _._entityEqualOptions( o );
 
-  return self.isSame( src,o );
+  return self.equalWith( src,o );
 }
 
 //
@@ -1126,7 +1053,7 @@ function _copyableFieldsGet()
   if( !self.instanceIs() )
   return _copyableFieldsStaticGet.call( self );
 
-  _.assert( self.instanceIs() ); debugger;
+  _.assert( self.instanceIs() );
 
   var result = _.mapScreen( self.Self.copyableFields,self );
   return result;
@@ -1189,7 +1116,7 @@ function _nickNameGet()
   var index = '';
   if( _.numberIs( self.instanceIndex ) )
   result += '#in' + self.instanceIndex;
-  if( _.numberIs( self.id ) )
+  if( Object.hasOwnProperty.call( self,'id' ) )
   result += '#id' + self.id;
   return self.className + '( ' + result + ' )';
 }
@@ -1209,7 +1136,7 @@ function _uniqueNameGet()
   var index = '';
   if( _.numberIs( self.instanceIndex ) )
   result += '#in' + self.instanceIndex;
-  if( _.numberIs( self.id ) )
+  if( Object.hasOwnProperty.call( self,'id' ) )
   result += '#id' + self.id;
   return self.className + '( ' + result + ' )';
 }
@@ -1265,6 +1192,7 @@ var Supplement =
 
   init : init,
   finit : finit,
+  finitedIs : finitedIs,
 
   _copyCustom : _copyCustom,
   copyCustom : copyCustom,
@@ -1288,18 +1216,17 @@ var Supplement =
   toStr_functor : toStr_functor, /* deprecated */
   toStr : toStr,
 
-  /*assertDoesNotHaveReduntantFields : assertDoesNotHaveReduntantFields,*/
+  /*assertInstanceDoesNotHaveReduntantFields : assertInstanceDoesNotHaveReduntantFields,*/
   /*_constituteField_deprecated : _constituteField_deprecated,*/
 
 
   // tester
 
-  isFinited : isFinited,
-
-  _isSame : _isSame,
-  isSame : isSame,
-  isIdentical : isIdentical,
-  isEquivalent : isEquivalent,
+  _equalAre_functor : _equalAre_functor,
+  _equalAre : _equalAre,
+  equalWith : equalWith,
+  identicalWith : identicalWith,
+  equivalentWith : equivalentWith,
 
   instanceIs : instanceIs,
   prototypeIs : prototypeIs,
@@ -1334,20 +1261,23 @@ var Supplement =
 var Self =
 {
 
-  Supplement : Supplement,
-  mixin : mixin,
+  supplement : Supplement,
+  _mixin : _mixin,
   name : 'wCopyable',
   nameShort : 'Copyable',
 
 }
 
-Object.setPrototypeOf( Self, Supplement );
+// Object.setPrototypeOf( Self, Supplement );
+// _.mixinMake( Self );
+// _.assert( Self.copy );
 
 //
 
 if( typeof module !== 'undefined' )
 module[ 'exports' ] = Self;
+_global_[ Self.name ] = wTools[ Self.nameShort ] = _.mixinMake( Self );
 
-_global_[ Self.name ] = wTools[ Self.nameShort ] = Self;
+_.assert( Self.copy );
 
 })();
