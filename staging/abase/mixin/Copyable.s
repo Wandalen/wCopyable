@@ -212,6 +212,9 @@ function copy( src )
 {
   var self = this;
 
+  _.assert( arguments.length === 1 );
+  _.assert( src instanceof self.Self || _.mapIs( src ) );
+
   return ( self.copyCustom || copyCustom ).call( self,
   {
 
@@ -890,7 +893,7 @@ function equalWith( ins,o )
   _.assert( self._equalAre );
 
   var o = o || Object.create( null );
-  _._entityEqualOptions( o );
+  _._entityEqualIteratorMake( o );
 
   return self._equalAre( self,ins,o );
 }
@@ -912,7 +915,7 @@ function identicalWith( src,o )
 
   var o = o || Object.create( null );
   o.strict = 1;
-  _._entityEqualOptions( o );
+  _._entityEqualIteratorMake( o );
 
   return self.equalWith( src,o );
 }
@@ -934,7 +937,7 @@ function equivalentWith( src,o )
 
   var o = o || Object.create( null );
   o.strict = 0;
-  _._entityEqualOptions( o );
+  _._entityEqualIteratorMake( o );
 
   return self.equalWith( src,o );
 }
