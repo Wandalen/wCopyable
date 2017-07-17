@@ -212,8 +212,10 @@ function copy( src )
 {
   var self = this;
 
-  _.assert( arguments.length === 1 );
+  if( !( src instanceof self.Self || _.mapIs( src ) ) )
+  debugger;
   _.assert( src instanceof self.Self || _.mapIs( src ) );
+  _.assert( arguments.length === 1 );
 
   return ( self.copyCustom || copyCustom ).call( self,
   {
@@ -223,6 +225,40 @@ function copy( src )
 
   });
 
+}
+
+//
+
+/**
+ * Extend data from another instance.
+ * @param {object} src - another isntance.
+ * @method extend
+ * @memberof wCopyable#
+ */
+
+function extend( src )
+{
+  var self = this;
+
+  _.assert( arguments.length === 1 );
+  _.assert( src instanceof self.Self || _.mapIs( src ) );
+
+  for( var s in src )
+  {
+    if( _.objectIs( self[ s ] ) )
+    {
+      if( _.routineIs( self[ s ].extend ) )
+      self[ s ].extend( src[ s ] );
+      else
+      _.mapExtend( self[ s ],src[ s ] );
+    }
+    else
+    {
+      self[ s ] = src[ s ];
+    }
+  }
+
+  return self;
 }
 
 //
@@ -1201,6 +1237,7 @@ var Supplement =
   copyCustom : copyCustom,
   copyDeserializing : copyDeserializing,
   copy : copy,
+  extend : extend,
 
   cloneObject : cloneObject,
   _cloneObject : _cloneObject,
