@@ -61,17 +61,19 @@ function _mixin( cls )
 
   /* instance accessors */
 
+
+  var readOnly = { readOnlyProduct : 0 };
   var names =
   {
-    Self : 'Self',
-    Parent : 'Parent',
-    className : 'className',
+    Self : readOnly,
+    Parent : readOnly,
+    className : readOnly,
 
-    copyableFields : 'copyableFields',
-    allFields : 'allFields',
+    copyableFields : readOnly,
+    allFields : readOnly,
 
-    nickName : 'nickName',
-    uniqueName : 'uniqueName',
+    nickName : readOnly,
+    uniqueName : readOnly,
   }
 
   _.accessorReadOnly
@@ -88,11 +90,11 @@ function _mixin( cls )
 
   var names =
   {
-    Self : 'Self',
-    Parent : 'Parent',
-    className : 'className',
-    copyableFields : 'copyableFields',
-    allFields : 'allFields',
+    Self : readOnly,
+    Parent : readOnly,
+    className : readOnly,
+    copyableFields : readOnly,
+    allFields : readOnly,
   }
 
   _.accessorReadOnly
@@ -136,15 +138,12 @@ function _mixin( cls )
     _.assert( dstProto._copyableFieldsGet !== _copyableFieldsStaticGet );
     _.assert( dstProto._allFieldsGet !== _allFieldsStaticGet );
 
+    _.assert( dstProto.finit.name !== 'finitEventHandler', 'wEventHandler mixin should goes after wCopyable mixin.' );
+    _.assert( !_.mixinHas( dstProto,'wEventHandler' ), 'wEventHandler mixin should goes after wCopyable mixin.' );
+
+    _.assert( dstProto._allFieldsGet === _allFieldsGet );
+
   }
-
-  /* */
-
-  if( dstProto.finit.name === 'finitEventHandler' )
-  throw _.err( 'wEventHandler mixin should goes after wCopyable mixin.' );
-
-  if( dstProto._mixins[ 'wEventHandler' ] )
-  throw _.err( 'wEventHandler mixin should goes after wCopyable mixin.' );
 
 }
 
@@ -1014,21 +1013,23 @@ function constructorIs()
 
 function _allFieldsStaticGet()
 {
-  var self = this.Self.prototype;
-  var result = Object.create( null );
+  return _.prototypeAllFieldsGet( this );
 
-  _.assert( this.prototypeIs() || this.constructorIs() );
-
-  if( self.Composes )
-  _.mapExtend( result,self.Composes );
-  if( self.Aggregates )
-  _.mapExtend( result,self.Aggregates );
-  if( self.Associates )
-  _.mapExtend( result,self.Associates );
-  if( self.Restricts )
-  _.mapExtend( result,self.Restricts );
-
-  return result;
+  // var self = this.Self.prototype;
+  // var result = Object.create( null );
+  //
+  // _.assert( this.prototypeIs() || this.constructorIs() );
+  //
+  // if( self.Composes )
+  // _.mapExtend( result,self.Composes );
+  // if( self.Aggregates )
+  // _.mapExtend( result,self.Aggregates );
+  // if( self.Associates )
+  // _.mapExtend( result,self.Associates );
+  // if( self.Restricts )
+  // _.mapExtend( result,self.Restricts );
+  //
+  // return result;
 }
 
 //
@@ -1041,19 +1042,30 @@ function _allFieldsStaticGet()
 
 function _copyableFieldsStaticGet()
 {
-  var self = this.Self.prototype;
-  var result = Object.create( null );
+  debugger;
+  return _.prototypeCopyableFieldsGet( this );
 
-  _.assert( this.prototypeIs() || this.constructorIs() );
+  // var self = this.Self.prototype;
+  // var result = Object.create( null );
+  //
+  // _.assert( this.prototypeIs() || this.constructorIs() );
+  //
+  // if( self.Composes )
+  // _.mapExtend( result,self.Composes );
+  // if( self.Aggregates )
+  // _.mapExtend( result,self.Aggregates );
+  // if( self.Associates )
+  // _.mapExtend( result,self.Associates );
+  //
+  // return result;
+}
 
-  if( self.Composes )
-  _.mapExtend( result,self.Composes );
-  if( self.Aggregates )
-  _.mapExtend( result,self.Aggregates );
-  if( self.Associates )
-  _.mapExtend( result,self.Associates );
+//
 
-  return result;
+function hasField( fieldName )
+{
+  debugger;
+  return _.prototypeHasField( this,fieldName );
 }
 
 //
@@ -1068,6 +1080,7 @@ function _allFieldsGet()
 {
   var self = this;
 
+  debugger;
   if( !self.instanceIs() )
   return _allFieldsStaticGet.call( self );
 
@@ -1209,6 +1222,7 @@ var Statics =
 
   '_allFieldsGet' : _allFieldsStaticGet,
   '_copyableFieldsGet' : _copyableFieldsStaticGet,
+  hasField : hasField,
 
   '_SelfGet' : _SelfGet,
   '_ParentGet' : _ParentGet,
@@ -1298,26 +1312,27 @@ var Supplement =
 
 //
 
-var Self =
-{
+var Self = _.mixinMake
+({
 
   supplement : Supplement,
+
   _mixin : _mixin,
   name : 'wCopyable',
   nameShort : 'Copyable',
 
-}
-
-// Object.setPrototypeOf( Self, Supplement );
-// _.mixinMake( Self );
-// _.assert( Self.copy );
+});
 
 //
 
+_global_[ Self.name ] = wTools[ Self.nameShort ] = Self;
 if( typeof module !== 'undefined' )
 module[ 'exports' ] = Self;
-_global_[ Self.name ] = wTools[ Self.nameShort ] = _.mixinMake( Self );
 
-_.assert( Self.copy );
+_.assert( !Self.copy );
+_.assert( Self.prototype.copy );
+_.assert( Self.nameShort );
+_.assert( Self._mixin );
+_.assert( Self.mixin );
 
 })();

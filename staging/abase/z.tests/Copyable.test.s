@@ -78,7 +78,7 @@ function fields( test )
     Statics : Statics,
   }
 
-  _.protoMake
+  _.prototypeMake
   ({
     constructor : BasicConstructor,
     extend : extend,
