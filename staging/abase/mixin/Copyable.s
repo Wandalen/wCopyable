@@ -290,6 +290,7 @@ function _copyCustom( iteration,iterator )
   var Aggregates = proto.Aggregates || _empty;
   var Associates = proto.Associates || _empty;
   var Restricts = proto.Restricts || _empty;
+  var Medials = proto.Medials || _empty;
 
   /* verification */
 
@@ -303,10 +304,17 @@ function _copyCustom( iteration,iterator )
   _.assert( _.objectIs( proto ),'expects object ( proto ), but got',_.strTypeOf( proto ) );
   _.assert( !iteration.customFields || _.objectIs( iteration.customFields ) );
   _.assert( iteration.level >= 0 );
-  _.assertMapOwnOnly( src, Composes, Aggregates, Associates, Restricts );
   _.assert( _.numberIs( iteration.copyDegree ) );
 
-  var newIteration = _.mapExtend( null,iteration );
+  // if( _.mapIsPure( src ) )
+  // debugger;
+
+  if( _.instanceIsStandard( src ) )
+  _.assertMapOwnOnly( src, Composes, Aggregates, Associates, Restricts );
+  else
+  _.assertMapOwnOnly( src, Composes, Aggregates, Associates, Medials );
+
+  // _.assertMapOwnOnly( src, Composes, Aggregates, Associates, Medials, Restricts );
 
   /* copy facets */
 
@@ -336,9 +344,12 @@ function _copyCustom( iteration,iterator )
 
   /* */
 
+  var newIteration = _.mapExtend( null,iteration );
+
   copyFacets( Composes,iterator.copyingComposes );
   copyFacets( Aggregates,iterator.copyingAggregates );
   copyFacets( Associates,iterator.copyingAssociates );
+  copyFacets( Medials,iterator.copyingMedials );
   copyFacets( Restricts,iterator.copyingRestricts );
   copyFacets( iterator.customFields,iterator.copyingCustomFields );
 
@@ -400,6 +411,7 @@ copyCustom.defaults.__proto__ = _._cloneOptions.defaults;
   copyingComposes : 3,
   copyingAggregates : 1,
   copyingAssociates : 1,
+  copyingMedials : 1,
   copyingRestricts : 0,
   copyingBuffers : 0,
   copyingCustomFields : 0,
@@ -502,6 +514,7 @@ function _cloneObject( iteration,iterator )
     standard = standard && iterator.copyingComposes;
     standard = standard && iterator.copyingAggregates;
     standard = standard && iterator.copyingAssociates;
+    standard = standard && iterator.copyingMedials;
     standard = standard && !iterator.copyingRestricts;
     standard = standard && ( !iterator.customFields || Object.keys( iterator.customFields ) === 0 );
     standard = standard && ( !iterator.dropFields || Object.keys( iterator.dropFields ) === 0 );
@@ -537,7 +550,6 @@ function _cloneObject( iteration,iterator )
   }
 
   return iteration.dst;
-  // return self._copyCustom( iteration,iterator );
 }
 
 //
@@ -596,7 +608,6 @@ cloneData.defaults.__proto__ = copyCustom.defaults;
 function _cloneData( iteration,iterator )
 {
   var self = this;
-  // var o = o || Object.create( null );
 
   _.assert( arguments.length === 2 );
 
@@ -1002,73 +1013,8 @@ function constructorIs()
 }
 
 // --
-// accessor
+// field
 // --
-
-/**
- * Get map of copyable fields.
- * @method _allFieldsGet
- * @memberof wCopyable#
- */
-
-function _allFieldsStaticGet()
-{
-  return _.prototypeAllFieldsGet( this );
-
-  // var self = this.Self.prototype;
-  // var result = Object.create( null );
-  //
-  // _.assert( this.prototypeIs() || this.constructorIs() );
-  //
-  // if( self.Composes )
-  // _.mapExtend( result,self.Composes );
-  // if( self.Aggregates )
-  // _.mapExtend( result,self.Aggregates );
-  // if( self.Associates )
-  // _.mapExtend( result,self.Associates );
-  // if( self.Restricts )
-  // _.mapExtend( result,self.Restricts );
-  //
-  // return result;
-}
-
-//
-
-/**
- * Get map of copyable fields.
- * @method _copyableFieldsGet
- * @memberof wCopyable#
- */
-
-function _copyableFieldsStaticGet()
-{
-  debugger;
-  return _.prototypeCopyableFieldsGet( this );
-
-  // var self = this.Self.prototype;
-  // var result = Object.create( null );
-  //
-  // _.assert( this.prototypeIs() || this.constructorIs() );
-  //
-  // if( self.Composes )
-  // _.mapExtend( result,self.Composes );
-  // if( self.Aggregates )
-  // _.mapExtend( result,self.Aggregates );
-  // if( self.Associates )
-  // _.mapExtend( result,self.Associates );
-  //
-  // return result;
-}
-
-//
-
-function hasField( fieldName )
-{
-  debugger;
-  return _.prototypeHasField( this,fieldName );
-}
-
-//
 
 /**
  * Get map of copyable fields.
@@ -1113,6 +1059,66 @@ function _copyableFieldsGet()
 
 //
 
+function fieldDescriptorGet( nameOfField )
+{
+  var proto = _.prototypeGet( this );
+  var report = Object.create( null );
+
+  _.assert( _.strIsNotEmpty( nameOfField ) );
+  _.assert( arguments.length === 1 );
+
+  debugger;
+
+  for( var f in _.ClassAllowedFacility )
+  {
+    var facility = _.ClassAllowedFacility[ f ];
+    if( proto[ facility ] )
+    if( proto[ facility ][ nameOfField ] !== undefined )
+    report[ facility ] = true;
+  }
+
+  return report;
+}
+
+//
+
+/**
+ * Get map of copyable fields.
+ * @method _allFieldsStaticGet
+ * @memberof wCopyable#
+ */
+
+function _allFieldsStaticGet()
+{
+  return _.prototypeAllFieldsGet( this );
+}
+
+//
+
+/**
+ * Get map of copyable fields.
+ * @method _copyableFieldsGet
+ * @memberof wCopyable#
+ */
+
+function _copyableFieldsStaticGet()
+{
+  debugger;
+  return _.prototypeCopyableFieldsGet( this );
+}
+
+//
+
+function hasField( fieldName )
+{
+  debugger;
+  return _.prototypeHasField( this,fieldName );
+}
+
+// --
+// class
+// --
+
 /**
  * Return own constructor.
  * @method _SelfGet
@@ -1139,7 +1145,9 @@ function _ParentGet()
   return result;
 }
 
-//
+// --
+// name
+// --
 
 /**
  * Return name of class constructor.
@@ -1213,6 +1221,10 @@ var Restricts =
 {
 }
 
+var Medials =
+{
+}
+
 var Statics =
 {
 
@@ -1234,6 +1246,7 @@ Object.freeze( Composes );
 Object.freeze( Aggregates );
 Object.freeze( Associates );
 Object.freeze( Restricts );
+Object.freeze( Medials );
 Object.freeze( Statics );
 
 // --
@@ -1287,13 +1300,26 @@ var Supplement =
   constructorIs : constructorIs,
 
 
-  // accessor
+  // field
 
   '_allFieldsGet' : _allFieldsGet,
   '_copyableFieldsGet' : _copyableFieldsGet,
+  fieldDescriptorGet : fieldDescriptorGet,
+
+/*
+  '_allFieldsGet' : _allFieldsStaticGet,
+  '_copyableFieldsGet' : _copyableFieldsStaticGet,
+  hasField : hasField,
+*/
+
+
+  // class
 
   '_SelfGet' : _SelfGet,
   '_ParentGet' : _ParentGet,
+
+
+  // name
 
   '_classNameGet' : _classNameGet,
   '_nickNameGet' : _nickNameGet,
@@ -1306,6 +1332,7 @@ var Supplement =
   Aggregates : Aggregates,
   Associates : Associates,
   Restricts : Restricts,
+  Medials : Medials,
   Statics : Statics,
 
 }
