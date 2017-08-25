@@ -304,7 +304,7 @@ function _copyCustom( iteration,iterator )
   _.assert( _.objectIs( proto ),'expects object ( proto ), but got',_.strTypeOf( proto ) );
   _.assert( !iteration.customFields || _.objectIs( iteration.customFields ) );
   _.assert( iteration.level >= 0 );
-  _.assert( _.numberIs( iteration.copyDegree ) );
+  _.assert( _.numberIs( iteration.copyingDegree ) );
 
   // if( _.mapIsPure( src ) )
   // debugger;
@@ -318,25 +318,25 @@ function _copyCustom( iteration,iterator )
 
   /* copy facets */
 
-  function copyFacets( screen,copyDegree )
+  function copyFacets( screen,copyingDegree )
   {
 
-    _.assert( _.numberIs( copyDegree ) );
+    _.assert( _.numberIs( copyingDegree ) );
     _.assert( iteration.dst === dst );
-    _.assert( _.objectIs( screen ) || !copyDegree );
+    _.assert( _.objectIs( screen ) || !copyingDegree );
 
-    if( !copyDegree )
+    if( !copyingDegree )
     return;
 
     newIteration.screenFields = screen;
-    newIteration.copyDegree = Math.min( copyDegree,iteration.copyDegree );
+    newIteration.copyingDegree = Math.min( copyingDegree,iteration.copyingDegree );
     newIteration.instanceAsMap = 1;
 
-    _.assert( iteration.copyDegree === 3,'not tested' );
-    _.assert( newIteration.copyDegree === 1 || newIteration.copyDegree === 3,'not tested' );
+    _.assert( iteration.copyingDegree === 3,'not tested' );
+    _.assert( newIteration.copyingDegree === 1 || newIteration.copyingDegree === 3,'not tested' );
 
-    if( copyDegree === 1 )
-    newIteration.copyDegree += 1;
+    if( copyingDegree === 1 )
+    newIteration.copyingDegree += 1;
 
     _._cloneMap( newIteration,iterator );
 
@@ -375,10 +375,14 @@ function copyCustom( o )
 {
   var self = this;
 
-  _.assertMapHasNoUndefine( o );
-  _.routineOptions( copyCustom,o );
+  // if( o.copyingMedials === undefined )
+  // o.copyingMedials = !_.instanceIsStandard( o.src );
+  //
+  // _.assertMapHasNoUndefine( o );
+  // _.routineOptions( copyCustom,o );
+  // _.assert( _.objectIs( o ) );
+
   _.assert( arguments.length == 1 );
-  _.assert( _.objectIs( o ) );
 
   var r = _._cloneOptions( copyCustom,o );
 
@@ -406,7 +410,7 @@ copyCustom.defaults.__proto__ = _._cloneOptions.defaults;
   dropFields : null,
   screenFields : null,
   instanceAsMap : 0,
-  copyDegree : 3,
+  copyingDegree : 3,
 
   copyingComposes : 3,
   copyingAggregates : 1,
@@ -514,7 +518,7 @@ function _cloneObject( iteration,iterator )
     standard = standard && iterator.copyingComposes;
     standard = standard && iterator.copyingAggregates;
     standard = standard && iterator.copyingAssociates;
-    standard = standard && iterator.copyingMedials;
+    // standard = standard && iterator.copyingMedials;
     standard = standard && !iterator.copyingRestricts;
     standard = standard && ( !iterator.customFields || Object.keys( iterator.customFields ) === 0 );
     standard = standard && ( !iterator.dropFields || Object.keys( iterator.dropFields ) === 0 );

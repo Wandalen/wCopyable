@@ -78,7 +78,7 @@ function fields( test )
     Statics : Statics,
   }
 
-  _.prototypeMake
+  _.classMake
   ({
     constructor : BasicConstructor,
     extend : extend,
@@ -149,7 +149,8 @@ var Self =
 {
 
   name : 'Copyable',
-  sourceFilePath : _.diagnosticLocation().full,
+  silencing : 1,
+  // sourceFilePath : _.diagnosticLocation().full,
 
   tests :
   {
