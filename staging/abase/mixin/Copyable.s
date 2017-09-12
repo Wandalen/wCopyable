@@ -211,8 +211,9 @@ function copy( src )
 {
   var self = this;
 
-  if( !( src instanceof self.Self || _.mapIs( src ) ) )
-  debugger;
+  // if( !( src instanceof self.Self || _.mapIs( src ) ) )
+  // debugger;
+
   _.assert( src instanceof self.Self || _.mapIs( src ) );
   _.assert( arguments.length === 1 );
 
@@ -294,6 +295,9 @@ function _copyCustom( iteration,iterator )
 
   /* verification */
 
+  // if( iteration.key === 'aOpacity' || iteration.key === 'aRadius' )
+  // debugger;
+
   _.assertMapHasNoUndefine( iteration );
   _.assertMapHasNoUndefine( iterator );
   _.assert( arguments.length === 2 );
@@ -349,7 +353,7 @@ function _copyCustom( iteration,iterator )
   copyFacets( Composes,iterator.copyingComposes );
   copyFacets( Aggregates,iterator.copyingAggregates );
   copyFacets( Associates,iterator.copyingAssociates );
-  copyFacets( Medials,iterator.copyingMedials );
+  copyFacets( _.mapScreen( Medials,Restricts ),iterator.copyingMedials );
   copyFacets( Restricts,iterator.copyingRestricts );
   copyFacets( iterator.customFields,iterator.copyingCustomFields );
 
@@ -646,9 +650,10 @@ function cloneSerializing( o )
   if( o.src === undefined )
   o.src = self;
 
-  //debugger;
+  // if( o.copyingMedials === undefined )
+  // o.copyingMedials = 0;
+
   var result = _.cloneDataSeparatingBuffers( o );
-  //debugger;
 
   return result;
 }
@@ -1107,7 +1112,6 @@ function _allFieldsStaticGet()
 
 function _copyableFieldsStaticGet()
 {
-  debugger;
   return _.prototypeCopyableFieldsGet( this );
 }
 
@@ -1345,13 +1349,10 @@ var Supplement =
 
 var Self = _.mixinMake
 ({
-
   supplement : Supplement,
-
   _mixin : _mixin,
   name : 'wCopyable',
   nameShort : 'Copyable',
-
 });
 
 //
