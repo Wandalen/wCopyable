@@ -5,9 +5,6 @@
 if( typeof module !== 'undefined' )
 {
 
-  require( '../../abase/layer3/Proto.s' );
-  require( '../../abase/layer3/ProtoLike.s' );
-
   try
   {
     require( '../../Base.s' );
@@ -19,6 +16,7 @@ if( typeof module !== 'undefined' )
 
   var _ = wTools;
 
+  _.include( 'wProto' );
   _.include( 'wTesting' );
 
 }
