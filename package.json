@@ -38,8 +38,8 @@
     "wcloner": ""
   },
   "devDependencies": {
-    "wCopyable": "",
-    "wTesting": ""
+    "wTesting": "",
+    "wCopyable": "."
   },
   "keywords": [
     "wTools",
