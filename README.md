@@ -1,4 +1,4 @@
-# wCopyable [![Build Status](https://travis-ci.org/Wandalen/wTesting.svg?branch=master)](https://travis-ci.org/Wandalen/wTesting)
+# wCopyable [![Build Status](https://travis-ci.org/Wandalen/wCopyable.svg?branch=master)](https://travis-ci.org/Wandalen/wCopyable)
 
 Copyable mixin. Makes object of a class able to be copied/cloned.
 
