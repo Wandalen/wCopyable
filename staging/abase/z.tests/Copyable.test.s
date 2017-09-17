@@ -5,12 +5,12 @@
 if( typeof module !== 'undefined' )
 {
 
-  require( '../../abase/component/Proto.s' );
-  require( '../../abase/component/ProtoLike.s' );
+  require( '../../abase/layer3/Proto.s' );
+  require( '../../abase/layer3/ProtoLike.s' );
 
   try
   {
-    require( '../../abase/wTools.s' );
+    require( '../../Base.s' );
   }
   catch( err )
   {
