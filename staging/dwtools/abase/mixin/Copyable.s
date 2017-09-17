@@ -314,9 +314,9 @@ function _copyCustom( iteration,iterator )
   // debugger;
 
   if( _.instanceIsStandard( src ) )
-  _.assertMapOwnOnly( src, Composes, Aggregates, Associates, Restricts );
+  _.assertMapOwnOnly( src, Composes, Aggregates, Associates, Restricts,'options( instance ) should not have fields' );
   else
-  _.assertMapOwnOnly( src, Composes, Aggregates, Associates, Medials );
+  _.assertMapOwnOnly( src, Composes, Aggregates, Associates, Medials,'options( map ) should not have fields' );
 
   // _.assertMapOwnOnly( src, Composes, Aggregates, Associates, Medials, Restricts );
 

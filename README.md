@@ -1,6 +1,6 @@
-# wCopyable
+# wCopyable [![Build Status](https://travis-ci.org/Wandalen/wTesting.svg?branch=master)](https://travis-ci.org/Wandalen/wTesting)
 
-Copyable mixin. Makes objects of a class able to be copied/cloned.
+Copyable mixin. Makes object of a class able to be copied/cloned.
 
 ### Try out
 ```
@@ -11,25 +11,4 @@ node sample/Base.s
 npm install
 node sample/Descendant.s
 ```
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 

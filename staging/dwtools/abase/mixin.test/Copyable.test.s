@@ -61,6 +61,11 @@ function fields( test )
     re : 1,
   }
 
+  var Medials =
+  {
+    re : 10,
+  }
+
   var Statics =
   {
     st : 1,
@@ -72,13 +77,14 @@ function fields( test )
     Composes : Composes,
     Aggregates : Aggregates,
     Associates : Associates,
+    Medials : Medials,
     Restricts : Restricts,
     Statics : Statics,
   }
 
   _.classMake
   ({
-    constructor : BasicConstructor,
+    cls : BasicConstructor,
     extend : extend,
   });
 
@@ -129,7 +135,7 @@ function fields( test )
     co : 3,
     as : 3,
     ag : 3,
-    re : 1,
+    re : 3,
   }
 
   debugger;
