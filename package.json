@@ -15,10 +15,10 @@
       "email": "volodymyr.migdal@gmail.com"
     }
   ],
-  "main": "staging/abase/mixin/Copyable.s",
+  "main": "staging/dwtools/abase/mixin/Copyable.s",
   "files": [
-    "staging/abase/mixin/Copyable.s",
-    "staging/abase/component",
+    "staging/dwtools/abase/mixin/Copyable.s",
+    "staging/dwtools/abase/component",
     "production"
   ],
   "scripts": {

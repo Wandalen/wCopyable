@@ -110,7 +110,7 @@ var Proto =
 
 /* make class */
 
-_.protoMake
+_.classMake
 ({
   constructor : Self,
   parent : Parent,
