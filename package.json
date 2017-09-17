@@ -18,7 +18,7 @@
   "main": "staging/dwtools/abase/mixin/Copyable.s",
   "files": [
     "staging/dwtools/abase/mixin/Copyable.s",
-    "staging/dwtools/abase/component",
+    "staging/dwtools/abase/layer3",
     "production"
   ],
   "scripts": {
