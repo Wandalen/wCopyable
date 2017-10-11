@@ -108,20 +108,20 @@ function _mixin( cls )
 
   /* */
 
-  var names =
-  {
-    Type : 'Type',
-    type : 'type',
-    fields : 'fields',
-  }
-
-  _.accessorForbid
-  ({
-    object : dstProto,
-    names : names,
-    preserveValues : 0,
-    strict : 0,
-  });
+  // var names =
+  // {
+  //   Type : 'Type',
+  //   type : 'type',
+  //   fields : 'fields',
+  // }
+  //
+  // _.accessorForbid
+  // ({
+  //   object : dstProto,
+  //   names : names,
+  //   preserveValues : 0,
+  //   strict : 0,
+  // });
 
   /* */
 
@@ -213,8 +213,8 @@ function copy( src )
   // if( !( src instanceof self.Self || _.mapIs( src ) ) )
   // debugger;
 
-  _.assert( src instanceof self.Self || _.mapIs( src ) );
-  _.assert( arguments.length === 1 );
+  _.assert( arguments.length === 1,'expects single argument' );
+  _.assert( src instanceof self.Self || _.mapIs( src ),'expects instance of Class or map as argument' );
 
   return ( self.copyCustom || copyCustom ).call( self,
   {
@@ -449,6 +449,7 @@ function copyDeserializing( o )
   optionsMerging.src = o;
   optionsMerging.proto = Object.getPrototypeOf( self );
   optionsMerging.dst = self;
+  optionsMerging.deserializing = 1;
 
   var result = _.cloneObjectMergingBuffers( optionsMerging );
 
