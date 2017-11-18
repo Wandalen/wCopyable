@@ -753,7 +753,11 @@ function toStr_functor( gen )
   _.assertMapHasOnly( gen,toStr_functor.defaults );
 
   if( _.arrayIs( gen.fields ) )
-  gen.fields = _.mapsFlatten({ maps : gen.fields });
+  gen.fields = _.mapsFlatten
+  ({
+    src : gen.fields,
+    assertingUniqueness : 1,
+  });
 
   return function toStr( o )
   {
