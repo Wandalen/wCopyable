@@ -154,7 +154,7 @@ var Self =
 
   name : 'Copyable',
   silencing : 1,
-  // sourceFilePath : _.diagnosticLocation().full,
+  // suiteFileLocation : _.diagnosticLocation().full,
 
   tests :
   {

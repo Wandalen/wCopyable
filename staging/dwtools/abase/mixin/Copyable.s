@@ -902,7 +902,7 @@ function _equalAre_functor( functorOptions )
     {
       for( var c in src2 )
       {
-        if( !_.entityEqual( src1[ c ],src2[ c ],o ) )
+        if( !_._entityEqual( src1[ c ],src2[ c ],o ) )
         return false;
       }
       return true;
@@ -914,7 +914,7 @@ function _equalAre_functor( functorOptions )
     if( functorOptions[ f ] )
     for( var c in src1[ f ] )
     {
-      if( !_.entityEqual( src1[ c ],src2[ c ],o ) )
+      if( !_._entityEqual( src1[ c ],src2[ c ],o ) )
       return false;
     }
 
