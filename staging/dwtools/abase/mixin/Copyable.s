@@ -5,25 +5,33 @@
 if( typeof module !== 'undefined' )
 {
 
-  try
+  if( typeof _global_ === 'undefined' || !_global_.wBase )
   {
-    require( '../../Base.s' );
-  }
-  catch( err )
-  {
-    require( 'wTools' );
+    let toolsPath = '../../../../dwtools/Base.s';
+    let toolsExternal = 0;
+    try
+    {
+      require.resolve( toolsPath )/*hhh*/;
+    }
+    catch( err )
+    {
+      toolsExternal = 1;
+      require( 'wTools' );
+    }
+    if( !toolsExternal )
+    require( toolsPath )/*hhh*/;
   }
 
-  var _ = wTools;
+  var _ = _global_.wTools;
 
-  wTools.include( 'wProto' );
-  wTools.include( 'wCloner' );
+  _.include( 'wProto' );
+  _.include( 'wCloner' );
 
 }
 
 //
 
-var _ = wTools;
+var _ = _global_.wTools;
 var _hasOwnProperty = Object.hasOwnProperty;
 
 //
@@ -1359,16 +1367,25 @@ var Self = _.mixinMake
   nameShort : 'Copyable',
 });
 
-//
+_global_[ Self.name ] = _[ Self.nameShort ] = Self;
 
-_global_[ Self.name ] = wTools[ Self.nameShort ] = Self;
-if( typeof module !== 'undefined' )
-module[ 'exports' ] = Self;
+//
 
 _.assert( !Self.copy );
 _.assert( Self.prototype.copy );
 _.assert( Self.nameShort );
 _.assert( Self._mixin );
 _.assert( Self.mixin );
+
+// --
+// export
+// --
+
+if( typeof module !== 'undefined' )
+if( _global_._UsingWtoolsPrivately_ )
+delete require.cache[ module.id ];
+
+if( typeof module !== 'undefined' && module !== null )
+module[ 'exports' ] = Self;
 
 })();
