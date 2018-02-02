@@ -1047,13 +1047,13 @@ function _allFieldsGet()
 {
   var self = this;
 
-  debugger;
   if( !self.instanceIs() )
   return _allFieldsStaticGet.call( self );
 
   _.assert( self.instanceIs() ); debugger;
 
-  var result = _.mapScreen( self.Self.allFields,self );
+  var result = _.mapScreen( _allFieldsStaticGet.call( self ),self );
+
   return result;
 }
 
@@ -1088,11 +1088,9 @@ function fieldDescriptorGet( nameOfField )
   _.assert( _.strIsNotEmpty( nameOfField ) );
   _.assert( arguments.length === 1 );
 
-  debugger;
-
-  for( var f in _.ClassAllowedFacility )
+  for( var f in _.ClassSubfieldsGroups )
   {
-    var facility = _.ClassAllowedFacility[ f ];
+    var facility = _.ClassSubfieldsGroups[ f ];
     if( proto[ facility ] )
     if( proto[ facility ][ nameOfField ] !== undefined )
     report[ facility ] = true;
@@ -1254,6 +1252,7 @@ var Statics =
 
   '_allFieldsGet' : _allFieldsStaticGet,
   '_copyableFieldsGet' : _copyableFieldsStaticGet,
+
   hasField : hasField,
 
   '_SelfGet' : _SelfGet,
