@@ -749,46 +749,64 @@ function cloneEmpty()
 // etc
 // --
 
-/**
- * Generate method to get descriptive string of the object.
- * @method toStr * @memberof wCopyable#
- */
-
-function toStr_functor( gen )
-{
-
-  _.assert( arguments.length === 1 );
-  _.assertMapHasOnly( gen,toStr_functor.defaults );
-
-  if( _.arrayIs( gen.fields ) )
-  gen.fields = _.mapsFlatten
-  ({
-    src : gen.fields,
-    assertingUniqueness : 1,
-  });
-
-  return function toStr( o )
-  {
-    var self = this;
-    var result = '';
-    var o = o || Object.create( null );
-
-    _.assert( arguments.length === 0 || arguments.length === 1 );
-
-    result += self.nickName + '\n';
-
-    var fields = _.mapScreen( gen.fields,self );
-    result += _.toStr( fields,o );
-
-    return result;
-  }
-
-}
-
-toStr_functor.defaults =
-{
-  fields : null,
-}
+// /**
+//  * Generate method to get descriptive string of the object.
+//  * @method toStr * @memberof wCopyable#
+//  */
+//
+// function toStr_functor( gen )
+// {
+//
+//   _.assert( arguments.length === 1 );
+//   _.assertMapHasOnly( gen,toStr_functor.defaults );
+//
+//   if( _.arrayIs( gen.fields ) )
+//   gen.fields = _.mapsFlatten
+//   ({
+//     src : gen.fields,
+//     assertingUniqueness : 1,
+//   });
+//
+//   return function toStr( o )
+//   {
+//     var self = this;
+//     var result = '';
+//     var o = o || Object.create( null );
+//
+//     _.assert( arguments.length === 0 || arguments.length === 1 );
+//
+//     result += self.nickName + '\n';
+//
+//     var fields = _.mapScreen( gen.fields,self );
+//     result += _.toStr( fields,o );
+//
+//     return result;
+//   }
+//
+// }
+//
+// toStr_functor.defaults =
+// {
+//   fields : null,
+// }
+//
+// //
+//
+// /**
+//  * Gives descriptive string of the object.
+//  * @method toStr
+//  * @memberof wCopyable#
+//  */
+//
+// function toStr( o )
+// {
+//   var self = this;
+//   var o = o || Object.create( null );
+//
+//   var result = self.toStr_functor({ fields : [ self.Composes,self.Aggregates ] }).call( self,o );
+//
+//   return result;
+// }
 
 //
 
@@ -801,9 +819,23 @@ toStr_functor.defaults =
 function toStr( o )
 {
   var self = this;
+  var result = '';
   var o = o || Object.create( null );
 
-  var result = self.toStr_functor({ fields : [ self.Composes,self.Aggregates ] }).call( self,o );
+  _.assert( arguments.length === 0 || arguments.length === 1 );
+
+  if( !o.jstructLike )
+  result += self.nickName + '\n';
+
+  // var fields = _.mapScreen( gen.fields,self );
+
+  var fields = self.copyableFields;
+
+  // debugger;
+  var t = _._toStr( fields,o ).text;
+  _.assert( _.strIs( t ) );
+  result += t;
+  // debugger;
 
   return result;
 }
@@ -1299,7 +1331,7 @@ var Supplement =
 
   // etc
 
-  toStr_functor : toStr_functor, /* deprecated */
+  // toStr_functor : toStr_functor, /* deprecated */
   toStr : toStr,
 
   /*assertInstanceDoesNotHaveReduntantFields : assertInstanceDoesNotHaveReduntantFields,*/
