@@ -1,6 +1,6 @@
 ( function _Copyable_s_() {
 
-'use strict';
+'use strict'; /*aaa*/
 
 if( typeof module !== 'undefined' )
 {
@@ -11,7 +11,7 @@ if( typeof module !== 'undefined' )
     let toolsExternal = 0;
     try
     {
-      require.resolve( toolsPath )/*hhh*/;
+      require.resolve( toolsPath );
     }
     catch( err )
     {
@@ -19,13 +19,14 @@ if( typeof module !== 'undefined' )
       require( 'wTools' );
     }
     if( !toolsExternal )
-    require( toolsPath )/*hhh*/;
+    require( toolsPath );
   }
 
   var _ = _global_.wTools;
 
   _.include( 'wProto' );
   _.include( 'wCloner' );
+  _.include( 'wStringer' );
 
 }
 
@@ -77,6 +78,7 @@ function _mixin( cls )
     className : readOnly,
 
     copyableFields : readOnly,
+    loggableFields : readOnly,
     allFields : readOnly,
 
     nickName : readOnly,
@@ -101,6 +103,7 @@ function _mixin( cls )
     Parent : readOnly,
     className : readOnly,
     copyableFields : readOnly,
+    loggableFields : readOnly,
     allFields : readOnly,
   }
 
@@ -142,13 +145,17 @@ function _mixin( cls )
     if( _.routineIs( dstProto.equalWith ) )
     _.assert( dstProto.equalWith.length <= 2 );
 
-    _.assert( dstProto._copyableFieldsGet !== _copyableFieldsStaticGet );
-    _.assert( dstProto._allFieldsGet !== _allFieldsStaticGet );
+    _.assert( dstProto._allFieldsGet === _allFieldsGet );
+    _.assert( dstProto._copyableFieldsGet === _copyableFieldsGet );
+    _.assert( dstProto._loggableFieldsGet === _loggableFieldsGet );
+
+    _.assert( dstProto.constructor._allFieldsGet === _allFieldsStaticGet );
+    _.assert( dstProto.constructor._copyableFieldsGet === _copyableFieldsStaticGet );
+    _.assert( dstProto.constructor._loggableFieldsGet === _loggableFieldsStaticGet );
 
     _.assert( dstProto.finit.name !== 'finitEventHandler', 'wEventHandler mixin should goes after wCopyable mixin.' );
     _.assert( !_.mixinHas( dstProto,'wEventHandler' ), 'wEventHandler mixin should goes after wCopyable mixin.' );
 
-    _.assert( dstProto._allFieldsGet === _allFieldsGet );
 
   }
 
@@ -208,36 +215,7 @@ function finitedIs()
 //
 
 /**
- * Copy data from another instance.
- * @param {object} src - another isntance.
- * @method copy
- * @memberof wCopyable#
- */
-
-function copy( src )
-{
-  var self = this;
-
-  // if( !( src instanceof self.Self || _.mapIs( src ) ) )
-  // debugger;
-
-  _.assert( arguments.length === 1,'expects single argument' );
-  _.assert( src instanceof self.Self || _.mapIs( src ),'expects instance of Class or map as argument' );
-
-  return ( self.copyCustom || copyCustom ).call( self,
-  {
-
-    src : src,
-    technique : 'object',
-
-  });
-
-}
-
-//
-
-/**
- * Extend data from another instance.
+ * Extend by data from another instance.
  * @param {object} src - another isntance.
  * @method extend
  * @memberof wCopyable#
@@ -271,102 +249,24 @@ function extend( src )
 //
 
 /**
- * Copy data from one instance to another. Customizable static function.
- * @param {object} o - options.
- * @param {object} o.Prototype - prototype of the class.
- * @param {object} o.src - src isntance.
- * @param {object} o.dst - dst isntance.
- * @param {object} o.constitutes - to constitute or not fields, should be off for serializing and on for deserializing.
- * @method _copyCustom
+ * Copy data from another instance.
+ * @param {object} src - another isntance.
+ * @method copy
  * @memberof wCopyable#
  */
 
-var _empty = Object.create( null );
-function _copyCustom( iteration,iterator )
+function copy( src )
 {
   var self = this;
+  var routine = ( self._traverseAct || _traverseAct );
 
-  /* var */
+  _.assert( arguments.length === 1,'expects single argument' );
+  _.assert( src instanceof self.Self || _.mapIs( src ),'expects instance of Class or map as argument' );
 
-  iteration.proto = iteration.proto || Object.getPrototypeOf( self );
+  var o = { dst : self, src : src, technique : 'object' };
+  var iteration = _._cloner( routine,o );
 
-  var proto = iteration.proto;
-  var src = iteration.src;
-  var dst = iteration.dst = iteration.dst || self;
-  var dropFields = iteration.dropFields || _empty;
-  var Composes = proto.Composes || _empty;
-  var Aggregates = proto.Aggregates || _empty;
-  var Associates = proto.Associates || _empty;
-  var Restricts = proto.Restricts || _empty;
-  var Medials = proto.Medials || _empty;
-
-  /* verification */
-
-  // if( iteration.key === 'aOpacity' || iteration.key === 'aRadius' )
-  // debugger;
-
-  _.assertMapHasNoUndefine( iteration );
-  _.assertMapHasNoUndefine( iterator );
-  _.assert( arguments.length === 2 );
-  _.assert( src );
-  _.assert( dst );
-  _.assert( proto );
-  _.assert( _.strIs( iteration.path ) );
-  _.assert( _.objectIs( proto ),'expects object ( proto ), but got',_.strTypeOf( proto ) );
-  _.assert( !iteration.customFields || _.objectIs( iteration.customFields ) );
-  _.assert( iteration.level >= 0 );
-  _.assert( _.numberIs( iteration.copyingDegree ) );
-
-  // if( _.mapIsPure( src ) )
-  // debugger;
-
-  if( _.instanceIsStandard( src ) )
-  _.assertMapOwnOnly( src, Composes, Aggregates, Associates, Restricts,'options( instance ) should not have fields' );
-  else
-  _.assertMapOwnOnly( src, Composes, Aggregates, Associates, Medials,'options( map ) should not have fields' );
-
-  // _.assertMapOwnOnly( src, Composes, Aggregates, Associates, Medials, Restricts );
-
-  /* copy facets */
-
-  function copyFacets( screen,copyingDegree )
-  {
-
-    _.assert( _.numberIs( copyingDegree ) );
-    _.assert( iteration.dst === dst );
-    _.assert( _.objectIs( screen ) || !copyingDegree );
-
-    if( !copyingDegree )
-    return;
-
-    newIteration.screenFields = screen;
-    newIteration.copyingDegree = Math.min( copyingDegree,iteration.copyingDegree );
-    newIteration.instanceAsMap = 1;
-
-    _.assert( iteration.copyingDegree === 3,'not tested' );
-    _.assert( newIteration.copyingDegree === 1 || newIteration.copyingDegree === 3,'not tested' );
-
-    if( copyingDegree === 1 )
-    newIteration.copyingDegree += 1;
-
-    _._cloneMap( newIteration,iterator );
-
-  }
-
-  /* */
-
-  var newIteration = _.mapExtend( null,iteration );
-
-  copyFacets( Composes,iterator.copyingComposes );
-  copyFacets( Aggregates,iterator.copyingAggregates );
-  copyFacets( Associates,iterator.copyingAssociates );
-  copyFacets( _.mapScreen( Medials,Restricts ),iterator.copyingMedials );
-  copyFacets( Restricts,iterator.copyingRestricts );
-  copyFacets( iterator.customFields,iterator.copyingCustomFields );
-
-  /* done */
-
-  return dst;
+  return routine.call( self, iteration, iteration.iterator );
 }
 
 //
@@ -385,62 +285,20 @@ function _copyCustom( iteration,iterator )
 function copyCustom( o )
 {
   var self = this;
-
-  // if( o.copyingMedials === undefined )
-  // o.copyingMedials = !_.instanceIsStandard( o.src );
-  //
-  // _.assertMapHasNoUndefine( o );
-  // _.routineOptions( copyCustom,o );
-  // _.assert( _.objectIs( o ) );
+  var routine = ( self._traverseAct || _traverseAct );
 
   _.assert( arguments.length == 1 );
 
-  var r = _._cloneOptions( copyCustom,o );
+  if( o.dst === undefined )
+  o.dst = self;
 
-  return ( self._copyCustom || _copyCustom ).call( self,r.iteration,r.iterator );
+  var iteration = _._cloner( copyCustom,o );
+
+  return routine.call( self, iteration, iteration.iterator );
 }
 
-copyCustom.defaults =
-{
-  dst : null,
-  proto : null,
-}
-
-copyCustom.defaults.__proto__ = _._cloneOptions.defaults;
-
-/*
-{
-
-  src : null,
-  key : null,
-  dst : null,
-  proto : null,
-  level : 0,
-  path : '',
-  customFields : null,
-  dropFields : null,
-  screenFields : null,
-  instanceAsMap : 0,
-  copyingDegree : 3,
-
-  copyingComposes : 3,
-  copyingAggregates : 1,
-  copyingAssociates : 1,
-  copyingMedials : 1,
-  copyingRestricts : 0,
-  copyingBuffers : 0,
-  copyingCustomFields : 0,
-
-  rootSrc : null,
-  levels : 999,
-  technique : null,
-
-  onString : null,
-  onRoutine : null,
-  onBuffer : null,
-
-}
-*/
+copyCustom.iterationDefaults = Object.create( _._cloner.iterationDefaults );
+copyCustom.defaults = _.mapSupplementOwn( Object.create( _._cloner.defaults ),copyCustom.iterationDefaults );
 
 //
 
@@ -488,17 +346,16 @@ function cloneObject( o )
   _.assert( arguments.length === 0 || arguments.length === 1 );
   _.routineOptions( cloneObject,o );
 
-  var r = _._cloneOptions( cloneObject,o );
+  var iteration = _._cloner( cloneObject,o );
 
-  return self._cloneObject( r.iteration,r.iterator );
+  return self._cloneObject( iteration,iteration.iterator );
 }
 
-cloneObject.defaults =
-{
-  technique : 'object',
-}
-
-cloneObject.defaults.__proto__ = copyCustom.defaults;
+// cloneObject.iteratorDefaults = Object.create( _._cloner.iteratorDefaults );
+// cloneObject.iteratorDefaults.technique = 'object';
+cloneObject.iterationDefaults = Object.create( _._cloner.iterationDefaults );
+cloneObject.defaults = _.mapSupplementOwn( Object.create( _._cloner.defaults ),cloneObject.iterationDefaults );
+cloneObject.defaults.technique = 'object';
 
 //
 
@@ -514,46 +371,19 @@ function _cloneObject( iteration,iterator )
   var self = this;
 
   _.assert( arguments.length === 2 );
-
-  if( !iteration.src )
-  iteration.src = self;
-
-  if( !iteration.proto )
-  iteration.proto = Object.getPrototypeOf( iteration.src );
+  _.assert( iterator.technique === 'object' );
 
   /* */
 
   if( !iteration.dst )
   {
 
-    var standard = 1;
-    standard = standard && iterator.copyingComposes;
-    standard = standard && iterator.copyingAggregates;
-    standard = standard && iterator.copyingAssociates;
-    // standard = standard && iterator.copyingMedials;
-    standard = standard && !iterator.copyingRestricts;
-    standard = standard && ( !iterator.customFields || Object.keys( iterator.customFields ) === 0 );
-    standard = standard && ( !iterator.dropFields || Object.keys( iterator.dropFields ) === 0 );
-
-    if( !standard )
+    dst = iteration.dst = new iteration.src.constructor( iteration.src );
+    if( iteration.dst === iteration.src )
     {
       debugger;
-      iteration.dst = new self.constructor();
-    }
-
-  }
-
-  /* */
-
-  if( !iteration.dst )
-  {
-
-    iteration.dst = new self.constructor( self );
-    if( iteration.dst === self )
-    {
-      debugger;
-      iteration.dst = new self.constructor();
-      iteration.dst._copyCustom( iteration,iterator );
+      dst = iteration.dst = new iteration.src.constructor();
+      iteration.dst._traverseAct( iteration,iterator );
     }
 
   }
@@ -561,7 +391,7 @@ function _cloneObject( iteration,iterator )
   {
 
     debugger;
-    iteration.dst._copyCustom( iteration,iterator );
+    iteration.dst._traverseAct( iteration,iterator );
 
   }
 
@@ -584,33 +414,20 @@ function cloneData( o )
 
   _.assert( arguments.length === 0 || arguments.length === 1 );
 
-  // if( !o.src )
-  // o.src = self;
-  //
-  // if( !iteration.proto )
-  // iteration.proto = Object.getPrototypeOf( o.src );
-  //
-  // if( !o.dst )
-  // o.dst = Object.create( null );
-  //
-  // _.routineOptions( cloneData,o );
+  if( o.src === undefined )
+  o.src = self;
 
-  var r = _._cloneOptions( cloneData,o );
+  var iteration = _._cloner( cloneData,o );
 
-  return self._cloneData( r.iteration,r.iterator );
+  return self._cloneData( iteration,iteration.iterator );
 }
 
-cloneData.defaults =
-{
-
-  dst : Object.create( null ),
-  copyingAggregates : 3,
-  copyingAssociates : 0,
-  technique : 'data',
-
-}
-
-cloneData.defaults.__proto__ = copyCustom.defaults;
+cloneData.iterationDefaults = Object.create( _._cloner.iterationDefaults );
+cloneData.iterationDefaults.dst = Object.create( null );
+cloneData.iterationDefaults.copyingAggregates = 3;
+cloneData.iterationDefaults.copyingAssociates = 0;
+cloneData.defaults = _.mapSupplementOwn( Object.create( _._cloner.defaults ),cloneData.iterationDefaults );
+cloneData.defaults.technique = 'data';
 
 //
 
@@ -626,17 +443,188 @@ function _cloneData( iteration,iterator )
   var self = this;
 
   _.assert( arguments.length === 2 );
+  _.assert( iterator.technique === 'data' );
 
-  if( !iteration.src )
+  return self._traverseAct( iteration,iterator );
+}
+
+//
+
+function _traverseActPre( iteration,iterator )
+{
+  var self = this;
+
+  _.assert( iteration );
+  _.assert( arguments.length === 2 );
+
+  /* adjust */
+
+  if( iteration.src === undefined )
+  debugger;
+  if( iteration.src === undefined )
   iteration.src = self;
 
-  if( !iteration.proto )
-  iteration.proto = Object.getPrototypeOf( iteration.src );
-
+  if( iterator.technique === 'data' )
   if( !iteration.dst )
   iteration.dst = Object.create( null );
 
-  return self._copyCustom( iteration,iterator );
+  if( !iteration.proto && iteration.dst )
+  iteration.proto = Object.getPrototypeOf( iteration.dst );
+  if( !iteration.proto && iteration.src )
+  iteration.proto = Object.getPrototypeOf( iteration.src );
+
+}
+
+//
+
+/**
+ * Copy data from one instance to another. Customizable static function.
+ * @param {object} o - options.
+ * @param {object} o.Prototype - prototype of the class.
+ * @param {object} o.src - src isntance.
+ * @param {object} o.dst - dst isntance.
+ * @param {object} o.constitutes - to constitute or not fields, should be off for serializing and on for deserializing.
+ * @method _traverseAct
+ * @memberof wCopyable#
+ */
+
+var _empty = Object.create( null );
+function _traverseAct( iteration,iterator )
+{
+  var self = this;
+
+  /* adjust */
+
+  self._traverseActPre( iteration,iterator );
+
+  _.assert( iteration.proto );
+
+  /* var */
+
+  var proto = iteration.proto;
+  var src = iteration.src;
+  var dst = iteration.dst;
+  // var dst = iteration.dst = iteration.dst || self;
+  var dropFields = iteration.dropFields || _empty;
+  var Composes = proto.Composes || _empty;
+  var Aggregates = proto.Aggregates || _empty;
+  var Associates = proto.Associates || _empty;
+  var Restricts = proto.Restricts || _empty;
+  var Medials = proto.Medials || _empty;
+
+  /* verification */
+
+  _.assertMapHasNoUndefine( iteration );
+  _.assertMapHasNoUndefine( iterator );
+  _.assert( arguments.length === 2 );
+  _.assert( src !== dst );
+  _.assert( src );
+  // _.assert( dst );
+  _.assert( proto );
+  _.assert( _.strIs( iteration.path ) );
+  _.assert( _.objectIs( proto ),'expects object ( proto ), but got',_.strTypeOf( proto ) );
+  _.assert( !iteration.customFields || _.objectIs( iteration.customFields ) );
+  _.assert( iteration.level >= 0 );
+  _.assert( _.numberIs( iteration.copyingDegree ) );
+  _.assert( self.__traverseAct );
+
+  if( _.instanceIsStandard( src ) )
+  _.assertMapOwnOnly( src, Composes, Aggregates, Associates, Restricts,'options( instance ) should not have fields' );
+  else
+  _.assertMapOwnOnly( src, Composes, Aggregates, Associates, Medials,'options( map ) should not have fields' );
+
+  /* */
+
+  if( iteration.dst === null )
+  {
+
+    dst = iteration.dst = new iteration.src.constructor( iteration.src );
+    if( iteration.dst === iteration.src )
+    {
+      debugger;
+      dst = iteration.dst = new iteration.src.constructor();
+      self.__traverseAct( iteration,iterator );
+    }
+
+  }
+  else
+  {
+
+    self.__traverseAct( iteration,iterator );
+
+  }
+
+  /* done */
+
+  return dst;
+}
+
+_traverseAct.iterationDefaults = Object.create( _._cloner.iterationDefaults );
+_traverseAct.defaults = _.mapSupplementOwn( Object.create( _._cloner.defaults ) , _traverseAct.iterationDefaults );
+
+//
+
+function __traverseAct( iteration,iterator )
+{
+
+  /* var */
+
+  var proto = iteration.proto;
+  var src = iteration.src;
+  var dst = iteration.dst = iteration.dst;
+  var dropFields = iteration.dropFields || _empty;
+  var Composes = proto.Composes || _empty;
+  var Aggregates = proto.Aggregates || _empty;
+  var Associates = proto.Associates || _empty;
+  var Restricts = proto.Restricts || _empty;
+  var Medials = proto.Medials || _empty;
+
+  /* copy facets */
+
+  function copyFacets( screen,copyingDegree )
+  {
+
+    _.assert( _.numberIs( copyingDegree ) );
+    _.assert( iteration.dst === dst );
+    _.assert( _.objectIs( screen ) || !copyingDegree );
+
+    if( !copyingDegree )
+    return;
+
+    newIteration.screenFields = screen;
+    newIteration.copyingDegree = Math.min( copyingDegree,iteration.copyingDegree );
+    newIteration.instanceAsMap = 1;
+
+    _.assert( iteration.copyingDegree === 3,'not tested' );
+    _.assert( newIteration.copyingDegree === 1 || newIteration.copyingDegree === 3,'not tested' );
+
+    /* copyingDegree applicable to fields, so increment is needed */
+
+    if( newIteration.copyingDegree === 1 )
+    newIteration.copyingDegree += 1;
+
+    _._traverseMap( newIteration,iterator );
+
+  }
+
+  /* */
+
+  var newIteration = iteration.iterationClone();
+
+  copyFacets( Composes,iteration.copyingComposes );
+  copyFacets( Aggregates,iteration.copyingAggregates );
+  copyFacets( Associates,iteration.copyingAssociates );
+  copyFacets( _.mapScreen( Medials,Restricts ),iteration.copyingMedialRestricts );
+
+  if( !_.instanceIsStandard( iteration.src ) )
+  copyFacets( Medials,iteration.copyingMedials );
+
+  copyFacets( Restricts,iteration.copyingRestricts );
+  copyFacets( iteration.customFields,iteration.copyingCustomFields );
+
+  /* done */
+
+  return dst;
 }
 
 //
@@ -658,8 +646,11 @@ function cloneSerializing( o )
   if( o.src === undefined )
   o.src = self;
 
-  // if( o.copyingMedials === undefined )
-  // o.copyingMedials = 0;
+  if( o.copyingMedials === undefined )
+  o.copyingMedials = 0;
+
+  if( o.copyingMedialRestricts === undefined )
+  o.copyingMedialRestricts = 1;
 
   var result = _.cloneDataSeparatingBuffers( o );
 
@@ -668,6 +659,7 @@ function cloneSerializing( o )
 
 cloneSerializing.defaults =
 {
+  copyingMedialRestricts : 1,
 }
 
 cloneSerializing.defaults.__proto__ = _.cloneDataSeparatingBuffers.defaults;
@@ -749,67 +741,6 @@ function cloneEmpty()
 // etc
 // --
 
-// /**
-//  * Generate method to get descriptive string of the object.
-//  * @method toStr * @memberof wCopyable#
-//  */
-//
-// function toStr_functor( gen )
-// {
-//
-//   _.assert( arguments.length === 1 );
-//   _.assertMapHasOnly( gen,toStr_functor.defaults );
-//
-//   if( _.arrayIs( gen.fields ) )
-//   gen.fields = _.mapsFlatten
-//   ({
-//     src : gen.fields,
-//     assertingUniqueness : 1,
-//   });
-//
-//   return function toStr( o )
-//   {
-//     var self = this;
-//     var result = '';
-//     var o = o || Object.create( null );
-//
-//     _.assert( arguments.length === 0 || arguments.length === 1 );
-//
-//     result += self.nickName + '\n';
-//
-//     var fields = _.mapScreen( gen.fields,self );
-//     result += _.toStr( fields,o );
-//
-//     return result;
-//   }
-//
-// }
-//
-// toStr_functor.defaults =
-// {
-//   fields : null,
-// }
-//
-// //
-//
-// /**
-//  * Gives descriptive string of the object.
-//  * @method toStr
-//  * @memberof wCopyable#
-//  */
-//
-// function toStr( o )
-// {
-//   var self = this;
-//   var o = o || Object.create( null );
-//
-//   var result = self.toStr_functor({ fields : [ self.Composes,self.Aggregates ] }).call( self,o );
-//
-//   return result;
-// }
-
-//
-
 /**
  * Gives descriptive string of the object.
  * @method toStr
@@ -824,94 +755,17 @@ function toStr( o )
 
   _.assert( arguments.length === 0 || arguments.length === 1 );
 
-  if( !o.jstructLike )
+  if( !o.jstructLike && !o.jsonLike )
   result += self.nickName + '\n';
 
-  // var fields = _.mapScreen( gen.fields,self );
+  var fields = self.loggableFields;
 
-  var fields = self.copyableFields;
-
-  // debugger;
-  var t = _._toStr( fields,o ).text;
+  var t = _.toStr( fields,o );
   _.assert( _.strIs( t ) );
   result += t;
-  // debugger;
 
   return result;
 }
-
-//
-
-// /**
-//  * Constitutes field.
-//  * @param {object} fieldName - src isntance.
-//  * @method _constituteField_deprecated
-//  * @memberof wCopyable#
-//  */
-//
-// function _constituteField_deprecated( dst,fieldName )
-// {
-//   var self = this;
-//   var Prototype = Object.getPrototypeOf( self ) || options.prototype;
-//   var constitute = Prototype.Constitutes[ fieldName ];
-//
-//   throw _.err( 'deprecated' );
-//
-//   if( !constitute )
-//   return;
-//
-//   if( dst[ fieldName ] === undefined || dst[ fieldName ] === null )
-//   return;
-//
-//   throw _.err( 'constituting is deprecated, use getter for ' + fieldName );
-//
-//   //
-//
-//   function constituteIt( constitute,src,dstContainer,key )
-//   {
-//
-//     if( src.Composes )
-//     {
-//       debugger;
-//       return;
-//     }
-//
-//     debugger;
-//     _.assert( constitute.length === 1,'constitute should take single argument' );
-//
-//     var n = constitute( src,self );
-//     if( n !== undefined )
-//     dstContainer[ key ] = n;
-//     else throw _.err( 'not tested' );
-//
-//   }
-//
-//   //
-//
-//   if( _.objectIs( constitute ) )
-//   {
-//     throw _.err( 'deprecated' );
-//
-//     for( var a in dst[ fieldName ] )
-//     constituteIt( constitute[ 0 ],dst[ fieldName ][ a ],dst[ fieldName ],a );
-//
-//   }
-//   else if( _.arrayIs( constitute ) )
-//   {
-//     throw _.err( 'deprecated' );
-//
-//     for( var a = 0 ; a < dst[ fieldName ].length ; a++ )
-//     constituteIt( constitute[ 0 ],dst[ fieldName ][ a ],dst[ fieldName ],a );
-//
-//   }
-//   else
-//   {
-//
-//     constituteIt( constitute,dst[ fieldName ],dst,fieldName );
-//
-//   }
-//
-// }
 
 // --
 // tester
@@ -1070,7 +924,7 @@ function constructorIs()
 // --
 
 /**
- * Get map of copyable fields.
+ * Get map of all fields.
  * @method _allFieldsGet
  * @memberof wCopyable
  */
@@ -1112,6 +966,27 @@ function _copyableFieldsGet()
 
 //
 
+/**
+ * Get map of loggable fields.
+ * @method _loggableFieldsGet
+ * @memberof wCopyable
+ */
+
+function _loggableFieldsGet()
+{
+  var self = this;
+
+  if( !self.instanceIs() )
+  return _loggableFieldsStaticGet.call( self );
+
+  _.assert( self.instanceIs() );
+
+  var result = _.mapScreen( self.Self.loggableFields,self );
+  return result;
+}
+
+//
+
 function fieldDescriptorGet( nameOfField )
 {
   var proto = _.prototypeGet( this );
@@ -1134,7 +1009,7 @@ function fieldDescriptorGet( nameOfField )
 //
 
 /**
- * Get map of copyable fields.
+ * Get map of all fields.
  * @method _allFieldsStaticGet
  * @memberof wCopyable#
  */
@@ -1155,6 +1030,19 @@ function _allFieldsStaticGet()
 function _copyableFieldsStaticGet()
 {
   return _.prototypeCopyableFieldsGet( this );
+}
+
+//
+
+/**
+ * Get map of loggable fields.
+ * @method _loggableFieldsGet
+ * @memberof wCopyable#
+ */
+
+function _loggableFieldsStaticGet()
+{
+  return _.prototypeLoggableFieldsGet( this );
 }
 
 //
@@ -1284,6 +1172,7 @@ var Statics =
 
   '_allFieldsGet' : _allFieldsStaticGet,
   '_copyableFieldsGet' : _copyableFieldsStaticGet,
+  '_loggableFieldsGet' : _loggableFieldsStaticGet,
 
   hasField : hasField,
 
@@ -1311,11 +1200,15 @@ var Supplement =
   finit : finit,
   finitedIs : finitedIs,
 
-  _copyCustom : _copyCustom,
+  extend : extend,
+  copy : copy,
+
   copyCustom : copyCustom,
   copyDeserializing : copyDeserializing,
-  copy : copy,
-  extend : extend,
+
+  _traverseActPre : _traverseActPre,
+  _traverseAct : _traverseAct,
+  __traverseAct : __traverseAct,
 
   cloneObject : cloneObject,
   _cloneObject : _cloneObject,
@@ -1331,11 +1224,7 @@ var Supplement =
 
   // etc
 
-  // toStr_functor : toStr_functor, /* deprecated */
   toStr : toStr,
-
-  /*assertInstanceDoesNotHaveReduntantFields : assertInstanceDoesNotHaveReduntantFields,*/
-  /*_constituteField_deprecated : _constituteField_deprecated,*/
 
 
   // tester
@@ -1355,13 +1244,8 @@ var Supplement =
 
   '_allFieldsGet' : _allFieldsGet,
   '_copyableFieldsGet' : _copyableFieldsGet,
+  '_loggableFieldsGet' : _loggableFieldsGet,
   fieldDescriptorGet : fieldDescriptorGet,
-
-/*
-  '_allFieldsGet' : _allFieldsStaticGet,
-  '_copyableFieldsGet' : _copyableFieldsStaticGet,
-  hasField : hasField,
-*/
 
 
   // class
