@@ -1,6 +1,6 @@
 ( function _Copyable_s_() {
 
-'use strict'; /*aaa*/
+'use strict'; /*bbb*/
 
 if( typeof module !== 'undefined' )
 {
@@ -68,7 +68,6 @@ function _mixin( cls )
   });
 
   /* instance accessors */
-
 
   var readOnly = { readOnlyProduct : 0 };
   var names =
@@ -936,7 +935,7 @@ function _allFieldsGet()
   if( !self.instanceIs() )
   return _allFieldsStaticGet.call( self );
 
-  _.assert( self.instanceIs() ); debugger;
+  _.assert( self.instanceIs() );
 
   var result = _.mapScreen( _allFieldsStaticGet.call( self ),self );
 

@@ -42,8 +42,6 @@ function fields( test )
 
   test.description = 'allFields and copyableFields should act differently with instance and prototype/constructor context';
 
-  debugger;
-
   function BasicConstructor( o )
   {
     _.instanceInit( this );
@@ -147,10 +145,8 @@ function fields( test )
     re : 3,
   }
 
-  debugger;
   test.identical( instance.allFields,allFields );
   test.identical( instance.copyableFields,copyableFields );
-  debugger;
 
 }
 
@@ -163,7 +159,6 @@ var Self =
 
   name : 'Copyable',
   silencing : 1,
-  // suitFileLocation : _.diagnosticLocation().full,
 
   tests :
   {
@@ -180,4 +175,4 @@ Self = wTestSuit( Self );
 if( typeof module !== 'undefined' && !module.parent )
 _.Tester.test( Self.name );
 
-} )( );
+})();
