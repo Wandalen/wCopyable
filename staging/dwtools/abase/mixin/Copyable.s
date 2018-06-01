@@ -1120,6 +1120,15 @@ function _nickNameGet()
 
 //
 
+function unameGet()
+{
+  var self = this;
+  return self.className + '( ' + '#id' + self.id + ' )';
+}
+
+
+//
+
 /**
  * Unique name of the object.
  * @method _uniqueNameGet
@@ -1258,6 +1267,8 @@ var Supplement =
   '_classNameGet' : _classNameGet,
   '_nickNameGet' : _nickNameGet,
   '_uniqueNameGet' : _uniqueNameGet,
+
+  unameGet : unameGet,
 
 
   //
