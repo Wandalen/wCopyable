@@ -1,6 +1,6 @@
 ( function _Copyable_s_() {
 
-'use strict'; /*bbb*/
+'use strict'; 
 
 if( typeof module !== 'undefined' )
 {
