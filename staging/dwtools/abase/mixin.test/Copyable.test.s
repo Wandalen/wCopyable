@@ -1,6 +1,6 @@
 ( function _Copyable_test_s_( ) {
 
-'use strict'; 
+'use strict';
 
 if( typeof module !== 'undefined' )
 {
@@ -157,7 +157,7 @@ function fields( test )
 var Self =
 {
 
-  name : 'Copyable',
+  name : 'Tools/base/CopyableMixin',
   silencing : 1,
 
   tests :
