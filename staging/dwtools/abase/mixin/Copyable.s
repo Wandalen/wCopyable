@@ -54,7 +54,7 @@ function _mixin( cls )
     constructor : 'constructor',
   }
 
-  _.assert( arguments.length === 1 );
+  _.assert( arguments.length === 1, 'expects single argument' );
   _.assert( _.routineIs( cls ),'mixin expects constructor, but got',_.strPrimitiveTypeOf( cls ) );
   _.assertMapOwnAll( dstProto,has );
   _.assert( _hasOwnProperty.call( dstProto,'constructor' ),'prototype of object should has own constructor' );
@@ -77,7 +77,7 @@ function _mixin( cls )
     className : readOnly,
 
     copyableFields : readOnly,
-    loggableFields : readOnly,
+    tightFields : readOnly,
     allFields : readOnly,
 
     nickName : readOnly,
@@ -102,7 +102,7 @@ function _mixin( cls )
     Parent : readOnly,
     className : readOnly,
     copyableFields : readOnly,
-    loggableFields : readOnly,
+    tightFields : readOnly,
     allFields : readOnly,
   }
 
@@ -139,22 +139,21 @@ function _mixin( cls )
   {
 
     if( _.routineIs( dstProto._equalAre ) )
-    _.assert( dstProto._equalAre.length === 3 || dstProto._equalAre.length === 0 );
+    _.assert( dstProto._equalAre.length <= 1 );
 
     if( _.routineIs( dstProto.equalWith ) )
     _.assert( dstProto.equalWith.length <= 2 );
 
     _.assert( dstProto._allFieldsGet === _allFieldsGet );
     _.assert( dstProto._copyableFieldsGet === _copyableFieldsGet );
-    _.assert( dstProto._loggableFieldsGet === _loggableFieldsGet );
+    _.assert( dstProto._tightFieldsGet === _tightFieldsGet );
 
     _.assert( dstProto.constructor._allFieldsGet === _allFieldsStaticGet );
     _.assert( dstProto.constructor._copyableFieldsGet === _copyableFieldsStaticGet );
-    _.assert( dstProto.constructor._loggableFieldsGet === _loggableFieldsStaticGet );
+    _.assert( dstProto.constructor._tightFieldsGet === _tightFieldsStaticGet );
 
     _.assert( dstProto.finit.name !== 'finitEventHandler', 'wEventHandler mixin should goes after wCopyable mixin.' );
     _.assert( !_.mixinHas( dstProto,'wEventHandler' ), 'wEventHandler mixin should goes after wCopyable mixin.' );
-
 
   }
 
@@ -224,7 +223,7 @@ function extend( src )
 {
   var self = this;
 
-  _.assert( arguments.length === 1 );
+  _.assert( arguments.length === 1, 'expects single argument' );
   _.assert( src instanceof self.Self || _.mapIs( src ) );
 
   for( var s in src )
@@ -367,7 +366,7 @@ function _cloneObject( it )
 {
   var self = this;
 
-  _.assert( arguments.length === 1 );
+  _.assert( arguments.length === 1, 'expects single argument' );
   _.assert( it.iterator.technique === 'object' );
 
   /* */
@@ -439,7 +438,7 @@ function _cloneData( it )
 {
   var self = this;
 
-  _.assert( arguments.length === 1 );
+  _.assert( arguments.length === 1, 'expects single argument' );
   _.assert( it.iterator.technique === 'data' );
 
   return self._traverseAct( it );
@@ -452,7 +451,7 @@ function _traverseActPre( it )
   var self = this;
 
   _.assert( it );
-  _.assert( arguments.length === 1 );
+  _.assert( arguments.length === 1, 'expects single argument' );
 
   /* adjust */
 
@@ -501,7 +500,6 @@ function _traverseAct( it )
   var proto = it.proto;
   var src = it.src;
   var dst = it.dst;
-  // var dst = it.dst = it.dst || self;
   var dropFields = it.dropFields || _empty;
   var Composes = proto.Composes || _empty;
   var Aggregates = proto.Aggregates || _empty;
@@ -513,10 +511,9 @@ function _traverseAct( it )
 
   _.assertMapHasNoUndefine( it );
   _.assertMapHasNoUndefine( it.iterator );
-  _.assert( arguments.length === 1 );
+  _.assert( arguments.length === 1, 'expects single argument' );
   _.assert( src !== dst );
   _.assert( src );
-  // _.assert( dst );
   _.assert( proto );
   _.assert( _.strIs( it.path ) );
   _.assert( _.objectIs( proto ),'expects object ( proto ), but got',_.strTypeOf( proto ) );
@@ -526,9 +523,9 @@ function _traverseAct( it )
   _.assert( self.__traverseAct );
 
   if( _.instanceIsStandard( src ) )
-  _.assertMapOwnOnly( src, Composes, Aggregates, Associates, Restricts,'options( instance ) should not have fields' );
+  _.assertMapOwnOnly( src, [ Composes, Aggregates, Associates, Restricts ], 'options( instance ) should not have fields' );
   else
-  _.assertMapOwnOnly( src, Composes, Aggregates, Associates, Medials,'options( map ) should not have fields' );
+  _.assertMapOwnOnly( src, [ Composes, Aggregates, Associates, Medials ], 'options( map ) should not have fields' );
 
   /* */
 
@@ -611,7 +608,7 @@ function __traverseAct( it )
   copyFacets( Composes,it.copyingComposes );
   copyFacets( Aggregates,it.copyingAggregates );
   copyFacets( Associates,it.copyingAssociates );
-  copyFacets( _.mapScreen( Medials,Restricts ),it.copyingMedialRestricts );
+  copyFacets( _.mapOnly( Medials,Restricts ), it.copyingMedialRestricts );
 
   if( !_.instanceIsStandard( it.src ) )
   copyFacets( Medials,it.copyingMedials );
@@ -717,7 +714,7 @@ function cloneOverriding( override )
   }
   else
   {
-    var src = _.mapScreen( self.Self.copyableFields,self );
+    var src = _.mapOnly( self, self.Self.copyableFields );
     _.mapExtend( src,override );
     var dst = new self.constructor( src );
     _.assert( dst !== self && dst !== src );
@@ -755,7 +752,7 @@ function toStr( o )
   if( !o.jstructLike && !o.jsonLike )
   result += self.nickName + '\n';
 
-  var fields = self.loggableFields;
+  var fields = self.tightFields;
 
   var t = _.toStr( fields,o );
   _.assert( _.strIs( t ) );
@@ -765,62 +762,96 @@ function toStr( o )
 }
 
 // --
-// tester
+// checker
 // --
 
-function _equalAre_functor( functorOptions )
+function _equalAre_functor( fieldsGroupsMap )
 {
   _.assert( arguments.length <= 1 );
 
-  functorOptions = _.routineOptions( _equalAre_functor,functorOptions || Object.create( null ) );
+  fieldsGroupsMap = _.routineOptions( _equalAre_functor, fieldsGroupsMap );
 
-  return function _equalAre( src1,src2,o )
+  _.routineSupplement( _equalAre, _._entityEqual );
+
+  return _equalAre;
+
+  function _equalAre( it )
   {
 
-    _.assert( arguments.length === 3 );
+    _.assert( arguments.length === 1, 'expects single argument' );
+    _.assert( it.context );
+    _.assert( it.context.strictTyping !== undefined );
+    _.assert( it.context.containing !== undefined );
 
-    if( !src1 )
+    if( !it.src )
     return false;
 
-    if( !src2 )
+    if( !it.src2 )
     return false;
 
-    if( o.strict && !o.contain )
-    if( src1.constructor !== src2.constructor )
+    if( it.context.strictTyping )
+    if( it.src.constructor !== it.src2.constructor )
     return false;
 
-    if( o.contain )
+    /* */
+
+    var fieldsMap = Object.create( null );
+    for( var g in fieldsGroupsMap )
+    if( fieldsGroupsMap[ g ] )
+    _.mapExtend( fieldsMap, this[ g ] );
+
+    /* */
+
+    for( var f in fieldsMap )
     {
-      for( var c in src2 )
-      {
-        if( !_._entityEqual( src1[ c ],src2[ c ],o ) )
-        return false;
-      }
-      return true;
+      if( !it.looking || !it.iterator.looking )
+      break;
+      var newIt = it.begin().select( f );
+      if( !_.mapHas( it.src, f ) )
+      return end( false );
+      if( !_._entityEqual.body( newIt ) )
+      return end( false );
     }
 
     /* */
 
-    for( var f in functorOptions )
-    if( functorOptions[ f ] )
-    for( var c in src1[ f ] )
+    if( !it.context.containing )
     {
-      if( !_._entityEqual( src1[ c ],src2[ c ],o ) )
-      return false;
+      debugger;
+
+      if( !( it.src2 instanceof this.constructor ) )
+      if( _.mapKeys( _.mapBut( it.src, fieldsMap ) ).length )
+      return end( false );
+
     }
 
-    return true;
+    if( !( it.src instanceof this.constructor ) )
+    if( _.mapKeys( _.mapBut( it.src, fieldsMap,  ) ).length )
+    return end( false );
+
+    /* */
+
+    return end( true );
+
+    /* */
+
+    function end( result )
+    {
+      it.looking = false;
+      return result;
+    }
+
   }
 
 }
 
-_equalAre_functor.defaults =
-{
-  Composes : 1,
-  Aggregates : 1,
-  Associates : 1,
-  Restricts : 0,
-}
+_equalAre_functor.defaults = Object.create( null );
+
+var on = _.mapMake( _.ClassFieldsGroupsCopyable );
+var off = _.mapBut( _.ClassFieldsGroups, _.ClassFieldsGroupsCopyable );
+_.mapValsSet( on, 1 );
+_.mapValsSet( off, 0 );
+_.mapExtend( _equalAre_functor.defaults, on, off );
 
 //
 
@@ -835,62 +866,71 @@ var _equalAre = _equalAre_functor();
 
 //
 
-function equalWith( ins,o )
-{
-  var self = this;
-
-  _.assert( arguments.length === 1 || arguments.length === 2 );
-  _.assert( self._equalAre );
-
-  var o = o || Object.create( null );
-  _._entityEqualIteratorMake( o );
-
-  return self._equalAre( self,ins,o );
-}
-
-//
-
 /**
  * Is this instance same with another one. Use relation maps to compare.
  * @method identicalWith
- * @param {object} ins - another instance of the class
+ * @param {object} src - another instance of the class
  * @memberof wCopyable#
  */
 
-function identicalWith( src,o )
+function identicalWith( src, o )
 {
   var self = this;
-
   _.assert( arguments.length === 1 || arguments.length === 2 );
-
-  var o = o || Object.create( null );
-  o.strict = 1;
-  _._entityEqualIteratorMake( o );
-
-  return self.equalWith( src,o );
+  var it = identicalWith.lookContinue( identicalWith, [ self, src, o ] );
+  var result = this._equalAre( it );
+  return result;
+  // _entityEqualIteratorMake
 }
+
+_.routineSupplement( identicalWith, _.entityIdentical );
+_.assert( _.entityIdentical.lookContinue );
+_.assert( identicalWith.lookContinue );
 
 //
 
 /**
- * Is this instance same with another one. Use relation maps to compare.
+ * Is this instance equivalent with another one. Use relation maps to compare.
  * @method equivalentWith
- * @param {object} ins - another instance of the class
+ * @param {object} src - another instance of the class
  * @memberof wCopyable#
  */
 
 function equivalentWith( src,o )
 {
   var self = this;
-
+  debugger;
   _.assert( arguments.length === 1 || arguments.length === 2 );
-
-  var o = o || Object.create( null );
-  o.strict = 0;
-  _._entityEqualIteratorMake( o );
-
-  return self.equalWith( src,o );
+  var it = equivalentWith.lookContinue( equivalentWith, [ self, src, o ] );
+  debugger;
+  var result = this._equalAre( it );
+  debugger;
+  return result;
+  // _entityEqualIteratorMake
 }
+
+_.routineSupplement( equivalentWith, _.entityEquivalent );
+
+//
+
+/**
+ * Does this instance contain with another instance or map.
+ * @method contains
+ * @param {object} src - another instance of the class
+ * @memberof wCopyable#
+ */
+
+function contains( src,o )
+{
+  var self = this;
+  _.assert( arguments.length === 1 || arguments.length === 2 );
+  var it = contains.lookContinue( contains, [ self, src, o ] );
+  var result = this._equalAre( it );
+  return result;
+  // _entityEqualIteratorMake
+}
+
+_.routineSupplement( contains, _.entityContains );
 
 //
 
@@ -935,7 +975,7 @@ function _allFieldsGet()
 
   _.assert( self.instanceIs() );
 
-  var result = _.mapScreen( _allFieldsStaticGet.call( self ),self );
+  var result = _.mapOnly( self, _allFieldsStaticGet.call( self ) );
 
   return result;
 }
@@ -957,7 +997,7 @@ function _copyableFieldsGet()
 
   _.assert( self.instanceIs() );
 
-  var result = _.mapScreen( self.Self.copyableFields,self );
+  var result = _.mapOnly( self, self.Self.copyableFields );
   return result;
 }
 
@@ -965,20 +1005,20 @@ function _copyableFieldsGet()
 
 /**
  * Get map of loggable fields.
- * @method _loggableFieldsGet
+ * @method _tightFieldsGet
  * @memberof wCopyable
  */
 
-function _loggableFieldsGet()
+function _tightFieldsGet()
 {
   var self = this;
 
   if( !self.instanceIs() )
-  return _loggableFieldsStaticGet.call( self );
+  return _tightFieldsStaticGet.call( self );
 
   _.assert( self.instanceIs() );
 
-  var result = _.mapScreen( self.Self.loggableFields,self );
+  var result = _.mapOnly( self, self.Self.tightFields );
   return result;
 }
 
@@ -990,11 +1030,11 @@ function fieldDescriptorGet( nameOfField )
   var report = Object.create( null );
 
   _.assert( _.strIsNotEmpty( nameOfField ) );
-  _.assert( arguments.length === 1 );
+  _.assert( arguments.length === 1, 'expects single argument' );
 
-  for( var f in _.ClassSubfieldsGroups )
+  for( var f in _.ClassFieldsGroups )
   {
-    var facility = _.ClassSubfieldsGroups[ f ];
+    var facility = _.ClassFieldsGroups[ f ];
     if( proto[ facility ] )
     if( proto[ facility ][ nameOfField ] !== undefined )
     report[ facility ] = true;
@@ -1033,13 +1073,13 @@ function _copyableFieldsStaticGet()
 
 /**
  * Get map of loggable fields.
- * @method _loggableFieldsGet
+ * @method _tightFieldsGet
  * @memberof wCopyable#
  */
 
-function _loggableFieldsStaticGet()
+function _tightFieldsStaticGet()
 {
-  return _.prototypeLoggableFieldsGet( this );
+  return _.prototypeFieldsTightGet( this );
 }
 
 //
@@ -1178,7 +1218,7 @@ var Statics =
 
   '_allFieldsGet' : _allFieldsStaticGet,
   '_copyableFieldsGet' : _copyableFieldsStaticGet,
-  '_loggableFieldsGet' : _loggableFieldsStaticGet,
+  '_tightFieldsGet' : _tightFieldsStaticGet,
 
   hasField : hasField,
 
@@ -1196,7 +1236,7 @@ Object.freeze( Medials );
 Object.freeze( Statics );
 
 // --
-// proto
+// define class
 // --
 
 var Supplement =
@@ -1233,13 +1273,14 @@ var Supplement =
   toStr : toStr,
 
 
-  // tester
+  // checker
 
   _equalAre_functor : _equalAre_functor,
   _equalAre : _equalAre,
-  equalWith : equalWith,
+
   identicalWith : identicalWith,
   equivalentWith : equivalentWith,
+  contains : contains,
 
   instanceIs : instanceIs,
   prototypeIs : prototypeIs,
@@ -1250,7 +1291,7 @@ var Supplement =
 
   '_allFieldsGet' : _allFieldsGet,
   '_copyableFieldsGet' : _copyableFieldsGet,
-  '_loggableFieldsGet' : _loggableFieldsGet,
+  '_tightFieldsGet' : _tightFieldsGet,
   fieldDescriptorGet : fieldDescriptorGet,
 
 
