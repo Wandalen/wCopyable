@@ -1,6 +1,6 @@
 {
   "name": "wCopyable",
-  "version": "0.4.31",
+  "version": "0.4.32",
   "engine": "node >= 6.0.0",
   "description": "Copyable mixin. Makes objects of a class able to be copied/cloned.",
   "license": "MIT",
@@ -52,6 +52,5 @@
     "destructor",
     "init",
     "finit"
-
   ]
 }
