@@ -41,7 +41,7 @@ function fields( test )
 {
   var self = this;
 
-  test.description = 'allFields and copyableFields should act differently with instance and prototype/constructor context';
+  test.description = 'fieldsOfRelationshipsGroups and fieldsOfCopyableGroups should act differently with instance and prototype/constructor context';
 
   function BasicConstructor( o )
   {
@@ -98,7 +98,7 @@ function fields( test )
 
   _.Copyable.mixin( BasicConstructor );
 
-  var allFields =
+  var fieldsOfRelationshipsGroups =
   {
     co : 1,
     as : 1,
@@ -106,22 +106,22 @@ function fields( test )
     re : 1,
   }
 
-  var copyableFields =
+  var fieldsOfCopyableGroups =
   {
     co : 1,
     as : 1,
     ag : 1,
   }
 
-  test.identical( BasicConstructor.allFields,allFields );
-  test.identical( BasicConstructor.prototype.allFields,allFields );
+  test.identical( BasicConstructor.fieldsOfRelationshipsGroups,fieldsOfRelationshipsGroups );
+  test.identical( BasicConstructor.prototype.fieldsOfRelationshipsGroups,fieldsOfRelationshipsGroups );
 
-  test.identical( BasicConstructor.copyableFields,copyableFields );
-  test.identical( BasicConstructor.prototype.copyableFields,copyableFields );
+  test.identical( BasicConstructor.fieldsOfCopyableGroups,fieldsOfCopyableGroups );
+  test.identical( BasicConstructor.prototype.fieldsOfCopyableGroups,fieldsOfCopyableGroups );
 
   /* */
 
-  var allFields =
+  var fieldsOfRelationshipsGroups =
   {
     co : 3,
     as : 3,
@@ -129,16 +129,16 @@ function fields( test )
     re : 3,
   }
 
-  var copyableFields =
+  var fieldsOfCopyableGroups =
   {
     co : 3,
     as : 3,
     ag : 3,
   }
 
-  var instance = new BasicConstructor( allFields );
+  var instance = new BasicConstructor( fieldsOfRelationshipsGroups );
 
-  var allFields =
+  var fieldsOfRelationshipsGroups =
   {
     co : 3,
     as : 3,
@@ -146,8 +146,8 @@ function fields( test )
     re : 3,
   }
 
-  test.identical( instance.allFields,allFields );
-  test.identical( instance.copyableFields,copyableFields );
+  test.identical( instance.fieldsOfRelationshipsGroups,fieldsOfRelationshipsGroups );
+  test.identical( instance.fieldsOfCopyableGroups,fieldsOfCopyableGroups );
 
 }
 
@@ -157,7 +157,7 @@ function equal( test )
 {
   var self = this;
 
-  test.description = 'allFields and copyableFields should act differently with instance and prototype/constructor context';
+  test.description = 'fieldsOfRelationshipsGroups and fieldsOfCopyableGroups should act differently with instance and prototype/constructor context';
 
   function BasicConstructor( o )
   {
@@ -215,7 +215,7 @@ function equal( test )
 
   _.Copyable.mixin( BasicConstructor );
 
-  var allFields =
+  var fieldsOfRelationshipsGroups =
   {
     co : 1,
     as : 1,
@@ -224,16 +224,16 @@ function equal( test )
     me : 1,
   }
 
-  var copyableFields =
+  var fieldsOfCopyableGroups =
   {
     co : 1,
     as : 1,
     ag : 1,
   }
 
-  var all1 = new BasicConstructor( allFields );
-  var all2 = new BasicConstructor( allFields );
-  var copyable1 = new BasicConstructor( copyableFields );
+  var all1 = new BasicConstructor( fieldsOfRelationshipsGroups );
+  var all2 = new BasicConstructor( fieldsOfRelationshipsGroups );
+  var copyable1 = new BasicConstructor( fieldsOfCopyableGroups );
   var none1 = new BasicConstructor();
 
   test.description = 'identicalWith itself'; /* */
