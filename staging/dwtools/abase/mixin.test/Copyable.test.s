@@ -41,7 +41,7 @@ function fields( test )
 {
   var self = this;
 
-  test.description = 'fieldsOfRelationshipsGroups and fieldsOfCopyableGroups should act differently with instance and prototype/constructor context';
+  test.case = 'fieldsOfRelationshipsGroups and fieldsOfCopyableGroups should act differently with instance and prototype/constructor context';
 
   function BasicConstructor( o )
   {
@@ -157,7 +157,7 @@ function equal( test )
 {
   var self = this;
 
-  test.description = 'fieldsOfRelationshipsGroups and fieldsOfCopyableGroups should act differently with instance and prototype/constructor context';
+  test.case = 'fieldsOfRelationshipsGroups and fieldsOfCopyableGroups should act differently with instance and prototype/constructor context';
 
   function BasicConstructor( o )
   {
@@ -236,7 +236,7 @@ function equal( test )
   var copyable1 = new BasicConstructor( fieldsOfCopyableGroups );
   var none1 = new BasicConstructor();
 
-  test.description = 'identicalWith itself'; /* */
+  test.case = 'identicalWith itself'; /* */
 
   var expected = true;
   var got = all1.identicalWith( all1 );
@@ -250,7 +250,7 @@ function equal( test )
   var got = none1.identicalWith( none1 );
   test.identical( got, expected );
 
-  test.description = 'equivalentWith itself'; /* */
+  test.case = 'equivalentWith itself'; /* */
 
   var expected = true;
   var got = all1.equivalentWith( all1 );
@@ -264,7 +264,7 @@ function equal( test )
   var got = none1.equivalentWith( none1 );
   test.identical( got, expected );
 
-  test.description = 'contains itself'; /* */
+  test.case = 'contains itself'; /* */
 
   var expected = true;
   var got = all1.contains( all1 );
@@ -278,7 +278,7 @@ function equal( test )
   var got = none1.contains( none1 );
   test.identical( got, expected );
 
-  test.description = 'identicalWith trivial';
+  test.case = 'identicalWith trivial';
 
   var expected = true;
   var got = all1.identicalWith( all2 );
@@ -288,7 +288,7 @@ function equal( test )
   var got = all2.identicalWith( all1 );
   test.identical( got, expected );
 
-  test.description = 'equivalentWith trivial';
+  test.case = 'equivalentWith trivial';
 
   var expected = true;
   var got = all1.equivalentWith( all2 );
@@ -298,7 +298,7 @@ function equal( test )
   var got = all2.equivalentWith( all1 );
   test.identical( got, expected );
 
-  test.description = 'contains trivial';
+  test.case = 'contains trivial';
 
   var expected = true;
   var got = all1.contains( all2 );
@@ -308,25 +308,25 @@ function equal( test )
   var got = all2.contains( all1 );
   test.identical( got, expected );
 
-  test.description = 'identicalWith copyable';
+  test.case = 'identicalWith copyable';
 
   var expected = true;
   var got = all1.identicalWith( copyable1 );
   test.identical( got, expected );
 
-  test.description = 'equivalentWith copyable';
+  test.case = 'equivalentWith copyable';
 
   var expected = true;
   var got = all1.equivalentWith( copyable1 );
   test.identical( got, expected );
 
-  test.description = 'contains copyable';
+  test.case = 'contains copyable';
 
   var expected = true;
   var got = all1.contains( copyable1 );
   test.identical( got, expected );
 
-  test.description = 'identicalWith map';
+  test.case = 'identicalWith map';
 
   var map =
   {
@@ -343,7 +343,7 @@ function equal( test )
   var got = all1.identicalWith( map,{ strictTyping : 0 } );
   test.identical( got, expected );
 
-  test.description = 'not identicalWith map';
+  test.case = 'not identicalWith map';
 
   var map =
   {
@@ -360,7 +360,7 @@ function equal( test )
   var got = all1.identicalWith( map, { strictTyping : 0 } );
   test.identical( got, expected );
 
-  test.description = 'not identicalWith map having redundant fields';
+  test.case = 'not identicalWith map having redundant fields';
 
   var map =
   {
@@ -378,7 +378,7 @@ function equal( test )
   var got = all1.identicalWith( map, { strictTyping : 0 } );
   test.identical( got, expected );
 
-  test.description = 'not equivalentWith map having redundant fields';
+  test.case = 'not equivalentWith map having redundant fields';
 
   var map =
   {
@@ -396,7 +396,7 @@ function equal( test )
   var got = all1.equivalentWith( map, { strictTyping : 0 } );
   test.identical( got, expected );
 
-  test.description = 'not contains map having redundant fields';
+  test.case = 'not contains map having redundant fields';
 
   var map =
   {
@@ -410,7 +410,7 @@ function equal( test )
   var got = all1.contains( map );
   test.identical( got, expected );
 
-  test.description = 'not identicalWith map having restricts';
+  test.case = 'not identicalWith map having restricts';
 
   var map =
   {
@@ -428,7 +428,7 @@ function equal( test )
   var got = all1.identicalWith( map, { strictTyping : 0 } );
   test.identical( got, expected );
 
-  test.description = 'not contains map having restricts';
+  test.case = 'not contains map having restricts';
 
   var map =
   {
@@ -442,7 +442,7 @@ function equal( test )
   var got = all1.contains( map );
   test.identical( got, expected );
 
-  test.description = 'identicalWith map having medials';
+  test.case = 'identicalWith map having medials';
 
   var map =
   {
@@ -460,7 +460,7 @@ function equal( test )
   var got = all1.identicalWith( map,{ strictTyping : 0 } );
   test.identical( got, expected );
 
-  test.description = 'contains map having medials';
+  test.case = 'contains map having medials';
 
   var map =
   {
@@ -474,7 +474,7 @@ function equal( test )
   var got = all1.contains( map );
   test.identical( got, expected );
 
-  test.description = 'contains copyable';
+  test.case = 'contains copyable';
 
   var expected = true;
   var got = all1.contains( copyable1 );
