@@ -828,7 +828,7 @@ function _equalAre_functor( fieldsGroupsMap )
     }
 
     if( !( it.src instanceof this.constructor ) )
-    if( _.mapKeys( _.mapBut( it.src, fieldsMap,  ) ).length )
+    if( _.mapKeys( _.mapBut( it.src, fieldsMap ) ).length )
     return end( false );
 
     /* */
