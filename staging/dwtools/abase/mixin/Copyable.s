@@ -215,6 +215,42 @@ function finitedIs()
 
 //
 
+function from( src )
+{
+  var constr = this.Self;
+  if( src instanceof constr )
+  {
+    _.assert( arguments.length === 1 );
+    return src;
+  }
+  return new( _.routineJoin( constr, constr, arguments ) );
+}
+
+//
+
+function froms( srcs )
+{
+  var constr = this.Self;
+  _.assert( arguments.length === 1 );
+  if( srcs instanceof constr )
+  {
+    _.assert( arguments.length === 1 );
+    return srcs;
+  }
+  if( _._arrayLike( srcs ) )
+  {
+    _.assert( arguments.length === 1 );
+    var result = srcs.map( ( src ) =>
+    {
+      return constr.from( src );
+    });
+    return result;
+  }
+  return constr.from.apply( constr, arguments );
+}
+
+//
+
 /**
  * Extend by data from another instance.
  * @param {object} src - another isntance.
@@ -1242,6 +1278,9 @@ var Medials =
 var Statics =
 {
 
+  from : from,
+  froms : froms,
+
   instanceIs : instanceIs,
   prototypeIs : prototypeIs,
   constructorIs : constructorIs,
@@ -1276,6 +1315,9 @@ var Supplement =
   init : init,
   finit : finit,
   finitedIs : finitedIs,
+
+  from : from,
+  froms : froms,
 
   extend : extend,
   copy : copy,
