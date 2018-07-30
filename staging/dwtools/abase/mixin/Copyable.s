@@ -44,7 +44,7 @@ var _ObjectHasOwnProperty = Object.hasOwnProperty;
  * @memberof wCopyable#
  */
 
-function onMixin( dstClass )
+function onMixin( mixinDescriptor, dstClass )
 {
 
   var dstPrototype = dstClass.prototype;
@@ -138,7 +138,7 @@ function onMixin( dstClass )
   _.assert( dstClass.prototype._fieldsOfRelationshipsGroupsGet );
   _.assert( dstClass.fieldsOfRelationshipsGroups );
   _.assert( dstClass.prototype.fieldsOfRelationshipsGroups );
-  _.assert( _.mapKeys( dstClass.fieldsOfRelationshipsGroups ).length );
+  // _.assert( _.mapKeys( dstClass.fieldsOfRelationshipsGroups ).length );
 
   _.assert( dstPrototype._fieldsOfRelationshipsGroupsGet === _fieldsOfRelationshipsGroupsGet );
   _.assert( dstPrototype._fieldsOfCopyableGroupsGet === _fieldsOfCopyableGroupsGet );
