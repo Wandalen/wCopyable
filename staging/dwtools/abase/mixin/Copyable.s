@@ -33,7 +33,7 @@ if( typeof module !== 'undefined' )
 //
 
 var _global = _global_; var _ = _global_.wTools;
-var _hasOwnProperty = Object.hasOwnProperty;
+var _ObjectHasOwnProperty = Object.hasOwnProperty;
 
 //
 
@@ -57,7 +57,7 @@ function onMixin( dstClass )
   _.assert( arguments.length === 2, 'expects exactly two arguments' );
   _.assert( _.routineIs( dstClass ), () => 'mixin expects constructor, but got ' + _.strPrimitiveTypeOf( dstClass ) );
   _.assertMapOwnAll( dstPrototype, has );
-  _.assert( _hasOwnProperty.call( dstPrototype,'constructor' ), 'prototype of object should has own constructor' );
+  _.assert( _ObjectHasOwnProperty.call( dstPrototype,'constructor' ), 'prototype of object should has own constructor' );
 
   /* */
 
