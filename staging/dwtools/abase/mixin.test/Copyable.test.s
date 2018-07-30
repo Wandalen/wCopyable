@@ -500,7 +500,7 @@ var Self =
   {
 
     fields : fields,
-    equal : equal
+    equal : equal,
 
   },
 

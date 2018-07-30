@@ -39,33 +39,37 @@ var _hasOwnProperty = Object.hasOwnProperty;
 
 /**
  * Mixin this into prototype of another object.
- * @param {object} cls - constructor of class to mixin.
- * @method _mixin
+ * @param {object} dstClass - constructor of class to mixin.
+ * @method onMixin
  * @memberof wCopyable#
  */
 
-function _mixin( cls )
+function onMixin( dstClass )
 {
 
-  var dstProto = cls.prototype;
+  var dstPrototype = dstClass.prototype;
   var has =
   {
     Composes : 'Composes',
     constructor : 'constructor',
   }
 
-  _.assert( arguments.length === 1, 'expects single argument' );
-  _.assert( _.routineIs( cls ),'mixin expects constructor, but got',_.strPrimitiveTypeOf( cls ) );
-  _.assertMapOwnAll( dstProto,has );
-  _.assert( _hasOwnProperty.call( dstProto,'constructor' ),'prototype of object should has own constructor' );
+  _.assert( arguments.length === 2, 'expects exactly two arguments' );
+  _.assert( _.routineIs( dstClass ), () => 'mixin expects constructor, but got ' + _.strPrimitiveTypeOf( dstClass ) );
+  _.assertMapOwnAll( dstPrototype, has );
+  _.assert( _hasOwnProperty.call( dstPrototype,'constructor' ), 'prototype of object should has own constructor' );
 
   /* */
 
-  _.mixinApply
-  ({
-    dstProto : dstProto,
-    descriptor : Self,
-  });
+  // debugger;
+  _.mixinApply( this, dstPrototype );
+  // debugger;
+
+  // _.mixinApply
+  // ({
+  //   dstPrototype : dstPrototype,
+  //   descriptor : Self,
+  // });
 
   /* instance accessors */
 
@@ -75,19 +79,20 @@ function _mixin( cls )
     Self : readOnly,
     Parent : readOnly,
     className : readOnly,
+    lowName : readOnly,
+    nickName : readOnly,
+    uname : readOnly,
+    // uniqueName : readOnly,
 
     fieldsOfRelationshipsGroups : readOnly,
     fieldsOfCopyableGroups : readOnly,
     fieldsOfTightGroups : readOnly,
     fieldsOfInputGroups : readOnly,
-
-    nickName : readOnly,
-    uniqueName : readOnly,
   }
 
   _.accessorReadOnly
   ({
-    object : dstProto,
+    object : dstPrototype,
     names : names,
     preserveValues : 0,
     strict : 0,
@@ -102,6 +107,7 @@ function _mixin( cls )
     Self : readOnly,
     Parent : readOnly,
     className : readOnly,
+    lowName : readOnly,
     fieldsOfCopyableGroups : readOnly,
     fieldsOfTightGroups : readOnly,
     fieldsOfRelationshipsGroups : readOnly,
@@ -109,7 +115,7 @@ function _mixin( cls )
 
   _.accessorReadOnly
   ({
-    object : cls,
+    object : dstClass,
     names : names,
     preserveValues : 0,
     strict : 0,
@@ -119,46 +125,33 @@ function _mixin( cls )
 
   /* */
 
-  // var names =
-  // {
-  //   Type : 'Type',
-  //   type : 'type',
-  //   fields : 'fields',
-  // }
-  //
-  // _.accessorForbid
-  // ({
-  //   object : dstProto,
-  //   names : names,
-  //   preserveValues : 0,
-  //   strict : 0,
-  // });
+  if( !Config.debug )
+  return;
 
-  /* */
+  if( _.routineIs( dstPrototype._equalAre ) )
+  _.assert( dstPrototype._equalAre.length <= 1 );
 
-  if( Config.debug )
-  {
+  if( _.routineIs( dstPrototype.equalWith ) )
+  _.assert( dstPrototype.equalWith.length <= 2 );
 
-    if( _.routineIs( dstProto._equalAre ) )
-    _.assert( dstProto._equalAre.length <= 1 );
+  _.assert( dstClass._fieldsOfRelationshipsGroupsGet );
+  _.assert( dstClass.prototype._fieldsOfRelationshipsGroupsGet );
+  _.assert( dstClass.fieldsOfRelationshipsGroups );
+  _.assert( dstClass.prototype.fieldsOfRelationshipsGroups );
+  _.assert( _.mapKeys( dstClass.fieldsOfRelationshipsGroups ).length );
 
-    if( _.routineIs( dstProto.equalWith ) )
-    _.assert( dstProto.equalWith.length <= 2 );
+  _.assert( dstPrototype._fieldsOfRelationshipsGroupsGet === _fieldsOfRelationshipsGroupsGet );
+  _.assert( dstPrototype._fieldsOfCopyableGroupsGet === _fieldsOfCopyableGroupsGet );
+  _.assert( dstPrototype._fieldsOfTightGroupsGet === _fieldsOfTightGroupsGet );
+  _.assert( dstPrototype._fieldsOfInputGroupsGet === _fieldsOfInputGroupsGet );
 
-    _.assert( dstProto._fieldsOfRelationshipsGroupsGet === _fieldsOfRelationshipsGroupsGet );
-    _.assert( dstProto._fieldsOfCopyableGroupsGet === _fieldsOfCopyableGroupsGet );
-    _.assert( dstProto._fieldsOfTightGroupsGet === _fieldsOfTightGroupsGet );
-    _.assert( dstProto._fieldsOfInputGroupsGet === _fieldsOfInputGroupsGet );
+  _.assert( dstPrototype.constructor._fieldsOfRelationshipsGroupsGet === _fieldsOfRelationshipsGroupsStaticGet );
+  _.assert( dstPrototype.constructor._fieldsOfCopyableGroupsGet === _fieldsOfCopyableGroupsStaticGet );
+  _.assert( dstPrototype.constructor._fieldsOfTightGroupsGet === _fieldsOfTightGroupsStaticGet );
+  _.assert( dstPrototype.constructor._fieldsOfInputGroupsGet === _fieldsOfInputGroupsStaticGet );
 
-    _.assert( dstProto.constructor._fieldsOfRelationshipsGroupsGet === _fieldsOfRelationshipsGroupsStaticGet );
-    _.assert( dstProto.constructor._fieldsOfCopyableGroupsGet === _fieldsOfCopyableGroupsStaticGet );
-    _.assert( dstProto.constructor._fieldsOfTightGroupsGet === _fieldsOfTightGroupsStaticGet );
-    _.assert( dstProto.constructor._fieldsOfInputGroupsGet === _fieldsOfInputGroupsStaticGet );
-
-    _.assert( dstProto.finit.name !== 'finitEventHandler', 'wEventHandler mixin should goes after wCopyable mixin.' );
-    _.assert( !_.mixinHas( dstProto,'wEventHandler' ), 'wEventHandler mixin should goes after wCopyable mixin.' );
-
-  }
+  _.assert( dstPrototype.finit.name !== 'finitEventHandler', 'wEventHandler mixin should goes after wCopyable mixin.' );
+  _.assert( !_.mixinHas( dstPrototype,'wEventHandler' ), 'wEventHandler mixin should goes after wCopyable mixin.' );
 
 }
 
@@ -215,7 +208,7 @@ function finitedIs()
 
 //
 
-function from( src )
+function From( src )
 {
   var constr = this.Self;
   if( src instanceof constr )
@@ -228,7 +221,7 @@ function from( src )
 
 //
 
-function froms( srcs )
+function Froms( srcs )
 {
   var constr = this.Self;
   _.assert( arguments.length === 1 );
@@ -242,11 +235,11 @@ function froms( srcs )
     _.assert( arguments.length === 1 );
     var result = srcs.map( ( src ) =>
     {
-      return constr.from( src );
+      return constr.From( src );
     });
     return result;
   }
-  return constr.from.apply( constr, arguments );
+  return constr.From.apply( constr, arguments );
 }
 
 //
@@ -555,7 +548,7 @@ function _traverseAct( it )
   _.assert( src );
   _.assert( proto );
   _.assert( _.strIs( it.path ) );
-  _.assert( _.objectIs( proto ),'expects object ( proto ), but got',_.strTypeOf( proto ) );
+  _.assert( _.objectIs( proto ),'expects object {-proto-}, but got',_.strTypeOf( proto ) );
   _.assert( !it.customFields || _.objectIs( it.customFields ) );
   _.assert( it.level >= 0 );
   _.assert( _.numberIs( it.copyingDegree ) );
@@ -1099,7 +1092,7 @@ function fieldDescriptorGet( nameOfField )
 //
 
 /**
- * Get map of all relationships fields.
+ * Get map of all relations fields.
  * @method _fieldsOfRelationshipsGroupsStaticGet
  * @memberof wCopyable#
  */
@@ -1190,6 +1183,15 @@ function _ParentGet()
 // name
 // --
 
+function _lowNameGet()
+{
+  var name = this.className;
+  name = _.strDecapitalize( name );
+  return name;
+}
+
+//
+
 /**
  * Return name of class constructor.
  * @method _classNameGet
@@ -1199,7 +1201,7 @@ function _ParentGet()
 function _classNameGet()
 {
   _.assert( this.constructor === null || this.constructor.name || this.constructor._name );
-  return this.constructor ? this.constructor.name || this.constructor._name : '';
+  return this.constructor ? ( this.constructor.name || this.constructor._name ) : '';
 }
 
 //
@@ -1232,27 +1234,27 @@ function unameGet()
 
 
 //
-
-/**
- * Unique name of the object.
- * @method _uniqueNameGet
- * @memberof wCopyable#
- */
-
-function _uniqueNameGet()
-{
-  var self = this;
-  var result = '';
-  var index = '';
-  if( _.numberIs( self.instanceIndex ) )
-  result += '#in' + self.instanceIndex;
-  if( Object.hasOwnProperty.call( self,'id' ) )
-  result += '#id' + self.id;
-  return self.className + '( ' + result + ' )';
-}
+//
+// /**
+//  * Unique name of the object.
+//  * @method _uniqueNameGet
+//  * @memberof wCopyable#
+//  */
+//
+// function _uniqueNameGet()
+// {
+//   var self = this;
+//   var result = '';
+//   var index = '';
+//   if( _.numberIs( self.instanceIndex ) )
+//   result += '#in' + self.instanceIndex;
+//   if( Object.hasOwnProperty.call( self,'id' ) )
+//   result += '#id' + self.id;
+//   return self.className + '( ' + result + ' )';
+// }
 
 // --
-// relationships
+// relations
 // --
 
 var Composes =
@@ -1278,8 +1280,8 @@ var Medials =
 var Statics =
 {
 
-  from : from,
-  froms : froms,
+  From : From,
+  Froms : Froms,
 
   instanceIs : instanceIs,
   prototypeIs : prototypeIs,
@@ -1295,6 +1297,7 @@ var Statics =
   '_SelfGet' : _SelfGet,
   '_ParentGet' : _ParentGet,
   '_classNameGet' : _classNameGet,
+  '_lowNameGet' : _lowNameGet,
 
 }
 
@@ -1316,8 +1319,8 @@ var Supplement =
   finit : finit,
   finitedIs : finitedIs,
 
-  from : from,
-  froms : froms,
+  From : From,
+  Froms : Froms,
 
   extend : extend,
   copy : copy,
@@ -1340,11 +1343,9 @@ var Supplement =
   cloneOverriding : cloneOverriding,
   cloneEmpty : cloneEmpty,
 
-
   // etc
 
   toStr : toStr,
-
 
   // checker
 
@@ -1359,7 +1360,6 @@ var Supplement =
   prototypeIs : prototypeIs,
   constructorIs : constructorIs,
 
-
   // field
 
   '_fieldsOfRelationshipsGroupsGet' : _fieldsOfRelationshipsGroupsGet,
@@ -1368,21 +1368,18 @@ var Supplement =
   '_fieldsOfInputGroupsGet' : _fieldsOfInputGroupsGet,
   fieldDescriptorGet : fieldDescriptorGet,
 
-
   // class
 
   '_SelfGet' : _SelfGet,
   '_ParentGet' : _ParentGet,
 
-
   // name
 
+  '_lowNameGet' : _lowNameGet,
   '_classNameGet' : _classNameGet,
   '_nickNameGet' : _nickNameGet,
-  '_uniqueNameGet' : _uniqueNameGet,
-
+  // '_uniqueNameGet' : _uniqueNameGet,
   unameGet : unameGet,
-
 
   //
 
@@ -1400,19 +1397,20 @@ var Supplement =
 var Self = _.mixinMake
 ({
   supplement : Supplement,
-  _mixin : _mixin,
+  onMixin : onMixin,
   name : 'wCopyable',
-  nameShort : 'Copyable',
+  shortName : 'Copyable',
 });
 
-_global_[ Self.name ] = _[ Self.nameShort ] = Self;
+_global_[ Self.name ] = _[ Self.shortName ] = Self;
 
 //
 
 _.assert( !Self.copy );
 _.assert( Self.prototype.copy );
-_.assert( Self.nameShort );
-_.assert( Self._mixin );
+_.assert( Self.shortName );
+_.assert( Self.__mixin__ );
+_.assert( !Self.onMixin );
 _.assert( Self.mixin );
 
 // --
