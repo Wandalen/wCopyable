@@ -61,9 +61,7 @@ function onMixin( mixinDescriptor, dstClass )
 
   /* */
 
-  // debugger;
   _.mixinApply( this, dstPrototype );
-  // debugger;
 
   // _.mixinApply
   // ({
@@ -134,10 +132,10 @@ function onMixin( mixinDescriptor, dstClass )
   if( _.routineIs( dstPrototype.equalWith ) )
   _.assert( dstPrototype.equalWith.length <= 2 );
 
-  _.assert( dstClass._fieldsOfRelationshipsGroupsGet );
-  _.assert( dstClass.prototype._fieldsOfRelationshipsGroupsGet );
-  _.assert( dstClass.fieldsOfRelationshipsGroups );
-  _.assert( dstClass.prototype.fieldsOfRelationshipsGroups );
+  _.assert( !!dstClass._fieldsOfRelationshipsGroupsGet );
+  _.assert( !!dstClass.prototype._fieldsOfRelationshipsGroupsGet );
+  _.assert( !!dstClass.fieldsOfRelationshipsGroups );
+  _.assert( !!dstClass.prototype.fieldsOfRelationshipsGroups );
   // _.assert( _.mapKeys( dstClass.fieldsOfRelationshipsGroups ).length );
 
   _.assert( dstPrototype._fieldsOfRelationshipsGroupsGet === _fieldsOfRelationshipsGroupsGet );
@@ -230,7 +228,7 @@ function Froms( srcs )
     _.assert( arguments.length === 1 );
     return srcs;
   }
-  if( _._arrayLike( srcs ) )
+  if( _.arrayLike( srcs ) )
   {
     _.assert( arguments.length === 1 );
     var result = srcs.map( ( src ) =>
@@ -482,7 +480,7 @@ function _traverseActPre( it )
 {
   var self = this;
 
-  _.assert( it );
+  _.assert( _.objectIs( it ) );
   _.assert( arguments.length === 1, 'expects single argument' );
 
   /* adjust */
@@ -525,7 +523,7 @@ function _traverseAct( it )
 
   self._traverseActPre( it );
 
-  _.assert( it.proto );
+  _.assert( _.objectIs( it.proto ) );
 
   /* var */
 
@@ -545,14 +543,14 @@ function _traverseAct( it )
   _.assertMapHasNoUndefine( it.iterator );
   _.assert( arguments.length === 1, 'expects single argument' );
   _.assert( src !== dst );
-  _.assert( src );
-  _.assert( proto );
+  _.assert( !!src );
+  _.assert( _.objectIs( proto ) );
   _.assert( _.strIs( it.path ) );
   _.assert( _.objectIs( proto ),'expects object {-proto-}, but got',_.strTypeOf( proto ) );
   _.assert( !it.customFields || _.objectIs( it.customFields ) );
   _.assert( it.level >= 0 );
   _.assert( _.numberIs( it.copyingDegree ) );
-  _.assert( self.__traverseAct );
+  _.assert( _.routineIs( self.__traverseAct ) );
 
   if( _.instanceIsStandard( src ) )
   _.assertMapOwnOnly( src, [ Composes, Aggregates, Associates, Restricts ], 'options( instance ) should not have fields' );
@@ -915,8 +913,8 @@ function identicalWith( src, o )
 }
 
 _.routineSupplement( identicalWith, _.entityIdentical );
-_.assert( _.entityIdentical.lookContinue );
-_.assert( identicalWith.lookContinue );
+_.assert( !!_.entityIdentical.lookContinue );
+_.assert( !!identicalWith.lookContinue );
 
 //
 
@@ -1200,7 +1198,7 @@ function _lowNameGet()
 
 function _classNameGet()
 {
-  _.assert( this.constructor === null || this.constructor.name || this.constructor._name );
+  _.assert( this.constructor === null || _.strIs( this.constructor.name ) || _.strIs( this.constructor._name ) );
   return this.constructor ? ( this.constructor.name || this.constructor._name ) : '';
 }
 
@@ -1407,11 +1405,11 @@ _global_[ Self.name ] = _[ Self.shortName ] = Self;
 //
 
 _.assert( !Self.copy );
-_.assert( Self.prototype.copy );
-_.assert( Self.shortName );
-_.assert( Self.__mixin__ );
+_.assert( _.routineIs( Self.prototype.copy ) );
+_.assert( _.strIs( Self.shortName ) );
+_.assert( _.objectIs( Self.__mixin__ ) );
 _.assert( !Self.onMixin );
-_.assert( Self.mixin );
+_.assert( _.routineIs( Self.mixin ) );
 
 // --
 // export
