@@ -809,7 +809,7 @@ function _equalAre_functor( fieldsGroupsMap )
   {
 
     _.assert( arguments.length === 1, 'expects single argument' );
-    _.assert( it.context );
+    _.assert( _.objectIs( it.context ) );
     _.assert( it.context.strictTyping !== undefined );
     _.assert( it.context.containing !== undefined );
 
