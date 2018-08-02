@@ -81,7 +81,6 @@ function fields( test )
 
   var extend =
   {
-    constructor : BasicConstructor,
     Composes : Composes,
     Aggregates : Aggregates,
     Associates : Associates,
@@ -198,7 +197,6 @@ function equal( test )
 
   var extend =
   {
-    constructor : BasicConstructor,
     Composes : Composes,
     Aggregates : Aggregates,
     Associates : Associates,
