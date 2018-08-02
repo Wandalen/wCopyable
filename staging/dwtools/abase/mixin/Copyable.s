@@ -82,7 +82,7 @@ function onMixin( mixinDescriptor, dstClass )
     uname : readOnly,
     // uniqueName : readOnly,
 
-    fieldsOfRelationshipsGroups : readOnly,
+    fieldsOfRelationsGroups : readOnly,
     fieldsOfCopyableGroups : readOnly,
     fieldsOfTightGroups : readOnly,
     fieldsOfInputGroups : readOnly,
@@ -108,7 +108,7 @@ function onMixin( mixinDescriptor, dstClass )
     lowName : readOnly,
     fieldsOfCopyableGroups : readOnly,
     fieldsOfTightGroups : readOnly,
-    fieldsOfRelationshipsGroups : readOnly,
+    fieldsOfRelationsGroups : readOnly,
   }
 
   _.accessorReadOnly
@@ -132,18 +132,18 @@ function onMixin( mixinDescriptor, dstClass )
   if( _.routineIs( dstPrototype.equalWith ) )
   _.assert( dstPrototype.equalWith.length <= 2 );
 
-  _.assert( !!dstClass._fieldsOfRelationshipsGroupsGet );
-  _.assert( !!dstClass.prototype._fieldsOfRelationshipsGroupsGet );
-  _.assert( !!dstClass.fieldsOfRelationshipsGroups );
-  _.assert( !!dstClass.prototype.fieldsOfRelationshipsGroups );
-  // _.assert( _.mapKeys( dstClass.fieldsOfRelationshipsGroups ).length );
+  _.assert( !!dstClass.prototype._fieldsOfRelationsGroupsGet );
+  _.assert( !!dstClass._fieldsOfRelationsGroupsGet );
+  _.assert( !!dstClass.fieldsOfRelationsGroups );
+  _.assert( !!dstClass.prototype.fieldsOfRelationsGroups );
+  // _.assert( _.mapKeys( dstClass.fieldsOfRelationsGroups ).length );
 
-  _.assert( dstPrototype._fieldsOfRelationshipsGroupsGet === _fieldsOfRelationshipsGroupsGet );
+  _.assert( dstPrototype._fieldsOfRelationsGroupsGet === _fieldsOfRelationsGroupsGet );
   _.assert( dstPrototype._fieldsOfCopyableGroupsGet === _fieldsOfCopyableGroupsGet );
   _.assert( dstPrototype._fieldsOfTightGroupsGet === _fieldsOfTightGroupsGet );
   _.assert( dstPrototype._fieldsOfInputGroupsGet === _fieldsOfInputGroupsGet );
 
-  _.assert( dstPrototype.constructor._fieldsOfRelationshipsGroupsGet === _fieldsOfRelationshipsGroupsStaticGet );
+  _.assert( dstPrototype.constructor._fieldsOfRelationsGroupsGet === _fieldsOfRelationsGroupsStaticGet );
   _.assert( dstPrototype.constructor._fieldsOfCopyableGroupsGet === _fieldsOfCopyableGroupsStaticGet );
   _.assert( dstPrototype.constructor._fieldsOfTightGroupsGet === _fieldsOfTightGroupsStaticGet );
   _.assert( dstPrototype.constructor._fieldsOfInputGroupsGet === _fieldsOfInputGroupsStaticGet );
@@ -876,8 +876,8 @@ function _equalAre_functor( fieldsGroupsMap )
 
 _equalAre_functor.defaults = Object.create( null );
 
-var on = _.mapMake( _.ClassFieldsGroupsCopyable );
-var off = _.mapBut( _.ClassFieldsGroups, _.ClassFieldsGroupsCopyable );
+var on = _.mapMake( _.DefaultFieldsGroupsCopyable );
+var off = _.mapBut( _.DefaultFieldsGroups, _.DefaultFieldsGroupsCopyable );
 _.mapValsSet( on, 1 );
 _.mapValsSet( off, 0 );
 _.mapExtend( _equalAre_functor.defaults, on, off );
@@ -991,20 +991,20 @@ function constructorIs()
 
 /**
  * Get map of all fields.
- * @method _fieldsOfRelationshipsGroupsGet
+ * @method _fieldsOfRelationsGroupsGet
  * @memberof wCopyable
  */
 
-function _fieldsOfRelationshipsGroupsGet()
+function _fieldsOfRelationsGroupsGet()
 {
   var self = this;
 
   if( !self.instanceIs() )
-  return _fieldsOfRelationshipsGroupsStaticGet.call( self );
+  return _fieldsOfRelationsGroupsStaticGet.call( self );
 
   _.assert( self.instanceIs() );
 
-  var result = _.mapOnly( self, _fieldsOfRelationshipsGroupsStaticGet.call( self ) );
+  var result = _.mapOnly( self, _fieldsOfRelationsGroupsStaticGet.call( self ) );
 
   return result;
 }
@@ -1076,9 +1076,9 @@ function fieldDescriptorGet( nameOfField )
   _.assert( _.strIsNotEmpty( nameOfField ) );
   _.assert( arguments.length === 1, 'expects single argument' );
 
-  for( var f in _.ClassFieldsGroups )
+  for( var f in _.DefaultFieldsGroups )
   {
-    var facility = _.ClassFieldsGroups[ f ];
+    var facility = _.DefaultFieldsGroups[ f ];
     if( proto[ facility ] )
     if( proto[ facility ][ nameOfField ] !== undefined )
     report[ facility ] = true;
@@ -1091,13 +1091,13 @@ function fieldDescriptorGet( nameOfField )
 
 /**
  * Get map of all relations fields.
- * @method _fieldsOfRelationshipsGroupsStaticGet
+ * @method _fieldsOfRelationsGroupsStaticGet
  * @memberof wCopyable#
  */
 
-function _fieldsOfRelationshipsGroupsStaticGet()
+function _fieldsOfRelationsGroupsStaticGet()
 {
-  return _.fieldsOfRelationshipsGroups( this );
+  return _.fieldsOfRelationsGroups( this );
 }
 
 //
@@ -1285,7 +1285,7 @@ var Statics =
   prototypeIs : prototypeIs,
   constructorIs : constructorIs,
 
-  '_fieldsOfRelationshipsGroupsGet' : _fieldsOfRelationshipsGroupsStaticGet,
+  '_fieldsOfRelationsGroupsGet' : _fieldsOfRelationsGroupsStaticGet,
   '_fieldsOfCopyableGroupsGet' : _fieldsOfCopyableGroupsStaticGet,
   '_fieldsOfTightGroupsGet' : _fieldsOfTightGroupsStaticGet,
   '_fieldsOfInputGroupsGet' : _fieldsOfInputGroupsStaticGet,
@@ -1360,7 +1360,7 @@ var Supplement =
 
   // field
 
-  '_fieldsOfRelationshipsGroupsGet' : _fieldsOfRelationshipsGroupsGet,
+  '_fieldsOfRelationsGroupsGet' : _fieldsOfRelationsGroupsGet,
   '_fieldsOfCopyableGroupsGet' : _fieldsOfCopyableGroupsGet,
   '_fieldsOfTightGroupsGet' : _fieldsOfTightGroupsGet,
   '_fieldsOfInputGroupsGet' : _fieldsOfInputGroupsGet,
@@ -1400,8 +1400,6 @@ var Self = _.mixinMake
   shortName : 'Copyable',
 });
 
-_global_[ Self.name ] = _[ Self.shortName ] = Self;
-
 //
 
 _.assert( !Self.copy );
@@ -1414,6 +1412,8 @@ _.assert( _.routineIs( Self.mixin ) );
 // --
 // export
 // --
+
+_global_[ Self.name ] = _[ Self.shortName ] = Self;
 
 if( typeof module !== 'undefined' )
 if( _global_.WTOOLS_PRIVATE )
