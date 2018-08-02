@@ -2,6 +2,14 @@
 
 'use strict';
 
+/**
+  @module Tools/base/CopyableMixin - Copyable mixin add copyability and clonability to your class. The module uses defined relation to deduce how to copy / clone the instanceCopyable mixin adds copyability and clonability to your class. The module uses defined relation to deduce how to copy / clone the instance.
+*/
+
+/**
+ * @file Copyable.s.
+ */
+
 if( typeof module !== 'undefined' )
 {
 
