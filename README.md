@@ -11,4 +11,3 @@ node sample/Base.s
 npm install
 node sample/Descendant.s
 ```
-
