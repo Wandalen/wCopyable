@@ -1400,7 +1400,7 @@ var Supplement =
 
 //
 
-var Self = _.mixinMake
+var Self = _.mixinDelcare
 ({
   supplement : Supplement,
   onMixin : onMixin,

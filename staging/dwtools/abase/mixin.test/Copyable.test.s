@@ -89,7 +89,7 @@ function fields( test )
     Statics : Statics,
   }
 
-  _.classMake
+  _.classDeclare
   ({
     cls : BasicConstructor,
     extend : extend,
@@ -205,7 +205,7 @@ function equal( test )
     Statics : Statics,
   }
 
-  _.classMake
+  _.classDeclare
   ({
     cls : BasicConstructor,
     extend : extend,
