@@ -1318,7 +1318,7 @@ Object.freeze( Medials );
 Object.freeze( Statics );
 
 // --
-// define class
+// declare
 // --
 
 var Supplement =

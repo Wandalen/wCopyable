@@ -485,7 +485,7 @@ function equal( test )
 }
 
 // --
-// define class
+// declare
 // --
 
 var Self =
