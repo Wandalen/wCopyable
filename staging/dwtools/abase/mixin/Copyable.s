@@ -812,7 +812,7 @@ function _equalAre_functor( fieldsGroupsMap )
 
   fieldsGroupsMap = _.routineOptions( _equalAre_functor, fieldsGroupsMap );
 
-  _.routineSupplement( _equalAre, _._entityEqual );
+  _.routineExtend( _equalAre, _._entityEqual );
 
   return _equalAre;
 
@@ -923,7 +923,7 @@ function identicalWith( src, o )
   // _entityEqualIteratorMake
 }
 
-_.routineSupplement( identicalWith, _.entityIdentical );
+_.routineExtend( identicalWith, _.entityIdentical );
 _.assert( !!_.entityIdentical.lookContinue );
 _.assert( !!identicalWith.lookContinue );
 
@@ -949,7 +949,7 @@ function equivalentWith( src,o )
   // _entityEqualIteratorMake
 }
 
-_.routineSupplement( equivalentWith, _.entityEquivalent );
+_.routineExtend( equivalentWith, _.entityEquivalent );
 
 //
 
@@ -970,7 +970,7 @@ function contains( src,o )
   // _entityEqualIteratorMake
 }
 
-_.routineSupplement( contains, _.entityContains );
+_.routineExtend( contains, _.entityContains );
 
 //
 
