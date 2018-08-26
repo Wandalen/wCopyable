@@ -790,7 +790,7 @@ function toStr( o )
 
   _.assert( arguments.length === 0 || arguments.length === 1 );
 
-  if( !o.jstructLike && !o.jsonLike )
+  if( !o.jsLike && !o.jsonLike )
   result += self.nickName + '\n';
 
   var fields = self.fieldsOfTightGroups;
