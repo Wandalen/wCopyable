@@ -939,14 +939,10 @@ _.assert( !!identicalWith.lookContinue );
 function equivalentWith( src,o )
 {
   var self = this;
-  debugger;
   _.assert( arguments.length === 1 || arguments.length === 2 );
   var it = equivalentWith.lookContinue( equivalentWith, [ self, src, o ] );
-  debugger;
   var result = this._equalAre( it );
-  debugger;
   return result;
-  // _entityEqualIteratorMake
 }
 
 _.routineExtend( equivalentWith, _.entityEquivalent );

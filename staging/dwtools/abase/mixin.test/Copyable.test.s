@@ -484,6 +484,64 @@ function equal( test )
 
 }
 
+//
+
+function hasField( test )
+{
+
+  test.case = 'trivial';
+
+  function SampleClass( o )
+  {
+    return _.instanceConstructor( SampleClass, this, arguments );
+  }
+
+  function init( o )
+  {
+    _.instanceInit( this );
+  }
+
+  let Associates =
+  {
+    field0 : null,
+  }
+
+  let Extend =
+  {
+    init : init,
+    Associates : Associates,
+  }
+
+  _.classDeclare
+  ({
+    cls : SampleClass,
+    extend : Extend,
+  });
+
+  _.Copyable.mixin( SampleClass );
+
+  /* */
+
+  var sample = new SampleClass();
+
+  test.identical( sample.hasField( 'field0' ), true );
+  test.identical( sample.Self.hasField( 'field0' ), true );
+  test.identical( sample.hasField( 'field1' ), false );
+
+  sample.field0 = 1;
+
+  test.identical( sample.hasField( 'field0' ), true );
+  test.identical( sample.Self.hasField( 'field0' ), true );
+  test.identical( sample.hasField( 'field1' ), false );
+
+  sample.field1 = 1;
+
+  test.identical( sample.hasField( 'field0' ), true );
+  test.identical( sample.Self.hasField( 'field0' ), true );
+  test.identical( sample.hasField( 'field1' ), false );
+
+}
+
 // --
 // declare
 // --
@@ -499,6 +557,8 @@ var Self =
 
     fields : fields,
     equal : equal,
+
+    hasField : hasField,
 
   },
 
