@@ -843,6 +843,7 @@ function _equalAre_functor( fieldsGroupsMap )
 
     /* */
 
+    // debugger;
     for( var f in fieldsMap )
     {
       if( !it.looking || !it.iterator.looking )
