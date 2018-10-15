@@ -99,7 +99,7 @@ function onMixin( mixinDescriptor, dstClass )
     fieldsOfInputGroups : readOnly,
   }
 
-  _.accessorReadOnly
+  _.accessor.readOnly
   ({
     object : dstPrototype,
     names : names,
@@ -122,7 +122,7 @@ function onMixin( mixinDescriptor, dstClass )
     fieldsOfRelationsGroups : readOnly,
   }
 
-  _.accessorReadOnly
+  _.accessor.readOnly
   ({
     object : dstClass,
     names : names,
@@ -1081,7 +1081,7 @@ function fieldDescriptorGet( nameOfField )
   var proto = _.prototypeGet( this );
   var report = Object.create( null );
 
-  _.assert( _.strIsNotEmpty( nameOfField ) );
+  _.assert( _.strDefined( nameOfField ) );
   _.assert( arguments.length === 1, 'expects single argument' );
 
   for( var f in _.DefaultFieldsGroups )
