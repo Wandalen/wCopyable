@@ -264,7 +264,7 @@ function extend( src )
 {
   var self = this;
 
-  _.assert( arguments.length === 1, 'expects single argument' );
+  _.assert( arguments.length === 1, 'Expects single argument' );
   _.assert( src instanceof self.Self || _.mapIs( src ) );
 
   for( var s in src )
@@ -299,8 +299,8 @@ function copy( src )
   var self = this;
   var routine = ( self._traverseAct || _traverseAct );
 
-  _.assert( arguments.length === 1,'expects single argument' );
-  _.assert( src instanceof self.Self || _.mapIs( src ),'expects instance of Class or map as argument' );
+  _.assert( arguments.length === 1,'Expects single argument' );
+  _.assert( src instanceof self.Self || _.mapIs( src ),'Expects instance of Class or map as argument' );
 
   var o = { dst : self, src : src, technique : 'object' };
   var it = _._cloner( routine,o );
@@ -407,7 +407,7 @@ function _cloneObject( it )
 {
   var self = this;
 
-  _.assert( arguments.length === 1, 'expects single argument' );
+  _.assert( arguments.length === 1, 'Expects single argument' );
   _.assert( it.iterator.technique === 'object' );
 
   /* */
@@ -479,7 +479,7 @@ function _cloneData( it )
 {
   var self = this;
 
-  _.assert( arguments.length === 1, 'expects single argument' );
+  _.assert( arguments.length === 1, 'Expects single argument' );
   _.assert( it.iterator.technique === 'data' );
 
   return self._traverseAct( it );
@@ -492,7 +492,7 @@ function _traverseActPre( it )
   var self = this;
 
   _.assert( _.objectIs( it ) );
-  _.assert( arguments.length === 1, 'expects single argument' );
+  _.assert( arguments.length === 1, 'Expects single argument' );
 
   /* adjust */
 
@@ -552,12 +552,12 @@ function _traverseAct( it )
 
   _.assertMapHasNoUndefine( it );
   _.assertMapHasNoUndefine( it.iterator );
-  _.assert( arguments.length === 1, 'expects single argument' );
+  _.assert( arguments.length === 1, 'Expects single argument' );
   _.assert( src !== dst );
   _.assert( !!src );
   _.assert( _.objectIs( proto ) );
   _.assert( _.strIs( it.path ) );
-  _.assert( _.objectIs( proto ),'expects object {-proto-}, but got',_.strTypeOf( proto ) );
+  _.assert( _.objectIs( proto ),'Expects object {-proto-}, but got',_.strTypeOf( proto ) );
   _.assert( !it.customFields || _.objectIs( it.customFields ) );
   _.assert( it.level >= 0 );
   _.assert( _.numberIs( it.copyingDegree ) );
@@ -819,7 +819,7 @@ function _equalAre_functor( fieldsGroupsMap )
   function _equalAre( it )
   {
 
-    _.assert( arguments.length === 1, 'expects single argument' );
+    _.assert( arguments.length === 1, 'Expects single argument' );
     _.assert( _.objectIs( it.context ) );
     _.assert( it.context.strictTyping !== undefined );
     _.assert( it.context.containing !== undefined );
@@ -1082,7 +1082,7 @@ function fieldDescriptorGet( nameOfField )
   var report = Object.create( null );
 
   _.assert( _.strDefined( nameOfField ) );
-  _.assert( arguments.length === 1, 'expects single argument' );
+  _.assert( arguments.length === 1, 'Expects single argument' );
 
   for( var f in _.DefaultFieldsGroups )
   {
