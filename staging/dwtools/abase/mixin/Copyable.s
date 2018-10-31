@@ -82,21 +82,22 @@ function onMixin( mixinDescriptor, dstClass )
 
   /* instance accessors */
 
-  var readOnly = { readOnlyProduct : 0 };
+  var readOnly = { readOnlyProduct : 0, combining : 'supplement' };
   var names =
   {
+
     Self : readOnly,
     Parent : readOnly,
     className : readOnly,
     lowName : readOnly,
     nickName : readOnly,
     uname : readOnly,
-    // uniqueName : readOnly,
 
     fieldsOfRelationsGroups : readOnly,
     fieldsOfCopyableGroups : readOnly,
     fieldsOfTightGroups : readOnly,
     fieldsOfInputGroups : readOnly,
+
   }
 
   _.accessor.readOnly
