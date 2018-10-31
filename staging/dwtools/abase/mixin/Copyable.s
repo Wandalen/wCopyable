@@ -463,7 +463,7 @@ cloneData.iterationDefaults = Object.create( _._cloner.iterationDefaults );
 cloneData.iterationDefaults.dst = Object.create( null );
 cloneData.iterationDefaults.copyingAggregates = 3;
 cloneData.iterationDefaults.copyingAssociates = 0;
-cloneData.defaults = _.mapSupplementOwn( Object.create( _._cloner.defaults ),cloneData.iterationDefaults );
+cloneData.defaults = _.mapSupplementOwn( Object.create( _._cloner.defaults ), cloneData.iterationDefaults );
 cloneData.defaults.technique = 'data';
 
 //
