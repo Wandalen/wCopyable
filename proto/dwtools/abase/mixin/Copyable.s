@@ -226,7 +226,7 @@ function From( src )
     _.assert( arguments.length === 1 );
     return src;
   }
-  return new( _.routineJoin( constr, constr, arguments ) );
+  return new( _.constructorJoin( constr, arguments ) );
 }
 
 //
