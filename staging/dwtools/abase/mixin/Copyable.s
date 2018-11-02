@@ -919,6 +919,7 @@ function identicalWith( src, o )
 {
   var self = this;
   _.assert( arguments.length === 1 || arguments.length === 2 );
+  debugger; xxx
   var it = identicalWith.lookContinue( identicalWith, [ self, src, o ] );
   var result = this._equalAre( it );
   return result;
@@ -926,8 +927,9 @@ function identicalWith( src, o )
 }
 
 _.routineExtend( identicalWith, _.entityIdentical );
-_.assert( !!_.entityIdentical.lookContinue );
-_.assert( !!identicalWith.lookContinue );
+
+// _.assert( !!_.entityIdentical.lookContinue );
+// _.assert( !!identicalWith.lookContinue );
 
 //
 
@@ -942,6 +944,7 @@ function equivalentWith( src,o )
 {
   var self = this;
   _.assert( arguments.length === 1 || arguments.length === 2 );
+  debugger; xxx
   var it = equivalentWith.lookContinue( equivalentWith, [ self, src, o ] );
   var result = this._equalAre( it );
   return result;
@@ -962,6 +965,7 @@ function contains( src,o )
 {
   var self = this;
   _.assert( arguments.length === 1 || arguments.length === 2 );
+  debugger; xxx
   var it = contains.lookContinue( contains, [ self, src, o ] );
   var result = this._equalAre( it );
   return result;
