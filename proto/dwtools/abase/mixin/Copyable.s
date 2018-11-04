@@ -15,8 +15,8 @@ if( typeof module !== 'undefined' )
 
   if( typeof _global_ === 'undefined' || !_global_.wBase )
   {
-    let toolsPath = '../../../dwtools/Base.s';
-    let toolsExternal = 0;
+    var toolsPath = '../../../dwtools/Base.s';
+    var toolsExternal = 0;
     try
     {
       toolsPath = require.resolve( toolsPath );
@@ -35,6 +35,8 @@ if( typeof module !== 'undefined' )
   _.include( 'wProto' );
   _.include( 'wCloner' );
   _.include( 'wStringer' );
+  _.include( 'wLooker' );
+  _.include( 'wComparator' );
 
 }
 
@@ -835,6 +837,9 @@ function _equalAre_functor( fieldsGroupsMap )
     if( it.src.constructor !== it.src2.constructor )
     return false;
 
+    if( it.src === it.src2 )
+    return end( true );
+
     /* */
 
     var fieldsMap = Object.create( null );
@@ -849,7 +854,7 @@ function _equalAre_functor( fieldsGroupsMap )
     {
       if( !it.looking || !it.iterator.looking )
       break;
-      var newIt = it.begin().select( f );
+      var newIt = it.iteration().select( f );
       if( !_.mapHas( it.src, f ) )
       return end( false );
       if( !_._entityEqual.body( newIt ) )
@@ -915,21 +920,21 @@ var _equalAre = _equalAre_functor();
  * @memberof wCopyable#
  */
 
-function identicalWith( src, o )
+function identicalWith( src, opts )
 {
   var self = this;
+
   _.assert( arguments.length === 1 || arguments.length === 2 );
-  debugger; xxx
-  var it = identicalWith.lookContinue( identicalWith, [ self, src, o ] );
+  _.assert( !opts || _.mapIs( opts ), 'not tested' );
+
+  var args = [ self, src, opts ];
+  var it = self._equalAre.pre.call( self, self.identicalWith, args );
   var result = this._equalAre( it );
+
   return result;
-  // _entityEqualIteratorMake
 }
 
 _.routineExtend( identicalWith, _.entityIdentical );
-
-// _.assert( !!_.entityIdentical.lookContinue );
-// _.assert( !!identicalWith.lookContinue );
 
 //
 
@@ -940,13 +945,17 @@ _.routineExtend( identicalWith, _.entityIdentical );
  * @memberof wCopyable#
  */
 
-function equivalentWith( src,o )
+function equivalentWith( src, opts )
 {
   var self = this;
+
   _.assert( arguments.length === 1 || arguments.length === 2 );
-  debugger; xxx
-  var it = equivalentWith.lookContinue( equivalentWith, [ self, src, o ] );
+  _.assert( !opts || _.mapIs( opts ), 'not tested' );
+
+  var args = [ self, src, opts ];
+  var it = self._equalAre.pre.call( self, self.equivalentWith, args );
   var result = this._equalAre( it );
+
   return result;
 }
 
@@ -961,15 +970,18 @@ _.routineExtend( equivalentWith, _.entityEquivalent );
  * @memberof wCopyable#
  */
 
-function contains( src,o )
+function contains( src, opts )
 {
   var self = this;
+
   _.assert( arguments.length === 1 || arguments.length === 2 );
-  debugger; xxx
-  var it = contains.lookContinue( contains, [ self, src, o ] );
+  _.assert( !opts || _.mapIs( opts ), 'not tested' );
+
+  var args = [ self, src, opts ];
+  var it = self._equalAre.pre.call( self, self.contains, args );
   var result = this._equalAre( it );
+
   return result;
-  // _entityEqualIteratorMake
 }
 
 _.routineExtend( contains, _.entityContains );

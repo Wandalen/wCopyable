@@ -24,9 +24,9 @@ if( typeof module !== 'undefined' )
 
   var _ = _global_.wTools;
 
-  _.include( 'wProto' );
-  _.include( 'wCopyable' );
   _.include( 'wTesting' );
+
+  require( '../l7/Copyable.s' );
 
 }
 
@@ -279,6 +279,7 @@ function equal( test )
   test.case = 'identicalWith trivial';
 
   var expected = true;
+  debugger;
   var got = all1.identicalWith( all2 );
   test.identical( got, expected );
 
@@ -568,6 +569,6 @@ var Self =
 
 Self = wTestSuite( Self );
 if( typeof module !== 'undefined' && !module.parent )
-/*_.*/wTester.test( Self.name );
+wTester.test( Self.name );
 
 })();
