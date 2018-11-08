@@ -854,7 +854,7 @@ function _equalAre_functor( fieldsGroupsMap )
     {
       if( !it.looking || !it.iterator.looking )
       break;
-      var newIt = it.iteration().select( f );
+      var newIt = it.iteration().select( f ).select2( f );
       if( !_.mapHas( it.src, f ) )
       return end( false );
       if( !_._entityEqual.body( newIt ) )
