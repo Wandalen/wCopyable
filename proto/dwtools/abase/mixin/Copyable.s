@@ -632,6 +632,9 @@ function __traverseAct( it )
 
   var newIt = it.iterationClone();
 
+  // if( it.src && it.src.nickName === 'reflector::exported.0' )
+  // debugger;
+
   copyFacets( Composes,it.copyingComposes );
   copyFacets( Aggregates,it.copyingAggregates );
   copyFacets( Associates,it.copyingAssociates );
@@ -646,6 +649,21 @@ function __traverseAct( it )
   /* done */
 
   return dst;
+}
+
+//
+
+function Clone( o )
+{
+  var cls = this.Self;
+  o = o || Object.create( null );
+
+  _.assert( arguments.length <= 1 );
+
+  if( o instanceof cls )
+  return o.clone();
+  else
+  return cls( o )
 }
 
 //
@@ -1289,6 +1307,8 @@ var Statics =
   From : From,
   Froms : Froms,
 
+  Clone : Clone,
+
   instanceIs : instanceIs,
   prototypeIs : prototypeIs,
   constructorIs : constructorIs,
@@ -1344,6 +1364,7 @@ var Supplement =
   cloneData : cloneData,
   _cloneData : _cloneData,
 
+  Clone : Clone,
   cloneSerializing : cloneSerializing,
   clone : clone,
   cloneExtending : cloneExtending,
