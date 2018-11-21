@@ -2,8 +2,8 @@
 about :
 
   name : wCopyable
-  description : Copyable mixin adds copyability and clonability to your class. The module uses defined relation to deduce how to copy / clone the instance.
-  version : 0.4.80
+  description : 'Copyable mixin adds copyability and clonability to your class. The module uses defined relation to deduce how to copy / clone the instance.'
+  version : 0.4.81
   enabled : 1
   interpreters :
   - nodejs >= 6.0.0
