@@ -543,7 +543,7 @@ function _traverseAct( it )
   _.assert( !!src );
   _.assert( _.objectIs( proto ) );
   _.assert( _.strIs( it.path ) );
-  _.assert( _.objectIs( proto ),'Expects object {-proto-}, but got',_.strTypeOf( proto ) );
+  _.assert( _.objectIs( proto ),'Expects object {-proto-}, but got',_.strType( proto ) );
   _.assert( !it.customFields || _.objectIs( it.customFields ) );
   _.assert( it.level >= 0 );
   _.assert( _.numberIs( it.copyingDegree ) );
