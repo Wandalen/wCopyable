@@ -162,8 +162,8 @@ reflector:
       ./dwtools/abase/mixin/Copyable.s: true
       ./dwtools/abase/mixin.test/Copyable.test.s: true
     srcFilter:
-      basePath: ./proto
-      prefixPath: .
+      basePath: .
+      prefixPath: proto
     dstFilter:
       basePath: .
       prefixPath: .
