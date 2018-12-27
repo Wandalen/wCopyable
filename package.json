@@ -41,8 +41,7 @@
     "wcomparator": ""
   },
   "devDependencies": {
-    "wTesting": "",
-    "wCopyable": "."
+    "wTesting": ""
   },
   "keywords": [
     "wTools",
