@@ -70,7 +70,6 @@ var Proto =
   init : init,
   print : print,
 
-  constructor : Self,
   Composes : Composes,
 
 }

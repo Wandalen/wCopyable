@@ -102,7 +102,6 @@ var Proto =
 
   print : print,
 
-  constructor : Self,
   Composes : Composes,
   Statics : Statics,
 
