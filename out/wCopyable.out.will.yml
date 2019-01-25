@@ -57,6 +57,8 @@ path:
       - ./dwtools/abase/l7_mixin/Copyable.s
       - ./dwtools/abase/l7_mixin.test
       - ./dwtools/abase/l7_mixin.test/Copyable.test.s
+      - ./dwtools/amid
+      - ./dwtools/atop
     criterion:
       default: 1
       debug: 1
