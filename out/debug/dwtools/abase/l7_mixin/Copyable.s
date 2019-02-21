@@ -851,12 +851,12 @@ function _equalAre_functor( fieldsGroupsMap )
 
     /* */
 
-    // debugger;
     for( var f in fieldsMap )
     {
-      if( !it.looking || !it.iterator.looking )
+      if( !it.continue || !it.iterator.continue )
       break;
-      var newIt = it.iteration().select( f ).select2( f );
+      // debugger;
+      var newIt = it.iteration().select( f );//.select2( f );
       if( !_.mapHas( it.src, f ) )
       return end( false );
       if( !_._entityEqual.body( newIt ) )
@@ -867,11 +867,9 @@ function _equalAre_functor( fieldsGroupsMap )
 
     if( !it.context.containing )
     {
-
       if( !( it.src2 instanceof this.constructor ) )
       if( _.mapKeys( _.mapBut( it.src, fieldsMap ) ).length )
       return end( false );
-
     }
 
     if( !( it.src instanceof this.constructor ) )
@@ -886,7 +884,7 @@ function _equalAre_functor( fieldsGroupsMap )
 
     function end( result )
     {
-      it.looking = false;
+      it.continue = false;
       return result;
     }
 
