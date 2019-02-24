@@ -52,7 +52,7 @@ function onMixin( mixinDescriptor, dstClass )
   }
 
   _.assert( arguments.length === 2, 'Expects exactly two arguments' );
-  _.assert( _.routineIs( dstClass ), () => 'mixin expects constructor, but got ' + _.strPrimitiveTypeOf( dstClass ) );
+  _.assert( _.routineIs( dstClass ), () => 'mixin expects constructor, but got ' + _.strPrimitiveType( dstClass ) );
   _.assertMapOwnAll( dstPrototype, has );
   _.assert( _ObjectHasOwnProperty.call( dstPrototype,'constructor' ), 'prototype of object should has own constructor' );
 
