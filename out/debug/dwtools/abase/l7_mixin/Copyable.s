@@ -1,6 +1,6 @@
 ( function _Copyable_s_() {
 
-'use strict';
+'use strict'; // !!!
 
 /**
  * Copyable mixin add copyability and clonability to your class. The module uses defined relation to deduce how to copy / clone the instanceCopyable mixin adds copyability and clonability to your class. The module uses defined relation to deduce how to copy / clone the instance.
@@ -54,7 +54,7 @@ function onMixin( mixinDescriptor, dstClass )
   _.assert( arguments.length === 2, 'Expects exactly two arguments' );
   _.assert( _.routineIs( dstClass ), () => 'mixin expects constructor, but got ' + _.strPrimitiveType( dstClass ) );
   _.assertMapOwnAll( dstPrototype, has );
-  _.assert( _ObjectHasOwnProperty.call( dstPrototype,'constructor' ), 'prototype of object should has own constructor' );
+  _.assert( _ObjectHasOwnProperty.call( dstPrototype, 'constructor' ), 'prototype of object should has own constructor' );
 
   /* */
 
@@ -104,9 +104,10 @@ function onMixin( mixinDescriptor, dstClass )
     Parent : readOnly,
     className : readOnly,
     lowName : readOnly,
-    fieldsOfCopyableGroups : readOnly,
-    fieldsOfTightGroups : readOnly,
-    fieldsOfRelationsGroups : readOnly,
+    FieldsOfCopyableGroups : readOnly,
+    FieldsOfTightGroups : readOnly,
+    FieldsOfRelationsGroups : readOnly,
+    FieldsOfInputGroups : readOnly,
   }
 
   _.accessor.readOnly
@@ -130,24 +131,25 @@ function onMixin( mixinDescriptor, dstClass )
   if( _.routineIs( dstPrototype.equalWith ) )
   _.assert( dstPrototype.equalWith.length <= 2 );
 
-  _.assert( !!dstClass.prototype._fieldsOfRelationsGroupsGet );
-  _.assert( !!dstClass._fieldsOfRelationsGroupsGet );
-  _.assert( !!dstClass.fieldsOfRelationsGroups );
-  _.assert( !!dstClass.prototype.fieldsOfRelationsGroups );
-  // _.assert( _.mapKeys( dstClass.fieldsOfRelationsGroups ).length );
+  _.assert( !!dstClass.prototype.FieldsOfRelationsGroupsGet );
+  _.assert( !!dstClass.FieldsOfRelationsGroupsGet );
+  _.assert( !dstClass.fieldsOfRelationsGroups );
+  _.assert( !!dstClass.FieldsOfRelationsGroups );
+  _.assert( !dstClass.prototype.fieldsOfRelationsGroups );
+  _.assert( !dstClass.prototype.FieldsOfRelationsGroups ); // xxx
 
-  _.assert( dstPrototype._fieldsOfRelationsGroupsGet === _fieldsOfRelationsGroupsGet );
+  _.assert( dstPrototype.FieldsOfRelationsGroupsGet === FieldsOfRelationsGroupsGet );
   _.assert( dstPrototype._fieldsOfCopyableGroupsGet === _fieldsOfCopyableGroupsGet );
   _.assert( dstPrototype._fieldsOfTightGroupsGet === _fieldsOfTightGroupsGet );
   _.assert( dstPrototype._fieldsOfInputGroupsGet === _fieldsOfInputGroupsGet );
 
-  _.assert( dstPrototype.constructor._fieldsOfRelationsGroupsGet === _fieldsOfRelationsGroupsStaticGet );
-  _.assert( dstPrototype.constructor._fieldsOfCopyableGroupsGet === _fieldsOfCopyableGroupsStaticGet );
-  _.assert( dstPrototype.constructor._fieldsOfTightGroupsGet === _fieldsOfTightGroupsStaticGet );
-  _.assert( dstPrototype.constructor._fieldsOfInputGroupsGet === _fieldsOfInputGroupsStaticGet );
+  _.assert( dstPrototype.constructor.FieldsOfRelationsGroupsGet === FieldsOfRelationsGroupsGet );
+  _.assert( dstPrototype.constructor.FieldsOfCopyableGroupsGet === FieldsOfCopyableGroupsGet );
+  _.assert( dstPrototype.constructor.FieldsOfTightGroupsGet === FieldsOfTightGroupsGet );
+  _.assert( dstPrototype.constructor.FieldsOfInputGroupsGet === FieldsOfInputGroupsGet );
 
   _.assert( dstPrototype.finit.name !== 'finitEventHandler', 'wEventHandler mixin should goes after wCopyable mixin.' );
-  _.assert( !_.mixinHas( dstPrototype,'wEventHandler' ), 'wEventHandler mixin should goes after wCopyable mixin.' );
+  _.assert( !_.mixinHas( dstPrototype, 'wEventHandler' ), 'wEventHandler mixin should goes after wCopyable mixin.' );
 
 }
 
@@ -261,7 +263,7 @@ function extend( src )
       if( _.routineIs( self[ s ].extend ) )
       self[ s ].extend( src[ s ] );
       else
-      _.mapExtend( self[ s ],src[ s ] );
+      _.mapExtend( self[ s ], src[ s ] );
     }
     else
     {
@@ -286,11 +288,18 @@ function copy( src )
   var self = this;
   var routine = ( self._traverseAct || _traverseAct );
 
-  _.assert( arguments.length === 1,'Expects single argument' );
-  _.assert( src instanceof self.Self || _.mapIs( src ),'Expects instance of Class or map as argument' );
+  _.assert( arguments.length === 1, 'Expects single argument' );
+  _.assert( src instanceof self.Self || _.mapIs( src ), 'Expects instance of Class or map as argument' );
 
-  var o = { dst : self, src : src, technique : 'object' };
-  var it = _._cloner( routine,o );
+  var o =
+  {
+    dst : self,
+    src : src,
+    technique : 'object',
+    copyingMedials : _.instanceIs( src ) ? 0 : 1,
+    // copyingMedialRestricts : xxx,
+  };
+  var it = _._cloner( routine, o );
 
   return routine.call( self, it );
 }
@@ -318,13 +327,13 @@ function copyCustom( o )
   if( o.dst === undefined )
   o.dst = self;
 
-  var it = _._cloner( copyCustom,o );
+  var it = _._cloner( copyCustom, o );
 
   return routine.call( self, it );
 }
 
 copyCustom.iterationDefaults = Object.create( _._cloner.iterationDefaults );
-copyCustom.defaults = _.mapSupplementOwn( Object.create( _._cloner.defaults ),copyCustom.iterationDefaults );
+copyCustom.defaults = _.mapSupplementOwn( Object.create( _._cloner.defaults ), copyCustom.iterationDefaults );
 
 //
 
@@ -332,7 +341,7 @@ function copyDeserializing( o )
 {
   var self = this;
 
-  _.assertMapHasAll( o,copyDeserializing.defaults )
+  _.assertMapHasAll( o, copyDeserializing.defaults )
   _.assertMapHasNoUndefine( o );
   _.assert( arguments.length == 1 );
   _.assert( _.objectIs( o ) );
@@ -370,15 +379,15 @@ function cloneObject( o )
   var o = o || Object.create( null );
 
   _.assert( arguments.length === 0 || arguments.length === 1 );
-  _.routineOptions( cloneObject,o );
+  _.routineOptions( cloneObject, o );
 
-  var it = _._cloner( cloneObject,o );
+  var it = _._cloner( cloneObject, o );
 
   return self._cloneObject( it );
 }
 
 cloneObject.iterationDefaults = Object.create( _._cloner.iterationDefaults );
-cloneObject.defaults = _.mapSupplementOwn( Object.create( _._cloner.defaults ),cloneObject.iterationDefaults );
+cloneObject.defaults = _.mapSupplementOwn( Object.create( _._cloner.defaults ), cloneObject.iterationDefaults );
 cloneObject.defaults.technique = 'object';
 
 //
@@ -441,7 +450,7 @@ function cloneData( o )
   if( o.src === undefined )
   o.src = self;
 
-  var it = _._cloner( cloneData,o );
+  var it = _._cloner( cloneData, o );
 
   return self._cloneData( it );
 }
@@ -544,7 +553,7 @@ function _traverseAct( it )
   _.assert( !!src );
   _.assert( _.objectIs( proto ) );
   _.assert( _.strIs( it.path ) );
-  _.assert( _.objectIs( proto ),'Expects object {-proto-}, but got',_.strType( proto ) );
+  _.assert( _.objectIs( proto ), 'Expects object {-proto-}, but got', _.strType( proto ) );
   _.assert( !it.customFields || _.objectIs( it.customFields ) );
   _.assert( it.level >= 0 );
   _.assert( _.numberIs( it.copyingDegree ) );
@@ -603,7 +612,7 @@ function __traverseAct( it )
 
   /* copy facets */
 
-  function copyFacets( screen,copyingDegree )
+  function copyFacets( screen, copyingDegree )
   {
 
     _.assert( _.numberIs( copyingDegree ) );
@@ -614,11 +623,11 @@ function __traverseAct( it )
     return;
 
     newIt.screenFields = screen;
-    newIt.copyingDegree = Math.min( copyingDegree,it.copyingDegree );
+    newIt.copyingDegree = Math.min( copyingDegree, it.copyingDegree );
     newIt.instanceAsMap = 1;
 
-    _.assert( it.copyingDegree === 3,'not tested' );
-    _.assert( newIt.copyingDegree === 1 || newIt.copyingDegree === 3,'not tested' );
+    _.assert( it.copyingDegree === 3, 'not tested' );
+    _.assert( newIt.copyingDegree === 1 || newIt.copyingDegree === 3, 'not tested' );
 
     /* copyingDegree applicable to fields, so increment is needed */
 
@@ -636,16 +645,16 @@ function __traverseAct( it )
   // if( it.src && it.src.nickName === 'reflector::exported.0' )
   // debugger;
 
-  copyFacets( Composes,it.copyingComposes );
-  copyFacets( Aggregates,it.copyingAggregates );
-  copyFacets( Associates,it.copyingAssociates );
-  copyFacets( _.mapOnly( Medials,Restricts ), it.copyingMedialRestricts );
+  copyFacets( Composes, it.copyingComposes );
+  copyFacets( Aggregates, it.copyingAggregates );
+  copyFacets( Associates, it.copyingAssociates );
+  copyFacets( _.mapOnly( Medials, Restricts ), it.copyingMedialRestricts );
 
-  if( !_.instanceIsStandard( it.src ) )
-  copyFacets( Medials,it.copyingMedials );
+  // if( !_.instanceIsStandard( it.src ) )
+  copyFacets( Medials, it.copyingMedials );
 
-  copyFacets( Restricts,it.copyingRestricts );
-  copyFacets( it.customFields,it.copyingCustomFields );
+  copyFacets( Restricts, it.copyingRestricts );
+  copyFacets( it.customFields, it.copyingCustomFields );
 
   /* done */
 
@@ -760,8 +769,8 @@ function cloneExtending( override )
   }
   else
   {
-    var src = _.mapOnly( self, self.Self.fieldsOfCopyableGroups );
-    _.mapExtend( src,override );
+    var src = _.mapOnly( self, self.Self.FieldsOfCopyableGroups );
+    _.mapExtend( src, override );
     var dst = new self.constructor( src );
     _.assert( dst !== self && dst !== src );
     return dst;
@@ -800,7 +809,7 @@ function toStr( o )
 
   var fields = self.fieldsOfTightGroups;
 
-  var t = _.toStr( fields,o );
+  var t = _.toStr( fields, o );
   _.assert( _.strIs( t ) );
   result += t;
 
@@ -1016,20 +1025,20 @@ function constructorIs()
 
 /**
  * Get map of all fields.
- * @method _fieldsOfRelationsGroupsGet
+ * @method FieldsOfRelationsGroupsGet
  * @memberof wCopyable
  */
 
-function _fieldsOfRelationsGroupsGet()
+function FieldsOfRelationsGroupsGet()
 {
   var self = this;
 
   if( !self.instanceIs() )
-  return _fieldsOfRelationsGroupsStaticGet.call( self );
+  return FieldsOfRelationsGroupsGet.call( self );
 
   _.assert( self.instanceIs() );
 
-  var result = _.mapOnly( self, _fieldsOfRelationsGroupsStaticGet.call( self ) );
+  var result = _.mapOnly( self, FieldsOfRelationsGroupsGet.call( self ) );
 
   return result;
 }
@@ -1047,11 +1056,11 @@ function _fieldsOfCopyableGroupsGet()
   var self = this;
 
   if( !self.instanceIs() )
-  return _fieldsOfCopyableGroupsStaticGet.call( self );
+  return FieldsOfCopyableGroupsGet.call( self );
 
   _.assert( self.instanceIs() );
 
-  var result = _.mapOnly( self, self.Self.fieldsOfCopyableGroups );
+  var result = _.mapOnly( self, self.Self.FieldsOfCopyableGroups );
   return result;
 }
 
@@ -1068,11 +1077,11 @@ function _fieldsOfTightGroupsGet()
   var self = this;
 
   if( !self.instanceIs() )
-  return _fieldsOfTightGroupsStaticGet.call( self );
+  return FieldsOfTightGroupsGet.call( self );
 
   _.assert( self.instanceIs() );
 
-  var result = _.mapOnly( self, self.Self.fieldsOfTightGroups );
+  var result = _.mapOnly( self, self.Self.FieldsOfTightGroups );
   return result;
 }
 
@@ -1083,11 +1092,11 @@ function _fieldsOfInputGroupsGet()
   var self = this;
 
   if( !self.instanceIs() )
-  return _fieldsOfInputGroupsStaticGet.call( self );
+  return FieldsOfInputGroupsGet.call( self );
 
   _.assert( self.instanceIs() );
 
-  var result = _.mapOnly( self, self.Self.fieldsOfInputGroups );
+  var result = _.mapOnly( self, self.Self.FieldsOfInputGroups );
   return result;
 }
 
@@ -1116,11 +1125,11 @@ function fieldDescriptorGet( nameOfField )
 
 /**
  * Get map of all relations fields.
- * @method _fieldsOfRelationsGroupsStaticGet
+ * @method FieldsOfRelationsGroupsGet
  * @memberof wCopyable#
  */
 
-function _fieldsOfRelationsGroupsStaticGet()
+function FieldsOfRelationsGroupsGet()
 {
   return _.fieldsOfRelationsGroups( this );
 }
@@ -1129,11 +1138,11 @@ function _fieldsOfRelationsGroupsStaticGet()
 
 /**
  * Get map of copyable fields.
- * @method _fieldsOfCopyableGroupsStaticGet
+ * @method FieldsOfCopyableGroupsGet
  * @memberof wCopyable#
  */
 
-function _fieldsOfCopyableGroupsStaticGet()
+function FieldsOfCopyableGroupsGet()
 {
   return _.fieldsOfCopyableGroups( this );
 }
@@ -1142,11 +1151,11 @@ function _fieldsOfCopyableGroupsStaticGet()
 
 /**
  * Get map of tight fields.
- * @method _fieldsOfTightGroupsStaticGet
+ * @method FieldsOfTightGroupsGet
  * @memberof wCopyable#
  */
 
-function _fieldsOfTightGroupsStaticGet()
+function FieldsOfTightGroupsGet()
 {
   return _.fieldsOfTightGroups( this );
 }
@@ -1155,11 +1164,11 @@ function _fieldsOfTightGroupsStaticGet()
 
 /**
  * Get map of input fields.
- * @method _fieldsOfInputGroupsStaticGet
+ * @method FieldsOfInputGroupsGet
  * @memberof wCopyable#
  */
 
-function _fieldsOfInputGroupsStaticGet()
+function FieldsOfInputGroupsGet()
 {
   return _.fieldsOfInputGroups( this );
 }
@@ -1169,7 +1178,7 @@ function _fieldsOfInputGroupsStaticGet()
 function hasField( fieldName )
 {
   debugger;
-  return _.prototypeHasField( this,fieldName );
+  return _.prototypeHasField( this, fieldName );
 }
 
 // --
@@ -1242,7 +1251,7 @@ function _nickNameGet()
   var index = '';
   if( _.numberIs( self.instanceIndex ) )
   result += '#in' + self.instanceIndex;
-  if( Object.hasOwnProperty.call( self,'id' ) )
+  if( Object.hasOwnProperty.call( self, 'id' ) )
   result += '#id' + self.id;
   return self.className + '( ' + result + ' )';
 }
@@ -1271,7 +1280,7 @@ function unameGet()
 //   var index = '';
 //   if( _.numberIs( self.instanceIndex ) )
 //   result += '#in' + self.instanceIndex;
-//   if( Object.hasOwnProperty.call( self,'id' ) )
+//   if( Object.hasOwnProperty.call( self, 'id' ) )
 //   result += '#id' + self.id;
 //   return self.className + '( ' + result + ' )';
 // }
@@ -1303,26 +1312,26 @@ var Medials =
 var Statics =
 {
 
-  From : From,
-  Froms : Froms,
+  From,
+  Froms,
 
-  Clone : Clone,
+  Clone,
 
-  instanceIs : instanceIs,
-  prototypeIs : prototypeIs,
-  constructorIs : constructorIs,
+  instanceIs,
+  prototypeIs,
+  constructorIs,
 
-  '_fieldsOfRelationsGroupsGet' : _fieldsOfRelationsGroupsStaticGet,
-  '_fieldsOfCopyableGroupsGet' : _fieldsOfCopyableGroupsStaticGet,
-  '_fieldsOfTightGroupsGet' : _fieldsOfTightGroupsStaticGet,
-  '_fieldsOfInputGroupsGet' : _fieldsOfInputGroupsStaticGet,
+  FieldsOfRelationsGroupsGet,
+  FieldsOfCopyableGroupsGet,
+  FieldsOfTightGroupsGet,
+  FieldsOfInputGroupsGet,
 
-  hasField : hasField,
+  hasField,
 
-  '_SelfGet' : _SelfGet,
-  '_ParentGet' : _ParentGet,
-  '_classNameGet' : _classNameGet,
-  '_lowNameGet' : _lowNameGet,
+  _SelfGet,
+  _ParentGet,
+  _classNameGet,
+  _lowNameGet,
 
 }
 
@@ -1340,81 +1349,80 @@ Object.freeze( Statics );
 var Supplement =
 {
 
-  init : init,
-  finit : finit,
-  finitedIs : finitedIs,
+  init,
+  finit,
+  finitedIs,
 
-  From : From,
-  Froms : Froms,
+  From,
+  Froms,
 
-  extend : extend,
-  copy : copy,
+  extend,
+  copy,
 
-  copyCustom : copyCustom,
-  copyDeserializing : copyDeserializing,
+  copyCustom,
+  copyDeserializing,
 
-  _traverseActPre : _traverseActPre,
-  _traverseAct : _traverseAct,
-  __traverseAct : __traverseAct,
+  _traverseActPre,
+  _traverseAct,
+  __traverseAct,
 
-  cloneObject : cloneObject,
-  _cloneObject : _cloneObject,
+  cloneObject,
+  _cloneObject,
 
-  cloneData : cloneData,
-  _cloneData : _cloneData,
+  cloneData,
+  _cloneData,
 
-  Clone : Clone,
-  cloneSerializing : cloneSerializing,
-  clone : clone,
-  cloneExtending : cloneExtending,
-  cloneEmpty : cloneEmpty,
+  Clone,
+  cloneSerializing,
+  clone,
+  cloneExtending,
+  cloneEmpty,
 
   // etc
 
-  toStr : toStr,
+  toStr,
 
   // checker
 
-  _equalAre_functor : _equalAre_functor,
-  _equalAre : _equalAre,
+  _equalAre_functor,
+  _equalAre,
 
-  identicalWith : identicalWith,
-  equivalentWith : equivalentWith,
-  contains : contains,
+  identicalWith,
+  equivalentWith,
+  contains,
 
-  instanceIs : instanceIs,
-  prototypeIs : prototypeIs,
-  constructorIs : constructorIs,
+  instanceIs,
+  prototypeIs,
+  constructorIs,
 
   // field
 
-  '_fieldsOfRelationsGroupsGet' : _fieldsOfRelationsGroupsGet,
-  '_fieldsOfCopyableGroupsGet' : _fieldsOfCopyableGroupsGet,
-  '_fieldsOfTightGroupsGet' : _fieldsOfTightGroupsGet,
-  '_fieldsOfInputGroupsGet' : _fieldsOfInputGroupsGet,
-  fieldDescriptorGet : fieldDescriptorGet,
+  FieldsOfRelationsGroupsGet,
+  _fieldsOfCopyableGroupsGet,
+  _fieldsOfTightGroupsGet,
+  _fieldsOfInputGroupsGet,
+  fieldDescriptorGet,
 
   // class
 
-  '_SelfGet' : _SelfGet,
-  '_ParentGet' : _ParentGet,
+  _SelfGet,
+  _ParentGet,
 
   // name
 
-  '_lowNameGet' : _lowNameGet,
-  '_classNameGet' : _classNameGet,
-  '_nickNameGet' : _nickNameGet,
-  // '_uniqueNameGet' : _uniqueNameGet,
-  unameGet : unameGet,
+  _lowNameGet,
+  _classNameGet,
+  _nickNameGet,
+  unameGet,
 
   //
 
-  Composes : Composes,
-  Aggregates : Aggregates,
-  Associates : Associates,
-  Restricts : Restricts,
-  Medials : Medials,
-  Statics : Statics,
+  Composes,
+  Aggregates,
+  Associates,
+  Restricts,
+  Medials,
+  Statics,
 
 }
 
@@ -1443,9 +1451,9 @@ _.assert( _.routineIs( Self.mixin ) );
 
 _global_[ Self.name ] = _[ Self.shortName ] = Self;
 
-if( typeof module !== 'undefined' )
-if( _global_.WTOOLS_PRIVATE )
-{ /* delete require.cache[ module.id ]; */ }
+// if( typeof module !== 'undefined' )
+// if( _global_.WTOOLS_PRIVATE )
+// { /* delete require.cache[ module.id ]; */ }
 
 if( typeof module !== 'undefined' && module !== null )
 module[ 'exports' ] = Self;
