@@ -50,11 +50,13 @@ function fields( test )
   var Restricts =
   {
     re : 1,
+    mr : 1,
   }
 
   var Medials =
   {
-    re : 10,
+    me : 1,
+    mr : 10,
   }
 
   var Statics =
@@ -80,35 +82,55 @@ function fields( test )
 
   _.Copyable.mixin( BasicConstructor );
 
-  var fieldsOfRelationsGroups =
+  var FieldsOfRelationsGroups =
   {
     co : 1,
     as : 1,
     ag : 1,
     re : 1,
+    mr : 1,
   }
 
-  var fieldsOfCopyableGroups =
+  var FieldsOfCopyableGroups =
   {
     co : 1,
     as : 1,
     ag : 1,
   }
 
-  test.identical( BasicConstructor.fieldsOfRelationsGroups,fieldsOfRelationsGroups );
-  test.identical( BasicConstructor.prototype.fieldsOfRelationsGroups,fieldsOfRelationsGroups );
+  var FieldsOfTightGroups =
+  {
+    co : 1,
+    ag : 1,
+  }
 
-  test.identical( BasicConstructor.fieldsOfCopyableGroups,fieldsOfCopyableGroups );
-  test.identical( BasicConstructor.prototype.fieldsOfCopyableGroups,fieldsOfCopyableGroups );
+  var FieldsOfInputGroups =
+  {
+    co : 1,
+    ag : 1,
+    as : 1,
+    me : 1,
+    mr : 10,
+  }
 
   /* */
+
+  var opts =
+  {
+    co : 3,
+    as : 3,
+    ag : 3,
+    mr : 3,
+    me : 3,
+  }
 
   var fieldsOfRelationsGroups =
   {
     co : 3,
     as : 3,
     ag : 3,
-    re : 3,
+    re : 1,
+    mr : 3,
   }
 
   var fieldsOfCopyableGroups =
@@ -118,18 +140,46 @@ function fields( test )
     ag : 3,
   }
 
-  var instance = new BasicConstructor( fieldsOfRelationsGroups );
+  var fieldsOfTightGroups =
+  {
+    co : 3,
+    ag : 3
+  }
 
-  var fieldsOfRelationsGroups =
+  var fieldsOfInputGroups =
   {
     co : 3,
     as : 3,
     ag : 3,
-    re : 3,
+    me : 3,
+    mr : 3,
   }
 
-  test.identical( instance.fieldsOfRelationsGroups,fieldsOfRelationsGroups );
-  test.identical( instance.fieldsOfCopyableGroups,fieldsOfCopyableGroups );
+  var instance = new BasicConstructor( opts );
+
+  test.identical( BasicConstructor.FieldsOfRelationsGroups, FieldsOfRelationsGroups );
+  test.identical( BasicConstructor.prototype.FieldsOfRelationsGroups, FieldsOfRelationsGroups );
+  test.identical( BasicConstructor.fieldsOfRelationsGroups, FieldsOfRelationsGroups );
+  test.identical( BasicConstructor.prototype.fieldsOfRelationsGroups, FieldsOfRelationsGroups );
+  test.identical( instance.fieldsOfRelationsGroups, fieldsOfRelationsGroups );
+
+  test.identical( BasicConstructor.FieldsOfCopyableGroups, FieldsOfCopyableGroups );
+  test.identical( BasicConstructor.prototype.FieldsOfCopyableGroups, FieldsOfCopyableGroups );
+  test.identical( BasicConstructor.fieldsOfCopyableGroups, FieldsOfCopyableGroups );
+  test.identical( BasicConstructor.prototype.fieldsOfCopyableGroups, FieldsOfCopyableGroups );
+  test.identical( instance.fieldsOfCopyableGroups, fieldsOfCopyableGroups );
+
+  test.identical( BasicConstructor.FieldsOfTightGroups, FieldsOfTightGroups );
+  test.identical( BasicConstructor.prototype.FieldsOfTightGroups, FieldsOfTightGroups );
+  test.identical( BasicConstructor.fieldsOfTightGroups, FieldsOfTightGroups );
+  test.identical( BasicConstructor.prototype.fieldsOfTightGroups, FieldsOfTightGroups );
+  test.identical( instance.fieldsOfTightGroups, fieldsOfTightGroups );
+
+  test.identical( BasicConstructor.FieldsOfInputGroups, FieldsOfInputGroups );
+  test.identical( BasicConstructor.prototype.FieldsOfInputGroups, FieldsOfInputGroups );
+  test.identical( BasicConstructor.fieldsOfInputGroups, FieldsOfInputGroups );
+  test.identical( BasicConstructor.prototype.fieldsOfInputGroups, FieldsOfInputGroups );
+  test.identical( instance.fieldsOfInputGroups, fieldsOfInputGroups );
 
 }
 
@@ -322,7 +372,7 @@ function equal( test )
   test.identical( got, expected );
 
   var expected = true ;
-  var got = all1.identicalWith( map,{ strictTyping : 0 } );
+  var got = all1.identicalWith( map, { strictTyping : 0 } );
   test.identical( got, expected );
 
   test.case = 'not identicalWith map';
@@ -439,7 +489,7 @@ function equal( test )
   test.identical( got, expected );
 
   var expected = false;
-  var got = all1.identicalWith( map,{ strictTyping : 0 } );
+  var got = all1.identicalWith( map, { strictTyping : 0 } );
   test.identical( got, expected );
 
   test.case = 'contains map having medials';

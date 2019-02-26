@@ -66,7 +66,7 @@ function onMixin( mixinDescriptor, dstClass )
   //   descriptor : Self,
   // });
 
-  /* instance accessors */
+  /* prototype accessors */
 
   var readOnly = { readOnlyProduct : 0, combining : 'supplement' };
   var names =
@@ -84,6 +84,11 @@ function onMixin( mixinDescriptor, dstClass )
     fieldsOfTightGroups : readOnly,
     fieldsOfInputGroups : readOnly,
 
+    FieldsOfCopyableGroups : readOnly,
+    FieldsOfTightGroups : readOnly,
+    FieldsOfRelationsGroups : readOnly,
+    FieldsOfInputGroups : readOnly,
+
   }
 
   _.accessor.readOnly
@@ -96,18 +101,26 @@ function onMixin( mixinDescriptor, dstClass )
     enumerable : 0,
   });
 
-  /* static accessors */
+  /* constructor accessors */
 
   var names =
   {
+
     Self : readOnly,
     Parent : readOnly,
     className : readOnly,
     lowName : readOnly,
+
+    fieldsOfRelationsGroups : readOnly,
+    fieldsOfCopyableGroups : readOnly,
+    fieldsOfTightGroups : readOnly,
+    fieldsOfInputGroups : readOnly,
+
     FieldsOfCopyableGroups : readOnly,
     FieldsOfTightGroups : readOnly,
     FieldsOfRelationsGroups : readOnly,
     FieldsOfInputGroups : readOnly,
+
   }
 
   _.accessor.readOnly
@@ -133,12 +146,12 @@ function onMixin( mixinDescriptor, dstClass )
 
   _.assert( !!dstClass.prototype.FieldsOfRelationsGroupsGet );
   _.assert( !!dstClass.FieldsOfRelationsGroupsGet );
-  _.assert( !dstClass.fieldsOfRelationsGroups );
+  _.assert( !!dstClass.fieldsOfRelationsGroups );
   _.assert( !!dstClass.FieldsOfRelationsGroups );
-  _.assert( !dstClass.prototype.fieldsOfRelationsGroups );
-  _.assert( !dstClass.prototype.FieldsOfRelationsGroups ); // xxx
+  _.assert( !!dstClass.prototype.fieldsOfRelationsGroups );
+  _.assert( !!dstClass.prototype.FieldsOfRelationsGroups );
 
-  _.assert( dstPrototype.FieldsOfRelationsGroupsGet === FieldsOfRelationsGroupsGet );
+  _.assert( dstPrototype._fieldsOfRelationsGroupsGet === _fieldsOfRelationsGroupsGet );
   _.assert( dstPrototype._fieldsOfCopyableGroupsGet === _fieldsOfCopyableGroupsGet );
   _.assert( dstPrototype._fieldsOfTightGroupsGet === _fieldsOfTightGroupsGet );
   _.assert( dstPrototype._fieldsOfInputGroupsGet === _fieldsOfInputGroupsGet );
@@ -1029,18 +1042,10 @@ function constructorIs()
  * @memberof wCopyable
  */
 
-function FieldsOfRelationsGroupsGet()
+function _fieldsOfRelationsGroupsGet()
 {
   var self = this;
-
-  if( !self.instanceIs() )
   return FieldsOfRelationsGroupsGet.call( self );
-
-  _.assert( self.instanceIs() );
-
-  var result = _.mapOnly( self, FieldsOfRelationsGroupsGet.call( self ) );
-
-  return result;
 }
 
 //
@@ -1054,14 +1059,7 @@ function FieldsOfRelationsGroupsGet()
 function _fieldsOfCopyableGroupsGet()
 {
   var self = this;
-
-  if( !self.instanceIs() )
   return FieldsOfCopyableGroupsGet.call( self );
-
-  _.assert( self.instanceIs() );
-
-  var result = _.mapOnly( self, self.Self.FieldsOfCopyableGroups );
-  return result;
 }
 
 //
@@ -1075,14 +1073,7 @@ function _fieldsOfCopyableGroupsGet()
 function _fieldsOfTightGroupsGet()
 {
   var self = this;
-
-  if( !self.instanceIs() )
   return FieldsOfTightGroupsGet.call( self );
-
-  _.assert( self.instanceIs() );
-
-  var result = _.mapOnly( self, self.Self.FieldsOfTightGroups );
-  return result;
 }
 
 //
@@ -1090,14 +1081,7 @@ function _fieldsOfTightGroupsGet()
 function _fieldsOfInputGroupsGet()
 {
   var self = this;
-
-  if( !self.instanceIs() )
   return FieldsOfInputGroupsGet.call( self );
-
-  _.assert( self.instanceIs() );
-
-  var result = _.mapOnly( self, self.Self.FieldsOfInputGroups );
-  return result;
 }
 
 //
@@ -1321,6 +1305,11 @@ var Statics =
   prototypeIs,
   constructorIs,
 
+  _fieldsOfRelationsGroupsGet,
+  _fieldsOfCopyableGroupsGet,
+  _fieldsOfTightGroupsGet,
+  _fieldsOfInputGroupsGet,
+
   FieldsOfRelationsGroupsGet,
   FieldsOfCopyableGroupsGet,
   FieldsOfTightGroupsGet,
@@ -1397,7 +1386,7 @@ var Supplement =
 
   // field
 
-  FieldsOfRelationsGroupsGet,
+  _fieldsOfRelationsGroupsGet,
   _fieldsOfCopyableGroupsGet,
   _fieldsOfTightGroupsGet,
   _fieldsOfInputGroupsGet,
