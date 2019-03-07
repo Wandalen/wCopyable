@@ -1,6 +1,6 @@
 ( function _Copyable_s_() {
 
-'use strict'; // !!!
+'use strict';
 
 /**
  * Copyable mixin add copyability and clonability to your class. The module uses defined relation to deduce how to copy / clone the instanceCopyable mixin adds copyability and clonability to your class. The module uses defined relation to deduce how to copy / clone the instance.
@@ -878,7 +878,7 @@ function _equalAre_functor( fieldsGroupsMap )
       if( !it.continue || !it.iterator.continue )
       break;
       // debugger;
-      var newIt = it.iteration().select( f );//.select2( f );
+      var newIt = it.iterationInit().select( f );//.select2( f );
       if( !_.mapHas( it.src, f ) )
       return end( false );
       if( !_._entityEqual.body( newIt ) )
