@@ -1045,7 +1045,8 @@ function constructorIs()
 function _fieldsOfRelationsGroupsGet()
 {
   var self = this;
-  return FieldsOfRelationsGroupsGet.call( self );
+  return _.fieldsOfRelationsGroups( this );
+  // return FieldsOfRelationsGroupsGet.call( self );
 }
 
 //
@@ -1059,7 +1060,8 @@ function _fieldsOfRelationsGroupsGet()
 function _fieldsOfCopyableGroupsGet()
 {
   var self = this;
-  return FieldsOfCopyableGroupsGet.call( self );
+  return _.fieldsOfCopyableGroups( this );
+  // return FieldsOfCopyableGroupsGet.call( self );
 }
 
 //
@@ -1073,7 +1075,8 @@ function _fieldsOfCopyableGroupsGet()
 function _fieldsOfTightGroupsGet()
 {
   var self = this;
-  return FieldsOfTightGroupsGet.call( self );
+  return _.fieldsOfTightGroups( this );
+  // return FieldsOfTightGroupsGet.call( self );
 }
 
 //
@@ -1081,7 +1084,8 @@ function _fieldsOfTightGroupsGet()
 function _fieldsOfInputGroupsGet()
 {
   var self = this;
-  return FieldsOfInputGroupsGet.call( self );
+  return _.fieldsOfInputGroups( this );
+  // return FieldsOfInputGroupsGet.call( self );
 }
 
 //
@@ -1115,7 +1119,7 @@ function fieldDescriptorGet( nameOfField )
 
 function FieldsOfRelationsGroupsGet()
 {
-  return _.fieldsOfRelationsGroups( this );
+  return _.fieldsOfRelationsGroups( this.Self );
 }
 
 //
@@ -1128,7 +1132,7 @@ function FieldsOfRelationsGroupsGet()
 
 function FieldsOfCopyableGroupsGet()
 {
-  return _.fieldsOfCopyableGroups( this );
+  return _.fieldsOfCopyableGroups( this.Self );
 }
 
 //
@@ -1141,7 +1145,7 @@ function FieldsOfCopyableGroupsGet()
 
 function FieldsOfTightGroupsGet()
 {
-  return _.fieldsOfTightGroups( this );
+  return _.fieldsOfTightGroups( this.Self );
 }
 
 //
@@ -1154,7 +1158,7 @@ function FieldsOfTightGroupsGet()
 
 function FieldsOfInputGroupsGet()
 {
-  return _.fieldsOfInputGroups( this );
+  return _.fieldsOfInputGroups( this.Self );
 }
 
 //
