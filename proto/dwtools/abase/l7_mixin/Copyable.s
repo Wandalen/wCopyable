@@ -11,6 +11,12 @@
  * @file Copyable.s.
  */
 
+ /**
+ * @classdesc Copyable mixin add copyability and clonability to your class.
+ * @class wCopyable
+ * @memberof module:Tools/base/CopyableMixin
+*/
+
 if( typeof module !== 'undefined' )
 {
 
@@ -38,7 +44,7 @@ _.assert( !!_._cloner );
  * Mixin this into prototype of another object.
  * @param {object} dstClass - constructor of class to mixin.
  * @method onMixin
- * @memberof wCopyable#
+ * @memberof module:Tools/base/CopyableMixin.wCopyable#
  */
 
 function onMixin( mixinDescriptor, dstClass )
@@ -171,7 +177,7 @@ function onMixin( mixinDescriptor, dstClass )
 /**
  * Default instance constructor.
  * @method init
- * @memberof wCopyable#
+ * @memberof module:Tools/base/CopyableMixin.wCopyable#
  */
 
 function init( o )
@@ -193,7 +199,7 @@ function init( o )
 /**
  * Instance descturctor.
  * @method finit
- * @memberof wCopyable#
+ * @memberof module:Tools/base/CopyableMixin.wCopyable#
  */
 
 function finit()
@@ -208,7 +214,7 @@ function finit()
  * Is this instance finited.
  * @method finitedIs
  * @param {object} ins - another instance of the class
- * @memberof wCopyable#
+ * @memberof module:Tools/base/CopyableMixin.wCopyable#
  */
 
 function finitedIs()
@@ -259,7 +265,7 @@ function Froms( srcs )
  * Extend by data from another instance.
  * @param {object} src - another isntance.
  * @method extend
- * @memberof wCopyable#
+ * @memberof module:Tools/base/CopyableMixin.wCopyable#
  */
 
 function extend( src )
@@ -293,7 +299,7 @@ function extend( src )
  * Copy data from another instance.
  * @param {object} src - another isntance.
  * @method copy
- * @memberof wCopyable#
+ * @memberof module:Tools/base/CopyableMixin.wCopyable#
  */
 
 function copy( src )
@@ -327,7 +333,7 @@ function copy( src )
  * @param {object} o.dst - dst isntance.
  * @param {object} o.constitutes - to constitute or not fields, should be off for serializing and on for deserializing.
  * @method copyCustom
- * @memberof wCopyable#
+ * @memberof module:Tools/base/CopyableMixin.wCopyable#
  */
 
 function copyCustom( o )
@@ -383,7 +389,7 @@ copyDeserializing.defaults =
  * Clone only data.
  * @param {object} [options] - options.
  * @method cloneObject
- * @memberof wCopyable#
+ * @memberof module:Tools/base/CopyableMixin.wCopyable#
  */
 
 function cloneObject( o )
@@ -409,7 +415,7 @@ cloneObject.defaults.technique = 'object';
  * Clone only data.
  * @param {object} [options] - options.
  * @method _cloneObject
- * @memberof wCopyable#
+ * @memberof module:Tools/base/CopyableMixin.wCopyable#
  */
 
 function _cloneObject( it )
@@ -450,7 +456,7 @@ function _cloneObject( it )
  * Clone only data.
  * @param {object} [options] - options.
  * @method cloneData
- * @memberof wCopyable#
+ * @memberof module:Tools/base/CopyableMixin.wCopyable#
  */
 
 function cloneData( o )
@@ -481,7 +487,7 @@ cloneData.defaults.technique = 'data';
  * Clone only data.
  * @param {object} [options] - options.
  * @method _cloneData
- * @memberof wCopyable#
+ * @memberof module:Tools/base/CopyableMixin.wCopyable#
  */
 
 function _cloneData( it )
@@ -531,7 +537,7 @@ function _traverseActPre( it )
  * @param {object} o.dst - dst isntance.
  * @param {object} o.constitutes - to constitute or not fields, should be off for serializing and on for deserializing.
  * @method _traverseAct
- * @memberof wCopyable#
+ * @memberof module:Tools/base/CopyableMixin.wCopyable#
  */
 
 var _empty = Object.create( null );
@@ -695,7 +701,7 @@ function Clone( o )
  * Clone only data.
  * @param {object} [options] - options.
  * @method cloneSerializing
- * @memberof wCopyable#
+ * @memberof module:Tools/base/CopyableMixin.wCopyable#
  */
 
 function cloneSerializing( o )
@@ -732,7 +738,7 @@ cloneSerializing.defaults.__proto__ = _.cloneDataSeparatingBuffers.defaults;
  * Clone instance.
  * @method clone
  * @param {object} [self] - optional destination
- * @memberof wCopyable#
+ * @memberof module:Tools/base/CopyableMixin.wCopyable#
  */
 
 function clone()
@@ -806,7 +812,7 @@ function cloneEmpty()
 /**
  * Gives descriptive string of the object.
  * @method toStr
- * @memberof wCopyable#
+ * @memberof module:Tools/base/CopyableMixin.wCopyable#
  */
 
 function toStr( o )
@@ -928,7 +934,7 @@ _.mapExtend( _equalAre_functor.defaults, on, off );
  * Is this instance same with another one. Use relation maps to compare.
  * @method equalWith
  * @param {object} ins - another instance of the class
- * @memberof wCopyable#
+ * @memberof module:Tools/base/CopyableMixin.wCopyable#
  */
 
 var _equalAre = _equalAre_functor();
@@ -939,7 +945,7 @@ var _equalAre = _equalAre_functor();
  * Is this instance same with another one. Use relation maps to compare.
  * @method identicalWith
  * @param {object} src - another instance of the class
- * @memberof wCopyable#
+ * @memberof module:Tools/base/CopyableMixin.wCopyable#
  */
 
 function identicalWith( src, opts )
@@ -964,7 +970,7 @@ _.routineExtend( identicalWith, _.entityIdentical );
  * Is this instance equivalent with another one. Use relation maps to compare.
  * @method equivalentWith
  * @param {object} src - another instance of the class
- * @memberof wCopyable#
+ * @memberof module:Tools/base/CopyableMixin.wCopyable#
  */
 
 function equivalentWith( src, opts )
@@ -989,7 +995,7 @@ _.routineExtend( equivalentWith, _.entityEquivalent );
  * Does this instance contain with another instance or map.
  * @method contains
  * @param {object} src - another instance of the class
- * @memberof wCopyable#
+ * @memberof module:Tools/base/CopyableMixin.wCopyable#
  */
 
 function contains( src, opts )
@@ -1114,7 +1120,7 @@ function fieldDescriptorGet( nameOfField )
 /**
  * Get map of all relations fields.
  * @method FieldsOfRelationsGroupsGet
- * @memberof wCopyable#
+ * @memberof module:Tools/base/CopyableMixin.wCopyable#
  */
 
 function FieldsOfRelationsGroupsGet()
@@ -1127,7 +1133,7 @@ function FieldsOfRelationsGroupsGet()
 /**
  * Get map of copyable fields.
  * @method FieldsOfCopyableGroupsGet
- * @memberof wCopyable#
+ * @memberof module:Tools/base/CopyableMixin.wCopyable#
  */
 
 function FieldsOfCopyableGroupsGet()
@@ -1140,7 +1146,7 @@ function FieldsOfCopyableGroupsGet()
 /**
  * Get map of tight fields.
  * @method FieldsOfTightGroupsGet
- * @memberof wCopyable#
+ * @memberof module:Tools/base/CopyableMixin.wCopyable#
  */
 
 function FieldsOfTightGroupsGet()
@@ -1153,7 +1159,7 @@ function FieldsOfTightGroupsGet()
 /**
  * Get map of input fields.
  * @method FieldsOfInputGroupsGet
- * @memberof wCopyable#
+ * @memberof module:Tools/base/CopyableMixin.wCopyable#
  */
 
 function FieldsOfInputGroupsGet()
@@ -1176,7 +1182,7 @@ function hasField( fieldName )
 /**
  * Return own constructor.
  * @method _SelfGet
- * @memberof wCopyable#
+ * @memberof module:Tools/base/CopyableMixin.wCopyable#
  */
 
 function _SelfGet()
@@ -1190,7 +1196,7 @@ function _SelfGet()
 /**
  * Return parent's constructor.
  * @method _ParentGet
- * @memberof wCopyable#
+ * @memberof module:Tools/base/CopyableMixin.wCopyable#
  */
 
 function _ParentGet()
@@ -1215,7 +1221,7 @@ function _lowNameGet()
 /**
  * Return name of class constructor.
  * @method _classNameGet
- * @memberof wCopyable#
+ * @memberof module:Tools/base/CopyableMixin.wCopyable#
  */
 
 function _classNameGet()
@@ -1229,7 +1235,7 @@ function _classNameGet()
 /**
  * Nick name of the object.
  * @method _nickNameGet
- * @memberof wCopyable#
+ * @memberof module:Tools/base/CopyableMixin.wCopyable#
  */
 
 function _nickNameGet()
@@ -1258,7 +1264,7 @@ function unameGet()
 // /**
 //  * Unique name of the object.
 //  * @method _uniqueNameGet
-//  * @memberof wCopyable#
+//  * @memberof module:Tools/base/CopyableMixin.wCopyable#
 //  */
 //
 // function _uniqueNameGet()
