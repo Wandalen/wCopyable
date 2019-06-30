@@ -68,7 +68,7 @@ function onMixin( mixinDescriptor, dstClass )
 
   // _.mixinApply
   // ({
-  //   dstPrototype : dstPrototype,
+  //   /*ttt*/dstPrototype,
   //   descriptor : Self,
   // });
 
@@ -100,7 +100,7 @@ function onMixin( mixinDescriptor, dstClass )
   _.accessor.readOnly
   ({
     object : dstPrototype,
-    names : names,
+    /*ttt*/names,
     preserveValues : 0,
     strict : 0,
     prime : 0,
@@ -132,7 +132,7 @@ function onMixin( mixinDescriptor, dstClass )
   _.accessor.readOnly
   ({
     object : dstClass,
-    names : names,
+    /*ttt*/names,
     preserveValues : 0,
     strict : 0,
     prime : 0,
@@ -313,7 +313,7 @@ function copy( src )
   var o =
   {
     dst : self,
-    src : src,
+    /*ttt*/src,
     technique : 'object',
     copyingMedials : _.instanceIs( src ) ? 0 : 1,
     // copyingMedialRestricts : xxx,
@@ -1430,7 +1430,7 @@ var Supplement =
 var Self = _.mixinDelcare
 ({
   supplement : Supplement,
-  onMixin : onMixin,
+  /*ttt*/onMixin,
   name : 'wCopyable',
   shortName : 'Copyable',
 });

@@ -66,18 +66,18 @@ function fields( test )
 
   var extend =
   {
-    Composes : Composes,
-    Aggregates : Aggregates,
-    Associates : Associates,
-    Medials : Medials,
-    Restricts : Restricts,
-    Statics : Statics,
+    /*ttt*/Composes,
+    /*ttt*/Aggregates,
+    /*ttt*/Associates,
+    /*ttt*/Medials,
+    /*ttt*/Restricts,
+    /*ttt*/Statics,
   }
 
   _.classDeclare
   ({
     cls : BasicConstructor,
-    extend : extend,
+    /*ttt*/extend,
   });
 
   _.Copyable.mixin( BasicConstructor );
@@ -230,18 +230,18 @@ function equal( test )
 
   var extend =
   {
-    Composes : Composes,
-    Aggregates : Aggregates,
-    Associates : Associates,
-    Medials : Medials,
-    Restricts : Restricts,
-    Statics : Statics,
+    /*ttt*/Composes,
+    /*ttt*/Aggregates,
+    /*ttt*/Associates,
+    /*ttt*/Medials,
+    /*ttt*/Restricts,
+    /*ttt*/Statics,
   }
 
   _.classDeclare
   ({
     cls : BasicConstructor,
-    extend : extend,
+    /*ttt*/extend,
   });
 
   _.Copyable.mixin( BasicConstructor );
@@ -542,8 +542,8 @@ function hasField( test )
 
   let Extend =
   {
-    init : init,
-    Associates : Associates,
+    /*ttt*/init,
+    /*ttt*/Associates,
   }
 
   _.classDeclare
@@ -589,10 +589,10 @@ var Self =
   tests :
   {
 
-    fields : fields,
-    equal : equal,
+    /*ttt*/fields,
+    /*ttt*/equal,
 
-    hasField : hasField,
+    /*ttt*/hasField,
 
   },
 
