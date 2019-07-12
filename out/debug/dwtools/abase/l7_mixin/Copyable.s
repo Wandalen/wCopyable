@@ -68,13 +68,13 @@ function onMixin( mixinDescriptor, dstClass )
 
   // _.mixinApply
   // ({
-  //   /*ttt*/dstPrototype,
+  //   dstPrototype,
   //   descriptor : Self,
   // });
 
   /* prototype accessors */
 
-  var readOnly = { readOnlyProduct : 0, combining : 'supplement' };
+  var readOnly = { combining : 'supplement' };
   var names =
   {
 
@@ -100,7 +100,7 @@ function onMixin( mixinDescriptor, dstClass )
   _.accessor.readOnly
   ({
     object : dstPrototype,
-    /*ttt*/names,
+    names,
     preserveValues : 0,
     strict : 0,
     prime : 0,
@@ -132,7 +132,7 @@ function onMixin( mixinDescriptor, dstClass )
   _.accessor.readOnly
   ({
     object : dstClass,
-    /*ttt*/names,
+    names,
     preserveValues : 0,
     strict : 0,
     prime : 0,
@@ -313,7 +313,7 @@ function copy( src )
   var o =
   {
     dst : self,
-    /*ttt*/src,
+    src,
     technique : 'object',
     copyingMedials : _.instanceIs( src ) ? 0 : 1,
     // copyingMedialRestricts : xxx,
@@ -661,16 +661,13 @@ function __traverseAct( it )
 
   var newIt = it.iterationClone();
 
-  // if( it.src && it.src.nickName === 'reflector::exported.0' )
-  // debugger;
-
   copyFacets( Composes, it.copyingComposes );
   copyFacets( Aggregates, it.copyingAggregates );
   copyFacets( Associates, it.copyingAssociates );
   copyFacets( _.mapOnly( Medials, Restricts ), it.copyingMedialRestricts );
 
   // if( !_.instanceIsStandard( it.src ) )
-  copyFacets( Medials, it.copyingMedials );
+  // copyFacets( Medials, it.copyingMedials ); // xxx yyy
 
   copyFacets( Restricts, it.copyingRestricts );
   copyFacets( it.customFields, it.copyingCustomFields );
@@ -1430,7 +1427,7 @@ var Supplement =
 var Self = _.mixinDelcare
 ({
   supplement : Supplement,
-  /*ttt*/onMixin,
+  onMixin,
   name : 'wCopyable',
   shortName : 'Copyable',
 });
