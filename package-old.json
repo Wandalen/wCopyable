@@ -1,0 +1,58 @@
+{
+  "name": "wCopyable",
+  "version": "0.4.126",
+  "engine": "node >= 6.0.0",
+  "description": "Copyable mixin adds copyability and clonability to your class. The module uses defined relation to deduce how to copy / clone the instance.",
+  "license": "MIT",
+  "author": "Kostiantyn Wandalen <wanalen@willbe.so>",
+  "contributors": [
+    {
+      "name": "Kostiantyn Wandalen",
+      "email": "wanalen@willbe.so"
+    },
+    {
+      "name": "Volodymyr M.",
+      "email": "volodymyr.migdal@gmail.com"
+    }
+  ],
+  "main": "proto/dwtools/abase/l7_mixin/Copyable.s",
+  "files": [
+    "proto/dwtools/abase/l7_mixin/Copyable.s",
+    "proto/dwtools/abase/layer3",
+    "proto/dwtools/Tools.s",
+    "production"
+  ],
+  "scripts": {
+    "test": "wtest proto",
+    "docgen": "wdocgen proto"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Wandalen/wCopyable.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Wandalen/wCopyable/issues"
+  },
+  "dependencies": {
+    "wTools": "",
+    "wProto": "",
+    "wcloner": "",
+    "wlooker": "",
+    "wcomparator": ""
+  },
+  "devDependencies": {
+    "wTesting": ""
+  },
+  "keywords": [
+    "wTools",
+    "wCopyable",
+    "copy",
+    "clone",
+    "copy mixin",
+    "clone mixin",
+    "constructor",
+    "destructor",
+    "init",
+    "finit"
+  ]
+}
