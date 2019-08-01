@@ -28,7 +28,7 @@ function fields( test )
 
   function BasicConstructor( o )
   {
-    _.instanceInit( this );
+    _.workpiece.initFields( this );
     this.copy( o || {} );
   }
 
@@ -130,7 +130,7 @@ function fields( test )
     as : 3,
     ag : 3,
     re : 1,
-    mr : 3,
+    mr : 1,
   }
 
   var fieldsOfCopyableGroups =
@@ -151,8 +151,8 @@ function fields( test )
     co : 3,
     as : 3,
     ag : 3,
-    me : 3,
-    mr : 3,
+    // me : 3,
+    mr : 1,
   }
 
   var instance = new BasicConstructor( opts );
@@ -193,7 +193,7 @@ function equal( test )
 
   function BasicConstructor( o )
   {
-    _.instanceInit( this );
+    _.workpiece.initFields( this );
     this.copy( o || {} );
   }
 
@@ -527,12 +527,12 @@ function hasField( test )
 
   function SampleClass( o )
   {
-    return _.instanceConstructor( SampleClass, this, arguments );
+    return _.workpiece.construct( SampleClass, this, arguments );
   }
 
   function init( o )
   {
-    _.instanceInit( this );
+    _.workpiece.initFields( this );
   }
 
   let Associates =
