@@ -26,7 +26,7 @@ if( typeof module !== 'undefined' )
   _.include( 'wCloner' );
   _.include( 'wStringer' );
   _.include( 'wLooker' );
-  _.include( 'wComparator' );
+  _.include( 'wEqualer' );
 
 }
 
@@ -464,7 +464,6 @@ function cloneData( o )
 }
 
 cloneData.iterationDefaults = Object.create( _._cloner.iterationDefaults );
-// cloneData.iterationDefaults.dst = Object.create( null );
 cloneData.iterationDefaults.dst = null;
 cloneData.iterationDefaults.copyingAggregates = 3;
 cloneData.iterationDefaults.copyingAssociates = 0;
@@ -864,7 +863,7 @@ function _equalAre_functor( fieldsGroupsMap )
 
   fieldsGroupsMap = _.routineOptions( _equalAre_functor, fieldsGroupsMap );
 
-  _.routineExtend( _equalAre, _._entityEqual );
+  _.routineExtend( _equalAre, _._equal );
 
   return _equalAre;
 
@@ -872,9 +871,9 @@ function _equalAre_functor( fieldsGroupsMap )
   {
 
     _.assert( arguments.length === 1, 'Expects single argument' );
-    _.assert( _.objectIs( it.context ) );
-    _.assert( it.context.strictTyping !== undefined );
-    _.assert( it.context.containing !== undefined );
+    _.assert( _.objectIs( it ) );
+    _.assert( it.strictTyping !== undefined );
+    _.assert( it.containing !== undefined );
 
     if( !it.src )
     return false;
@@ -882,7 +881,7 @@ function _equalAre_functor( fieldsGroupsMap )
     if( !it.src2 )
     return false;
 
-    if( it.context.strictTyping )
+    if( it.strictTyping )
     if( it.src.constructor !== it.src2.constructor )
     return false;
 
@@ -905,13 +904,13 @@ function _equalAre_functor( fieldsGroupsMap )
       var newIt = it.iterationInit().select( f );
       if( !_.mapHas( it.src, f ) )
       return end( false );
-      if( !_._entityEqual.body( newIt ) )
+      if( !_._equal.body( newIt ) )
       return end( false );
     }
 
     /* */
 
-    if( !it.context.containing )
+    if( !it.containing )
     {
       if( !( it.src2 instanceof this.constructor ) )
       if( _.mapKeys( _.mapBut( it.src, fieldsMap ) ).length )
