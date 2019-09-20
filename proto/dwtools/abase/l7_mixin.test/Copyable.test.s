@@ -583,7 +583,7 @@ function hasField( test )
 var Self =
 {
 
-  name : 'Tools/base/CopyableMixin',
+  name : 'Tools.base.CopyableMixin',
   silencing : 1,
 
   tests :

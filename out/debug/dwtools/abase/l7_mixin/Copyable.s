@@ -76,7 +76,7 @@ function onMixinApply( mixinDescriptor, dstClass )
     Parent : readOnly,
     className : readOnly,
     lowName : readOnly,
-    nickName : readOnly,
+    qualifiedName : readOnly,
     uname : readOnly,
 
     fieldsOfRelationsGroups : readOnly,
@@ -213,72 +213,15 @@ function finitedIs()
 function From( src )
 {
   return _.workpiece.from( src );
-  // var constr = this.Self;
-  // if( src instanceof constr )
-  // {
-  //   _.assert( arguments.length === 1 );
-  //   return src;
-  // }
-  // return new( _.constructorJoin( constr, arguments ) );
 }
 
 //
 
 function Froms( srcs )
 {
-  return _.workpiece.from( src );
-  // var constr = this.Self;
-  // _.assert( arguments.length === 1 );
-  // if( srcs instanceof constr )
-  // {
-  //   _.assert( arguments.length === 1 );
-  //   return srcs;
-  // }
-  // if( _.arrayLike( srcs ) )
-  // {
-  //   _.assert( arguments.length === 1 );
-  //   var result = srcs.map( ( src ) =>
-  //   {
-  //     return constr.From( src );
-  //   });
-  //   return result;
-  // }
-  // return constr.From.apply( constr, arguments );
+  debugger;
+  return _.workpiece.froms( src );
 }
-
-//
-
-// /**
-//  * Extend by data from another instance.
-//  * @param {object} src - another isntance.
-//  * @method extend
-//  * @memberof module:Tools/base/CopyableMixin.wCopyable#
-//  */
-//
-// function extend( src )
-// {
-//   var self = this;
-//
-//   _.assert( arguments.length === 1, 'Expects single argument' );
-//   _.assert( src instanceof self.Self || _.mapIs( src ) );
-//
-//   for( var s in src )
-//   {
-//     if( _.objectIs( self[ s ] ) )
-//     {
-//       if( _.routineIs( self[ s ].extend ) )
-//       self[ s ].extend( src[ s ] );
-//       else
-//       _.mapExtend( self[ s ], src[ s ] );
-//     }
-//     else
-//     {
-//       self[ s ] = src[ s ];
-//     }
-//   }
-//
-//   return self;
-// }
 
 //
 
@@ -491,16 +434,12 @@ function _cloneData( it )
 
 //
 
-// function _traverseAct_pre( it )
 function _traverseAct_pre( routine, args )
 {
   let self = this;
   let it = args[ 0 ];
 
-  // debugger;
-
   _.assert( _.objectIs( it ) );
-  // _.assert( arguments.length === 1, 'Expects single argument' );
   _.assert( arguments.length === 2, 'Expects single argument' );
   _.assert( args.length === 1, 'Expects single argument' );
 
@@ -543,8 +482,6 @@ function _traverseAct_body( it )
 
   /* adjust */
 
-  // self._traverseActPre( it );
-
   _.assert( _.objectIs( it.proto ) );
 
   /* var */
@@ -575,9 +512,9 @@ function _traverseAct_body( it )
   _.assert( _.routineIs( self.__traverseAct ) );
 
   if( _.instanceIsStandard( src ) )
-  _.assertMapOwnOnly( src, [ Composes, Aggregates, Associates, Restricts ], () => 'Options instance for ' + self.nickName + ' should not have fields' );
+  _.assertMapOwnOnly( src, [ Composes, Aggregates, Associates, Restricts ], () => 'Options instance for ' + self.qualifiedName + ' should not have fields :' );
   else
-  _.assertMapOwnOnly( src, [ Composes, Aggregates, Associates, Medials ], () => 'Options map for ' + self.nickName + ' should not have fields' );
+  _.assertMapOwnOnly( src, [ Composes, Aggregates, Associates, Medials ], () => 'Options map for ' + self.qualifiedName + ' should not have fields :' );
 
   /* */
 
@@ -1109,28 +1046,6 @@ function _fieldsOfInputGroupsGet()
 
 //
 
-// function fieldDescriptorGet( nameOfField )
-// {
-//   var proto = _.prototypeOf( this );
-//   var report = Object.create( null );
-//
-//   _.assert( _.strDefined( nameOfField ) );
-//   _.assert( arguments.length === 1, 'Expects single argument' );
-//
-//   for( var f in _.DefaultFieldsGroups )
-//   {
-//     var facility = _.DefaultFieldsGroups[ f ];
-//     if( proto[ facility ] )
-//     if( proto[ facility ][ nameOfField ] !== undefined )
-//     report[ facility ] = true;
-//   }
-//
-//   debugger;
-//   return report;
-// }
-
-//
-
 /**
  * Get map of all relations fields.
  * @method FieldsOfRelationsGroupsGet
@@ -1226,9 +1141,6 @@ function _ParentGet()
 function _lowNameGet()
 {
   return _.workpiece.lowClassName( this );
-  // var name = this.className;
-  // name = _.strDecapitalize( name );
-  // return name;
 }
 
 //
@@ -1242,29 +1154,19 @@ function _lowNameGet()
 function _classNameGet()
 {
   return _.workpiece.className( this );
-  // _.assert( this.constructor === null || _.strIs( this.constructor.name ) || _.strIs( this.constructor._name ) );
-  // return this.constructor ? ( this.constructor.name || this.constructor._name ) : '';
 }
 
 //
 
 /**
  * Nick name of the object.
- * @method _nickNameGet
+ * @method _qualifiedNameGet
  * @memberof module:Tools/base/CopyableMixin.wCopyable#
  */
 
-function _nickNameGet()
+function _qualifiedNameGet()
 {
-  return _.workpiece.nickName( this );
-  // var self = this;
-  // var result = ( self.key || self.name || '' );
-  // var index = '';
-  // if( _.numberIs( self.instanceIndex ) )
-  // result += '#in' + self.instanceIndex;
-  // if( Object.hasOwnProperty.call( self, 'id' ) )
-  // result += '#id' + self.id;
-  // return self.className + '( ' + result + ' )';
+  return _.workpiece.qualifiedName( this );
 }
 
 //
@@ -1272,8 +1174,6 @@ function _nickNameGet()
 function unameGet()
 {
   return _.workpiece.uname( this );
-  // var self = this;
-  // return self.className + '( ' + '#id' + self.id + ' )';
 }
 
 // --
@@ -1352,13 +1252,11 @@ var Supplement =
   From,
   Froms,
 
-  // extend,
   copy,
 
   copyCustom,
   copyDeserializing,
 
-  // _traverseActPre,
   _traverseAct,
   __traverseAct,
 
@@ -1397,7 +1295,6 @@ var Supplement =
   _fieldsOfCopyableGroupsGet,
   _fieldsOfTightGroupsGet,
   _fieldsOfInputGroupsGet,
-  // fieldDescriptorGet,
 
   // class
 
@@ -1408,7 +1305,7 @@ var Supplement =
 
   _lowNameGet,
   _classNameGet,
-  _nickNameGet,
+  _qualifiedNameGet,
   unameGet,
 
   //
