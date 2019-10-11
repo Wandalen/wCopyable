@@ -838,7 +838,7 @@ function _equalAre_functor( fieldsGroupsMap )
     {
       if( !it.continue || !it.iterator.continue )
       break;
-      var newIt = it.iterationMake().select( f );
+      var newIt = it.iterationMake().select( it.src[ f ], f );
       if( !_.mapHas( it.src, f ) )
       return end( false );
       if( !_._equal.body( newIt ) )
