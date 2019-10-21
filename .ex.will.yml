@@ -33,7 +33,7 @@ about :
 path :
 
   repository : git+https:///github.com/Wandalen/wCopyable.git
-  remotes :
+  origins :
    - git+https:///github.com/Wandalen/wCopyable.git
    - npm:///wCopyable
   bugtracker : https:///github.com/Wandalen/wCopyable/issues
