@@ -1100,7 +1100,6 @@ function FieldsOfInputGroupsGet()
 
 function hasField( fieldName )
 {
-  debugger;
   return _.prototypeHasField( this, fieldName );
 }
 
