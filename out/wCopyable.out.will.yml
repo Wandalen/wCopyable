@@ -3,18 +3,19 @@ root:
   - wCopyable.out
 consistency:
   wCopyable.out.will.yml: &ref_0
-    hash: b5a3f869827680e1ea217f99a4bc89c7
-    size: 39089
+    hash: 41f10905a8a4072f45735c558ab22ab1
+    size: 39118
   ../.ex.will.yml: &ref_1
     hash: 01c6ee52c0a544ff5ec4298c2626f727
     size: 1952
   ../.im.will.yml: &ref_2
-    hash: f710c7ac2a9657f82c5995f753333808
-    size: 5138
+    hash: 10f1bb8759211c79af7323ebb78779e8
+    size: 5212
 module:
   wCopyable.out:
     about:
       name: wCopyable
+      org: noorg
       description: >-
         Copyable mixin adds copyability and clonability to your class. The
         module uses defined relation to deduce how to copy / clone the instance.
@@ -72,9 +73,6 @@ module:
       download:
         criterion:
           predefined: 1
-      remote:
-        criterion:
-          predefined: 1
       repository:
         path: 'git+https:///github.com/Wandalen/wCopyable.git'
       origins:
@@ -84,15 +82,15 @@ module:
       bugtracker:
         path: 'https:///github.com/Wandalen/wCopyable/issues'
       in:
-        criterion:
-          predefined: 0
         path: .
       out:
-        criterion:
-          predefined: 0
         path: .
       temp:
-        path: 'path::out'
+        path:
+          - 'path::out'
+          - ../package-lock.json
+          - ../package.json
+          - ../node_modules
       proto:
         path: ../proto
       export:
@@ -157,11 +155,13 @@ module:
         path: '{path::out.*=}/source/Index.s'
       exported.dir.proto.export:
         criterion:
+          generated: 1
           content: proto
           export: 1
         path: ../proto
       exported.files.proto.export:
         criterion:
+          generated: 1
           content: proto
           export: 1
         path:
@@ -356,6 +356,7 @@ module:
           prefixPath: ../proto
         mandatory: 1
         criterion:
+          generated: 1
           content: proto
           export: 1
       exported.files.proto.export:
@@ -368,6 +369,7 @@ module:
         recursive: 0
         mandatory: 1
         criterion:
+          generated: 1
           content: proto
           export: 1
     step:
@@ -725,6 +727,7 @@ module:
         opts:
           reflector: 'reflector::exported.proto.export*'
         criterion:
+          generated: 1
           content: proto
           export: 1
         inherit:
@@ -733,6 +736,7 @@ module:
         opts:
           reflector: 'reflector::exported.files.proto.export*'
         criterion:
+          generated: 1
           content: proto
           export: 1
         inherit:
@@ -831,6 +835,7 @@ module:
   ../:
     about:
       name: wCopyable
+      org: noorg
       description: >-
         Copyable mixin adds copyability and clonability to your class. The
         module uses defined relation to deduce how to copy / clone the instance.
@@ -888,9 +893,6 @@ module:
       download:
         criterion:
           predefined: 1
-      remote:
-        criterion:
-          predefined: 1
       repository:
         path: 'git+https:///github.com/Wandalen/wCopyable.git'
       origins:
@@ -900,21 +902,21 @@ module:
       bugtracker:
         path: 'https:///github.com/Wandalen/wCopyable/issues'
       in:
-        criterion:
-          predefined: 0
         path: .
       out:
-        criterion:
-          predefined: 0
         path: out
       temp:
-        path: 'path::out'
+        path:
+          - 'path::out'
+          - package-lock.json
+          - package.json
+          - node_modules
       proto:
-        path: ./proto
+        path: proto
       export:
         path: '{path::proto}/**'
       doc:
-        path: ./doc
+        path: doc
       out.raw.debug:
         criterion:
           debug: debug
@@ -1548,6 +1550,6 @@ module:
         hash: 01c6ee52c0a544ff5ec4298c2626f727
         size: 1952
       ../.im.will.yml:
-        hash: f710c7ac2a9657f82c5995f753333808
-        size: 5138
+        hash: 10f1bb8759211c79af7323ebb78779e8
+        size: 5212
       wCopyable.out.will.yml: *ref_0
