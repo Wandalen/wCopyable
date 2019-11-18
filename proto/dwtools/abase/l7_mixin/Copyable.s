@@ -571,6 +571,9 @@ function __traverseAct( it )
 
   var newIt = it.iterationClone();
 
+  // if( _global_.debugger )
+  // debugger;
+
   copyFacets( Composes, it.copyingComposes );
   copyFacets( Aggregates, it.copyingAggregates );
   copyFacets( Associates, it.copyingAssociates );
