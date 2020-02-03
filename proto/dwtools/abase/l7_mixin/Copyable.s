@@ -197,12 +197,12 @@ function finit()
 
 /**
  * Is this instance finited.
- * @method finitedIs
+ * @method isFinited
  * @param {object} ins - another instance of the class
  * @memberof module:Tools/base/CopyableMixin.wCopyable#
  */
 
-function finitedIs()
+function isFinited()
 {
   var self = this;
   return _.workpiece.isFinited( self );
@@ -736,7 +736,7 @@ function clone()
 {
   var self = this;
 
-  _.assert( arguments.length === 0 );
+  _.assert( arguments.length === 0, 'Expects no arguments' );
 
   var dst = new self.constructor( self );
   _.assert( dst !== self );
@@ -975,7 +975,7 @@ _.routineExtend( contains, _.entityContains );
 
 function instanceIs()
 {
-  _.assert( arguments.length === 0 );
+  _.assert( arguments.length === 0, 'Expects no arguments' );
   return _.instanceIs( this );
 }
 
@@ -983,7 +983,7 @@ function instanceIs()
 
 function prototypeIs()
 {
-  _.assert( arguments.length === 0 );
+  _.assert( arguments.length === 0, 'Expects no arguments' );
   return _.prototypeIs( this );
 }
 
@@ -991,7 +991,7 @@ function prototypeIs()
 
 function constructorIs()
 {
-  _.assert( arguments.length === 0 );
+  _.assert( arguments.length === 0, 'Expects no arguments' );
   return _.constructorIs( this );
 }
 
@@ -1249,7 +1249,7 @@ var Supplement =
 
   init,
   finit,
-  finitedIs,
+  isFinited,
 
   From,
   Froms,
