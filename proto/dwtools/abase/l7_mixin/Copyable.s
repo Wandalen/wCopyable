@@ -1168,7 +1168,7 @@ function _classNameGet()
 
 function _qualifiedNameGet()
 {
-  return _.workpiece.qualifiedName( this );
+  return _.workpiece._qualifiedNameGet( this );
 }
 
 //
