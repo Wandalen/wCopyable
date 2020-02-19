@@ -24,13 +24,13 @@
   }, 
   "dependencies" : 
   {
-    "wTools" : "alpha", 
-    "wProto" : "alpha", 
-    "wcloner" : "alpha", 
-    "wlooker" : "alpha", 
-    "wequaler" : "alpha"
+    "wTools" : "", 
+    "wProto" : "", 
+    "wcloner" : "", 
+    "wlooker" : "", 
+    "wequaler" : ""
   }, 
-  "devDependencies" : { "wTesting" : "alpha" }, 
+  "devDependencies" : { "wTesting" : "" }, 
   "keywords" : 
   [
     "wTools", 

@@ -26,7 +26,7 @@ if( typeof module !== 'undefined' )
   _.include( 'wCloner' );
   _.include( 'wStringer' );
   _.include( 'wLooker' );
-  _.include( 'wComparator' );
+  _.include( 'wEqualer' );
 
 }
 
@@ -43,11 +43,11 @@ _.assert( !!_._cloner );
 /**
  * Mixin this into prototype of another object.
  * @param {object} dstClass - constructor of class to mixin.
- * @method onMixin
+ * @method onMixinApply
  * @memberof module:Tools/base/CopyableMixin.wCopyable#
  */
 
-function onMixin( mixinDescriptor, dstClass )
+function onMixinApply( mixinDescriptor, dstClass )
 {
 
   var dstPrototype = dstClass.prototype;
@@ -66,12 +66,6 @@ function onMixin( mixinDescriptor, dstClass )
 
   _.mixinApply( this, dstPrototype );
 
-  // _.mixinApply
-  // ({
-  //   dstPrototype,
-  //   descriptor : Self,
-  // });
-
   /* prototype accessors */
 
   var readOnly = { combining : 'supplement' };
@@ -82,7 +76,7 @@ function onMixin( mixinDescriptor, dstClass )
     Parent : readOnly,
     className : readOnly,
     lowName : readOnly,
-    nickName : readOnly,
+    qualifiedName : readOnly,
     uname : readOnly,
 
     fieldsOfRelationsGroups : readOnly,
@@ -182,16 +176,7 @@ function onMixin( mixinDescriptor, dstClass )
 
 function init( o )
 {
-  var self = this;
-
-  _.assert( arguments.length === 0 || arguments.length === 1 );
-  _.instanceInit( self );
-
-  Object.preventExtensions( self );
-
-  if( o )
-  self.copy( o );
-
+  return _.workpiece.initWithArguments({ instance : this, args : arguments });
 }
 
 //
@@ -205,92 +190,37 @@ function init( o )
 function finit()
 {
   var self = this;
-  _.instanceFinit( self );
+  _.workpiece.finit( self );
 }
 
 //
 
 /**
  * Is this instance finited.
- * @method finitedIs
+ * @method isFinited
  * @param {object} ins - another instance of the class
  * @memberof module:Tools/base/CopyableMixin.wCopyable#
  */
 
-function finitedIs()
+function isFinited()
 {
   var self = this;
-  return _.instanceIsFinited( self );
+  return _.workpiece.isFinited( self );
 }
 
 //
 
 function From( src )
 {
-  var constr = this.Self;
-  if( src instanceof constr )
-  {
-    _.assert( arguments.length === 1 );
-    return src;
-  }
-  return new( _.constructorJoin( constr, arguments ) );
+  return _.workpiece.from( src );
 }
 
 //
 
 function Froms( srcs )
 {
-  var constr = this.Self;
-  _.assert( arguments.length === 1 );
-  if( srcs instanceof constr )
-  {
-    _.assert( arguments.length === 1 );
-    return srcs;
-  }
-  if( _.arrayLike( srcs ) )
-  {
-    _.assert( arguments.length === 1 );
-    var result = srcs.map( ( src ) =>
-    {
-      return constr.From( src );
-    });
-    return result;
-  }
-  return constr.From.apply( constr, arguments );
-}
-
-//
-
-/**
- * Extend by data from another instance.
- * @param {object} src - another isntance.
- * @method extend
- * @memberof module:Tools/base/CopyableMixin.wCopyable#
- */
-
-function extend( src )
-{
-  var self = this;
-
-  _.assert( arguments.length === 1, 'Expects single argument' );
-  _.assert( src instanceof self.Self || _.mapIs( src ) );
-
-  for( var s in src )
-  {
-    if( _.objectIs( self[ s ] ) )
-    {
-      if( _.routineIs( self[ s ].extend ) )
-      self[ s ].extend( src[ s ] );
-      else
-      _.mapExtend( self[ s ], src[ s ] );
-    }
-    else
-    {
-      self[ s ] = src[ s ];
-    }
-  }
-
-  return self;
+  debugger;
+  return _.workpiece.froms( src );
 }
 
 //
@@ -316,7 +246,6 @@ function copy( src )
     src,
     technique : 'object',
     copyingMedials : _.instanceIs( src ) ? 0 : 1,
-    // copyingMedialRestricts : xxx,
   };
   var it = _._cloner( routine, o );
 
@@ -469,13 +398,16 @@ function cloneData( o )
   if( o.src === undefined )
   o.src = self;
 
+  if( o.dst === undefined || o.dst === null )
+  o.dst = Object.create( null );
+
   var it = _._cloner( cloneData, o );
 
   return self._cloneData( it );
 }
 
 cloneData.iterationDefaults = Object.create( _._cloner.iterationDefaults );
-cloneData.iterationDefaults.dst = Object.create( null );
+cloneData.iterationDefaults.dst = null;
 cloneData.iterationDefaults.copyingAggregates = 3;
 cloneData.iterationDefaults.copyingAssociates = 0;
 cloneData.defaults = _.mapSupplementOwn( Object.create( _._cloner.defaults ), cloneData.iterationDefaults );
@@ -502,12 +434,14 @@ function _cloneData( it )
 
 //
 
-function _traverseActPre( it )
+function _traverseAct_pre( routine, args )
 {
-  var self = this;
+  let self = this;
+  let it = args[ 0 ];
 
   _.assert( _.objectIs( it ) );
-  _.assert( arguments.length === 1, 'Expects single argument' );
+  _.assert( arguments.length === 2, 'Expects single argument' );
+  _.assert( args.length === 1, 'Expects single argument' );
 
   /* adjust */
 
@@ -525,6 +459,7 @@ function _traverseActPre( it )
   if( !it.proto && it.src )
   it.proto = Object.getPrototypeOf( it.src );
 
+  return it;
 }
 
 //
@@ -541,13 +476,11 @@ function _traverseActPre( it )
  */
 
 var _empty = Object.create( null );
-function _traverseAct( it )
+function _traverseAct_body( it )
 {
   var self = this;
 
   /* adjust */
-
-  self._traverseActPre( it );
 
   _.assert( _.objectIs( it.proto ) );
 
@@ -579,9 +512,9 @@ function _traverseAct( it )
   _.assert( _.routineIs( self.__traverseAct ) );
 
   if( _.instanceIsStandard( src ) )
-  _.assertMapOwnOnly( src, [ Composes, Aggregates, Associates, Restricts ], () => 'Options instance for ' + self.nickName + ' should not have fields' );
+  _.assertMapOwnOnly( src, [ Composes, Aggregates, Associates, Restricts ], () => 'Options instance for ' + self.qualifiedName + ' should not have fields :' );
   else
-  _.assertMapOwnOnly( src, [ Composes, Aggregates, Associates, Medials ], () => 'Options map for ' + self.nickName + ' should not have fields' );
+  _.assertMapOwnOnly( src, [ Composes, Aggregates, Associates, Medials ], () => 'Options map for ' + self.qualifiedName + ' should not have fields :' );
 
   /* */
 
@@ -609,8 +542,10 @@ function _traverseAct( it )
   return dst;
 }
 
-_traverseAct.iterationDefaults = Object.create( _._cloner.iterationDefaults );
-_traverseAct.defaults = _.mapSupplementOwn( Object.create( _._cloner.defaults ) , _traverseAct.iterationDefaults );
+_traverseAct_body.iterationDefaults = Object.create( _._cloner.iterationDefaults );
+_traverseAct_body.defaults = _.mapSupplementOwn( Object.create( _._cloner.defaults ) , _traverseAct_body.iterationDefaults );
+
+let _traverseAct = _.routineFromPreAndBody( _traverseAct_pre, _traverseAct_body );
 
 //
 
@@ -629,52 +564,111 @@ function __traverseAct( it )
   var Restricts = proto.Restricts || _empty;
   var Medials = proto.Medials || _empty;
 
-  /* copy facets */
-
-  function copyFacets( screen, copyingDegree )
-  {
-
-    _.assert( _.numberIs( copyingDegree ) );
-    _.assert( it.dst === dst );
-    _.assert( _.objectIs( screen ) || !copyingDegree );
-
-    if( !copyingDegree )
-    return;
-
-    newIt.screenFields = screen;
-    newIt.copyingDegree = Math.min( copyingDegree, it.copyingDegree );
-    newIt.instanceAsMap = 1;
-
-    _.assert( it.copyingDegree === 3, 'not tested' );
-    _.assert( newIt.copyingDegree === 1 || newIt.copyingDegree === 3, 'not tested' );
-
-    /* copyingDegree applicable to fields, so increment is needed */
-
-    if( newIt.copyingDegree === 1 )
-    newIt.copyingDegree += 1;
-
-    _._traverseMap( newIt );
-
-  }
+  var ordersHash = new Map;
+  var standardOrder = true;
 
   /* */
 
   var newIt = it.iterationClone();
 
+  // if( _global_.debugger )
+  // debugger;
+
   copyFacets( Composes, it.copyingComposes );
   copyFacets( Aggregates, it.copyingAggregates );
   copyFacets( Associates, it.copyingAssociates );
   copyFacets( _.mapOnly( Medials, Restricts ), it.copyingMedialRestricts );
-
-  // if( !_.instanceIsStandard( it.src ) )
-  // copyFacets( Medials, it.copyingMedials ); // xxx yyy
-
   copyFacets( Restricts, it.copyingRestricts );
   copyFacets( it.customFields, it.copyingCustomFields );
+
+  run();
 
   /* done */
 
   return dst;
+
+  /* */
+
+  function copyFacets( screen, copyingDegree )
+  {
+
+    if( screen === null )
+    return;
+
+    if( !copyingDegree )
+    return;
+
+    _.assert( _.mapIsHeritated( screen ) );
+    let screen2 = _.mapExtend( null, screen );
+
+    _.assert( _.numberIs( copyingDegree ) );
+    _.assert( it.dst === dst );
+    _.assert( _.mapIsHeritated( screen2 ) || !copyingDegree );
+
+    let newIt2 = Object.create( null );
+    newIt2.screenFields = screen2;
+    newIt2.copyingDegree = Math.min( copyingDegree, it.copyingDegree );
+    newIt2.instanceAsMap = 1;
+
+    _.assert( it.copyingDegree === 3, 'not tested' );
+    _.assert( newIt2.copyingDegree === 1 || newIt2.copyingDegree === 3, 'not tested' );
+
+    /* copyingDegree applicable to fields, so increment is needed */
+
+    if( newIt2.copyingDegree === 1 )
+    newIt2.copyingDegree += 1;
+
+    for( let s in screen2 )
+    {
+      let e = screen[ s ];
+      if( _.definitionIs( e ) )
+      if( e.order < 0 || e.order > 0 )
+      {
+        let newIt3 = _.mapExtend( null, newIt2 );
+        newIt3.screenFields = Object.create( null );
+        newIt3.screenFields[ s ] = screen2[ s ];
+        delete screen2[ s ];
+        orderAdd( e.order, newIt3 );
+      }
+    }
+
+    orderAdd( 0, newIt2 );
+
+  }
+
+  /* */
+
+  function orderAdd( order, newIt2 )
+  {
+    _.assert( _.numberIs( order ) );
+
+    if( !ordersHash.has( order ) )
+    ordersHash.set( order, [] );
+
+    ordersHash.get( order ).push( newIt2 );
+
+  }
+
+  /* */
+
+  function run()
+  {
+
+    let orders = Array.from( ordersHash.keys() );
+    orders.sort();
+
+    orders.forEach( ( order ) =>
+    {
+      let its = ordersHash.get( order );
+      its.forEach( ( newIt2 ) =>
+      {
+        _.mapExtend( newIt, newIt2 );
+        _._traverseMap( newIt );
+      });
+    });
+
+  }
+
 }
 
 //
@@ -742,23 +736,10 @@ function clone()
 {
   var self = this;
 
-  _.assert( arguments.length === 0 );
-  // _.assert( arguments.length <= 1 );
+  _.assert( arguments.length === 0, 'Expects no arguments' );
 
-  // if( !dst )
-  // {
-    var dst = new self.constructor( self );
-    _.assert( dst !== self );
-    // if( dst === self )
-    // {
-    //   dst = new self.constructor();
-    //   dst.copy( self );
-    // }
-  // }
-  // else
-  // {
-  //   dst.copy( self );
-  // }
+  var dst = new self.constructor( self );
+  _.assert( dst !== self );
 
   return dst;
 }
@@ -776,11 +757,6 @@ function cloneExtending( override )
     debugger;
     var dst = new self.constructor( self );
     _.assert( dst !== self );
-    // if( dst === self )
-    // {
-    //   dst = new self.constructor();
-    //   dst.copy( self );
-    // }
     return dst;
   }
   else
@@ -814,22 +790,7 @@ function cloneEmpty()
 
 function toStr( o )
 {
-  var self = this;
-  var result = '';
-  var o = o || Object.create( null );
-
-  _.assert( arguments.length === 0 || arguments.length === 1 );
-
-  if( !o.jsLike && !o.jsonLike )
-  result += self.nickName + '\n';
-
-  var fields = self.fieldsOfTightGroups;
-
-  var t = _.toStr( fields, o );
-  _.assert( _.strIs( t ) );
-  result += t;
-
-  return result;
+  return _.workpiece.toStr( this, o );
 }
 
 // --
@@ -842,7 +803,7 @@ function _equalAre_functor( fieldsGroupsMap )
 
   fieldsGroupsMap = _.routineOptions( _equalAre_functor, fieldsGroupsMap );
 
-  _.routineExtend( _equalAre, _._entityEqual );
+  _.routineExtend( _equalAre, _._equal );
 
   return _equalAre;
 
@@ -850,9 +811,9 @@ function _equalAre_functor( fieldsGroupsMap )
   {
 
     _.assert( arguments.length === 1, 'Expects single argument' );
-    _.assert( _.objectIs( it.context ) );
-    _.assert( it.context.strictTyping !== undefined );
-    _.assert( it.context.containing !== undefined );
+    _.assert( _.objectIs( it ) );
+    _.assert( it.strictTyping !== undefined );
+    _.assert( it.containing !== undefined );
 
     if( !it.src )
     return false;
@@ -860,7 +821,7 @@ function _equalAre_functor( fieldsGroupsMap )
     if( !it.src2 )
     return false;
 
-    if( it.context.strictTyping )
+    if( it.strictTyping )
     if( it.src.constructor !== it.src2.constructor )
     return false;
 
@@ -880,17 +841,16 @@ function _equalAre_functor( fieldsGroupsMap )
     {
       if( !it.continue || !it.iterator.continue )
       break;
-      // debugger;
-      var newIt = it.iterationInit().select( f );//.select2( f );
+      var newIt = it.iterationMake().choose( it.src[ f ], f );
       if( !_.mapHas( it.src, f ) )
       return end( false );
-      if( !_._entityEqual.body( newIt ) )
+      if( !_._equal.body( newIt ) )
       return end( false );
     }
 
     /* */
 
-    if( !it.context.containing )
+    if( !it.containing )
     {
       if( !( it.src2 instanceof this.constructor ) )
       if( _.mapKeys( _.mapBut( it.src, fieldsMap ) ).length )
@@ -1015,7 +975,7 @@ _.routineExtend( contains, _.entityContains );
 
 function instanceIs()
 {
-  _.assert( arguments.length === 0 );
+  _.assert( arguments.length === 0, 'Expects no arguments' );
   return _.instanceIs( this );
 }
 
@@ -1023,7 +983,7 @@ function instanceIs()
 
 function prototypeIs()
 {
-  _.assert( arguments.length === 0 );
+  _.assert( arguments.length === 0, 'Expects no arguments' );
   return _.prototypeIs( this );
 }
 
@@ -1031,7 +991,7 @@ function prototypeIs()
 
 function constructorIs()
 {
-  _.assert( arguments.length === 0 );
+  _.assert( arguments.length === 0, 'Expects no arguments' );
   return _.constructorIs( this );
 }
 
@@ -1048,8 +1008,7 @@ function constructorIs()
 function _fieldsOfRelationsGroupsGet()
 {
   var self = this;
-  return _.fieldsOfRelationsGroups( this );
-  // return FieldsOfRelationsGroupsGet.call( self );
+  return _.workpiece.fieldsOfRelationsGroups( this );
 }
 
 //
@@ -1063,8 +1022,7 @@ function _fieldsOfRelationsGroupsGet()
 function _fieldsOfCopyableGroupsGet()
 {
   var self = this;
-  return _.fieldsOfCopyableGroups( this );
-  // return FieldsOfCopyableGroupsGet.call( self );
+  return _.workpiece.fieldsOfCopyableGroups( this );
 }
 
 //
@@ -1078,8 +1036,7 @@ function _fieldsOfCopyableGroupsGet()
 function _fieldsOfTightGroupsGet()
 {
   var self = this;
-  return _.fieldsOfTightGroups( this );
-  // return FieldsOfTightGroupsGet.call( self );
+  return _.workpiece.fieldsOfTightGroups( this );
 }
 
 //
@@ -1087,29 +1044,7 @@ function _fieldsOfTightGroupsGet()
 function _fieldsOfInputGroupsGet()
 {
   var self = this;
-  return _.fieldsOfInputGroups( this );
-  // return FieldsOfInputGroupsGet.call( self );
-}
-
-//
-
-function fieldDescriptorGet( nameOfField )
-{
-  var proto = _.prototypeGet( this );
-  var report = Object.create( null );
-
-  _.assert( _.strDefined( nameOfField ) );
-  _.assert( arguments.length === 1, 'Expects single argument' );
-
-  for( var f in _.DefaultFieldsGroups )
-  {
-    var facility = _.DefaultFieldsGroups[ f ];
-    if( proto[ facility ] )
-    if( proto[ facility ][ nameOfField ] !== undefined )
-    report[ facility ] = true;
-  }
-
-  return report;
+  return _.workpiece.fieldsOfInputGroups( this );
 }
 
 //
@@ -1122,7 +1057,7 @@ function fieldDescriptorGet( nameOfField )
 
 function FieldsOfRelationsGroupsGet()
 {
-  return _.fieldsOfRelationsGroups( this.Self );
+  return _.workpiece.fieldsOfRelationsGroups( this.Self );
 }
 
 //
@@ -1135,7 +1070,7 @@ function FieldsOfRelationsGroupsGet()
 
 function FieldsOfCopyableGroupsGet()
 {
-  return _.fieldsOfCopyableGroups( this.Self );
+  return _.workpiece.fieldsOfCopyableGroups( this.Self );
 }
 
 //
@@ -1148,7 +1083,7 @@ function FieldsOfCopyableGroupsGet()
 
 function FieldsOfTightGroupsGet()
 {
-  return _.fieldsOfTightGroups( this.Self );
+  return _.workpiece.fieldsOfTightGroups( this.Self );
 }
 
 //
@@ -1161,14 +1096,13 @@ function FieldsOfTightGroupsGet()
 
 function FieldsOfInputGroupsGet()
 {
-  return _.fieldsOfInputGroups( this.Self );
+  return _.workpiece.fieldsOfInputGroups( this.Self );
 }
 
 //
 
 function hasField( fieldName )
 {
-  debugger;
   return _.prototypeHasField( this, fieldName );
 }
 
@@ -1184,7 +1118,7 @@ function hasField( fieldName )
 
 function _SelfGet()
 {
-  var result = _.constructorGet( this );
+  var result = _.constructorOf( this );
   return result;
 }
 
@@ -1198,7 +1132,7 @@ function _SelfGet()
 
 function _ParentGet()
 {
-  var result = _.parentGet( this );
+  var result = _.parentOf( this );
   return result;
 }
 
@@ -1208,9 +1142,7 @@ function _ParentGet()
 
 function _lowNameGet()
 {
-  var name = this.className;
-  name = _.strDecapitalize( name );
-  return name;
+  return _.workpiece.lowClassName( this );
 }
 
 //
@@ -1223,58 +1155,28 @@ function _lowNameGet()
 
 function _classNameGet()
 {
-  _.assert( this.constructor === null || _.strIs( this.constructor.name ) || _.strIs( this.constructor._name ) );
-  return this.constructor ? ( this.constructor.name || this.constructor._name ) : '';
+  return _.workpiece.className( this );
 }
 
 //
 
 /**
  * Nick name of the object.
- * @method _nickNameGet
+ * @method _qualifiedNameGet
  * @memberof module:Tools/base/CopyableMixin.wCopyable#
  */
 
-function _nickNameGet()
+function _qualifiedNameGet()
 {
-  var self = this;
-  var result = ( self.key || self.name || '' );
-  var index = '';
-  if( _.numberIs( self.instanceIndex ) )
-  result += '#in' + self.instanceIndex;
-  if( Object.hasOwnProperty.call( self, 'id' ) )
-  result += '#id' + self.id;
-  return self.className + '( ' + result + ' )';
+  return _.workpiece._qualifiedNameGet( this );
 }
 
 //
 
 function unameGet()
 {
-  var self = this;
-  return self.className + '( ' + '#id' + self.id + ' )';
+  return _.workpiece.uname( this );
 }
-
-
-//
-//
-// /**
-//  * Unique name of the object.
-//  * @method _uniqueNameGet
-//  * @memberof module:Tools/base/CopyableMixin.wCopyable#
-//  */
-//
-// function _uniqueNameGet()
-// {
-//   var self = this;
-//   var result = '';
-//   var index = '';
-//   if( _.numberIs( self.instanceIndex ) )
-//   result += '#in' + self.instanceIndex;
-//   if( Object.hasOwnProperty.call( self, 'id' ) )
-//   result += '#id' + self.id;
-//   return self.className + '( ' + result + ' )';
-// }
 
 // --
 // relations
@@ -1347,18 +1249,16 @@ var Supplement =
 
   init,
   finit,
-  finitedIs,
+  isFinited,
 
   From,
   Froms,
 
-  extend,
   copy,
 
   copyCustom,
   copyDeserializing,
 
-  _traverseActPre,
   _traverseAct,
   __traverseAct,
 
@@ -1397,7 +1297,6 @@ var Supplement =
   _fieldsOfCopyableGroupsGet,
   _fieldsOfTightGroupsGet,
   _fieldsOfInputGroupsGet,
-  fieldDescriptorGet,
 
   // class
 
@@ -1408,7 +1307,7 @@ var Supplement =
 
   _lowNameGet,
   _classNameGet,
-  _nickNameGet,
+  _qualifiedNameGet,
   unameGet,
 
   //
@@ -1427,7 +1326,7 @@ var Supplement =
 var Self = _.mixinDelcare
 ({
   supplement : Supplement,
-  onMixin,
+  onMixinApply,
   name : 'wCopyable',
   shortName : 'Copyable',
 });
@@ -1438,7 +1337,7 @@ _.assert( !Self.copy );
 _.assert( _.routineIs( Self.prototype.copy ) );
 _.assert( _.strIs( Self.shortName ) );
 _.assert( _.objectIs( Self.__mixin__ ) );
-_.assert( !Self.onMixin );
+_.assert( !Self.onMixinApply );
 _.assert( _.routineIs( Self.mixin ) );
 
 // --
@@ -1446,11 +1345,6 @@ _.assert( _.routineIs( Self.mixin ) );
 // --
 
 _global_[ Self.name ] = _[ Self.shortName ] = Self;
-
-// if( typeof module !== 'undefined' )
-// if( _global_.WTOOLS_PRIVATE )
-// { /* delete require.cache[ module.id ]; */ }
-
 if( typeof module !== 'undefined' && module !== null )
 module[ 'exports' ] = Self;
 

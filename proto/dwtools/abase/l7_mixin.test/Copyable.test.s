@@ -28,7 +28,7 @@ function fields( test )
 
   function BasicConstructor( o )
   {
-    _.instanceInit( this );
+    _.workpiece.initFields( this );
     this.copy( o || {} );
   }
 
@@ -66,18 +66,18 @@ function fields( test )
 
   var extend =
   {
-    /*ttt*/Composes,
-    /*ttt*/Aggregates,
-    /*ttt*/Associates,
-    /*ttt*/Medials,
-    /*ttt*/Restricts,
-    /*ttt*/Statics,
+    Composes,
+    Aggregates,
+    Associates,
+    Medials,
+    Restricts,
+    Statics,
   }
 
   _.classDeclare
   ({
     cls : BasicConstructor,
-    /*ttt*/extend,
+    extend,
   });
 
   _.Copyable.mixin( BasicConstructor );
@@ -130,7 +130,7 @@ function fields( test )
     as : 3,
     ag : 3,
     re : 1,
-    mr : 3,
+    mr : 1,
   }
 
   var fieldsOfCopyableGroups =
@@ -151,8 +151,8 @@ function fields( test )
     co : 3,
     as : 3,
     ag : 3,
-    me : 3,
-    mr : 3,
+    // me : 3,
+    mr : 1,
   }
 
   var instance = new BasicConstructor( opts );
@@ -193,7 +193,7 @@ function equal( test )
 
   function BasicConstructor( o )
   {
-    _.instanceInit( this );
+    _.workpiece.initFields( this );
     this.copy( o || {} );
   }
 
@@ -230,18 +230,18 @@ function equal( test )
 
   var extend =
   {
-    /*ttt*/Composes,
-    /*ttt*/Aggregates,
-    /*ttt*/Associates,
-    /*ttt*/Medials,
-    /*ttt*/Restricts,
-    /*ttt*/Statics,
+    Composes,
+    Aggregates,
+    Associates,
+    Medials,
+    Restricts,
+    Statics,
   }
 
   _.classDeclare
   ({
     cls : BasicConstructor,
-    /*ttt*/extend,
+    extend,
   });
 
   _.Copyable.mixin( BasicConstructor );
@@ -527,12 +527,12 @@ function hasField( test )
 
   function SampleClass( o )
   {
-    return _.instanceConstructor( SampleClass, this, arguments );
+    return _.workpiece.construct( SampleClass, this, arguments );
   }
 
   function init( o )
   {
-    _.instanceInit( this );
+    _.workpiece.initFields( this );
   }
 
   let Associates =
@@ -542,8 +542,8 @@ function hasField( test )
 
   let Extend =
   {
-    /*ttt*/init,
-    /*ttt*/Associates,
+    init,
+    Associates,
   }
 
   _.classDeclare
@@ -583,16 +583,16 @@ function hasField( test )
 var Self =
 {
 
-  name : 'Tools/base/CopyableMixin',
+  name : 'Tools.base.CopyableMixin',
   silencing : 1,
 
   tests :
   {
 
-    /*ttt*/fields,
-    /*ttt*/equal,
+    fields,
+    equal,
 
-    /*ttt*/hasField,
+    hasField,
 
   },
 
