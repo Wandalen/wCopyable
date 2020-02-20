@@ -576,6 +576,90 @@ function hasField( test )
 
 }
 
+//
+
+function constructUsingSetter( test )
+{ 
+  let _ = _testerGlobal_.wTools;
+  
+  let Self = function testClass( o ) 
+  {
+    return _.workpiece.construct( Self, this, arguments );
+  }
+  
+  function init( o )
+  { 
+    let self = this;
+    
+    _.workpiece.initFields( self );
+    Object.preventExtensions( self );
+    
+    if( o )
+    self.copy( o );
+    
+    if( !self.state )
+    self.state = State.construct();
+  }
+  
+  let State = _.blueprint
+  ({
+    property1 : _.define.shallow( [ 1,1,1 ] ),
+    property2 : null
+  })
+  
+  let Composes = 
+  {
+    state : null
+  }
+  
+  let Accessors = 
+  {
+    state : 'state',
+  }
+  
+  let Proto = 
+  { 
+    init,
+    
+    '_stateSet' : _.accessor.setter.copyable({ name : 'state', maker : State.construct }),
+    
+    Composes,
+    Accessors
+  }
+  
+  _.classDeclare
+  ({
+    cls : Self,
+    parent : null,
+    extend : Proto,
+  });
+  _.Copyable.mixin( Self );
+  
+  let instance = new Self({ state : { property2 : 123 } });
+  let expectedState = { property1 : [ 1,1,1 ], property2 : 123 }
+  test.identical( instance.state, expectedState )
+  
+  test.identical( _.blueprint.is( State ), true );
+  test.identical( _.construction.isTyped( instance.state ), false );
+  test.identical( _.construction.isInstanceOf( instance.state, State ), false );
+  test.identical( _.blueprint.isBlueprintOf( State, instance.state ), false );
+
+  test.identical( instance.state instanceof State.construct, false );
+  test.identical( Object.getPrototypeOf( instance.state ), null );
+  test.identical( instance.state.constructor, undefined );
+  var prototypes = _.prototype.each( instance.state );
+  test.identical( prototypes.length, 1 );
+  test.is( prototypes[ 0 ] === instance.state );
+  test.is( !_.prototype.hasPrototype( instance.state, State ) );
+  test.is( _.objectIs( instance.state ) );
+  test.is( _.mapIs( instance.state ) );
+  test.is( _.mapLike( instance.state ) );
+  test.is( !_.instanceIs( instance.state ) );
+  test.identical( _.mapKeys( instance.state ), [ 'property2', 'property1' ] );
+  test.identical( _.mapAllKeys( instance.state ), [ 'property2', 'property1' ] );
+  
+}
+
 // --
 // declare
 // --
@@ -593,7 +677,8 @@ var Self =
     equal,
 
     hasField,
-
+    
+    constructUsingSetter
   },
 
 }
