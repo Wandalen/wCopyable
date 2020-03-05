@@ -141,6 +141,7 @@ function onMixinApply( mixinDescriptor, dstClass )
   if( _.routineIs( dstPrototype._equalAre ) )
   _.assert( dstPrototype._equalAre.length <= 1 );
 
+  _.assert( !( 'equalWith' in dstPrototype ) );
   if( _.routineIs( dstPrototype.equalWith ) )
   _.assert( dstPrototype.equalWith.length <= 2 );
 
@@ -889,7 +890,7 @@ _.mapExtend( _equalAre_functor.defaults, on, off );
 
 /**
  * Is this instance same with another one. Use relation maps to compare.
- * @method equalWith
+ * @method _equalAre
  * @param {object} ins - another instance of the class
  * @memberof module:Tools/base/CopyableMixin.wCopyable#
  */
