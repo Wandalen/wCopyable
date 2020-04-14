@@ -833,7 +833,7 @@ function _equalAre_functor( fieldsGroupsMap )
 
   fieldsGroupsMap = _.routineOptions( _equalAre_functor, fieldsGroupsMap );
 
-  _.routineExtend( _equalAre, _._equal );
+  _.routineExtend( _equalAre, _.equaler._equal );
 
   return _equalAre;
 
@@ -874,7 +874,7 @@ function _equalAre_functor( fieldsGroupsMap )
       var newIt = it.iterationMake().choose( it.src[ f ], f );
       if( !_.mapHas( it.src, f ) )
       return end( false );
-      if( !_._equal.body( newIt ) )
+      if( !_.equaler._equal.body( newIt ) )
       return end( false );
     }
 
