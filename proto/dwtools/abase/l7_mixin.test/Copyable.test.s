@@ -267,7 +267,9 @@ function equal( test )
   var copyable1 = new BasicConstructor( fieldsOfCopyableGroups );
   var none1 = new BasicConstructor();
 
-  test.case = 'identicalWith itself'; /* */
+  /* */
+
+  test.case = 'identicalWith itself';
 
   var expected = true;
   var got = all1.identicalWith( all1 );
@@ -281,7 +283,9 @@ function equal( test )
   var got = none1.identicalWith( none1 );
   test.identical( got, expected );
 
-  test.case = 'equivalentWith itself'; /* */
+  /* */
+
+  test.case = 'equivalentWith itself';
 
   var expected = true;
   var got = all1.equivalentWith( all1 );
@@ -295,7 +299,9 @@ function equal( test )
   var got = none1.equivalentWith( none1 );
   test.identical( got, expected );
 
-  test.case = 'contains itself'; /* */
+  /* */
+
+  test.case = 'contains itself';
 
   var expected = true;
   var got = all1.contains( all1 );
