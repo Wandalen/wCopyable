@@ -98,7 +98,7 @@ function onMixinApply( mixinDescriptor, dstClass )
   ({
     object : dstPrototype,
     names,
-    preserveValues : 0,
+    preservingValue : 0,
     strict : 0,
     prime : 0,
     enumerable : 0,
@@ -130,7 +130,7 @@ function onMixinApply( mixinDescriptor, dstClass )
   ({
     object : dstClass,
     names,
-    preserveValues : 0,
+    preservingValue : 0,
     strict : 0,
     prime : 0,
     enumerable : 0,
