@@ -1,6 +1,6 @@
 {
   "name" : "wCopyable",
-  "version" : "0.4.230",
+  "version" : "0.4.231",
   "engine" : "node >= 8.0.0",
   "description" : "Copyable mixin adds copyability and clonability to your class. The module uses defined relation to deduce how to copy / clone the instance.",
   "license" : "MIT",
@@ -24,13 +24,13 @@
   },
   "dependencies" :
   {
-    "wTools" : "gamma",
-    "wProto" : "gamma",
-    "wcloner" : "gamma",
-    "wlooker" : "gamma",
-    "wequaler" : "gamma"
+    "wTools" : "beta",
+    "wProto" : "beta",
+    "wcloner" : "beta",
+    "wlooker" : "beta",
+    "wequaler" : "beta"
   },
-  "devDependencies" : { "wTesting" : "gamma" },
+  "devDependencies" : { "wTesting" : "beta" },
   "keywords" :
   [
     "wTools",
