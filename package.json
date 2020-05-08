@@ -4,10 +4,10 @@
   "engine" : "node >= 8.0.0",
   "description" : "Copyable mixin adds copyability and clonability to your class. The module uses defined relation to deduce how to copy / clone the instance.",
   "license" : "MIT",
-  "author" : "Kostiantyn Wandalen <wanalen@willbe.so>",
+  "author" : "Kostiantyn Wandalen <wanalen@01.school>",
   "contributors" :
   [
-    { "name" : "Kostiantyn Wandalen", "email" : "wanalen@willbe.so" },
+    { "name" : "Kostiantyn Wandalen", "email" : "wanalen@01.school" },
     { "name" : "Volodymyr M.", "email" : "volodymyr.migdal@gmail.com" }
   ],
   "main" : "proto/dwtools/abase/l7_mixin/Copyable.s",
