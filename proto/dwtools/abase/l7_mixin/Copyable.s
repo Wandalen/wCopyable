@@ -141,8 +141,11 @@ function onMixinApply( mixinDescriptor, dstClass )
   if( !Config.debug )
   return;
 
-  if( _.routineIs( dstPrototype._equalAre ) )
-  _.assert( dstPrototype._equalAre.length <= 1 );
+  // if( _.routineIs( dstPrototype._equalAre ) )
+  // _.assert( dstPrototype._equalAre.length <= 1 );
+
+  if( dstPrototype[ equalAreSymbol ] )
+  _.assert( dstPrototype[ equalAreSymbol ].length <= 1 );
 
   _.assert( !( 'equalWith' in dstPrototype ) );
   if( _.routineIs( dstPrototype.equalWith ) )
@@ -506,7 +509,7 @@ function _traverseAct_body( it )
 
   /* adjust */
 
-  _.assert( _.objectIs( it.proto ) );
+  _.assert( !_.primitiveIs( it.proto ) );
 
   /* var */
 
@@ -527,9 +530,8 @@ function _traverseAct_body( it )
   _.assert( arguments.length === 1, 'Expects single argument' );
   _.assert( src !== dst );
   _.assert( !!src );
-  _.assert( _.objectIs( proto ) );
   _.assert( _.strIs( it.path ) );
-  _.assert( _.objectIs( proto ), 'Expects object {-proto-}, but got', _.strType( proto ) );
+  _.assert( !_.primitiveIs( proto ), 'Expects object {-proto-}, but got', _.strType( proto ) );
   _.assert( !it.customFields || _.objectIs( it.customFields ) );
   _.assert( it.level >= 0 );
   _.assert( _.numberIs( it.copyingDegree ) );
@@ -947,8 +949,8 @@ function identicalWith( src, opts )
   _.assert( !opts || _.mapIs( opts ), 'not tested' );
 
   var args = [ self, src, opts ];
-  var it = self._equalAre.pre.call( self, self.identicalWith, args );
-  var result = this._equalAre( it );
+  var it = self[ equalAreSymbol ].pre.call( self, self.identicalWith, args );
+  var result = this[ equalAreSymbol ]( it );
 
   return result;
 }
@@ -974,8 +976,8 @@ function equivalentWith( src, opts )
   _.assert( !opts || _.mapIs( opts ), 'not tested' );
 
   var args = [ self, src, opts ];
-  var it = self._equalAre.pre.call( self, self.equivalentWith, args );
-  var result = this._equalAre( it );
+  var it = self[ equalAreSymbol ].pre.call( self, self.equivalentWith, args );
+  var result = this[ equalAreSymbol ]( it );
 
   return result;
 }
@@ -1001,8 +1003,8 @@ function contains( src, opts )
   _.assert( !opts || _.mapIs( opts ), 'not tested' );
 
   var args = [ self, src, opts ];
-  var it = self._equalAre.pre.call( self, self.contains, args );
-  var result = this._equalAre( it );
+  var it = self[ equalAreSymbol ].pre.call( self, self.contains, args );
+  var result = this[ equalAreSymbol ]( it );
 
   return result;
 }
@@ -1242,6 +1244,8 @@ function unameGet()
 // relations
 // --
 
+var equalAreSymbol = Symbol.for( 'equalAre' );
+
 var Composes =
 {
 }
@@ -1341,7 +1345,7 @@ var Supplement =
   // checker
 
   _equalAre_functor,
-  _equalAre,
+  [ equalAreSymbol ] : _equalAre,
 
   identicalWith,
   equivalentWith,
