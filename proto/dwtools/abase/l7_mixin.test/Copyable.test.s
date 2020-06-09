@@ -588,7 +588,8 @@ function constructUsingSetter( test )
 { 
   let _ = _testerGlobal_.wTools;
   
-  let Self = function testClass( o ) 
+  let Self = testClass;
+function testClass( o ) 
   {
     return _.workpiece.construct( Self, this, arguments );
   }
