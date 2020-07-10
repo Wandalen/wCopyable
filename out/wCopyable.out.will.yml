@@ -1536,6 +1536,4 @@ module:
       ../.im.will.yml:
         hash: 7b1ef6b6fd9c0924de23e89225787e3b
         size: 5209
-      wCopyable.out.will.yml:
-        hash: 1454b950dee7ffefbecd67c0d0163e7d
-        size: 38942
+      wCopyable.out.will.yml: *ref_0
