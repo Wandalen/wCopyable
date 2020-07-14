@@ -71,7 +71,7 @@ function onMixinApply( mixinDescriptor, dstClass )
 
   /* prototype accessors */
 
-  var readOnly = { combining : 'supplement' };
+  var readOnly = { combining : 'supplement', set : false };
   var names =
   {
 
@@ -140,9 +140,6 @@ function onMixinApply( mixinDescriptor, dstClass )
 
   if( !Config.debug )
   return;
-
-  // if( _.routineIs( dstPrototype._equalAre ) )
-  // _.assert( dstPrototype._equalAre.length <= 1 );
 
   if( dstPrototype[ equalAreSymbol ] )
   _.assert( dstPrototype[ equalAreSymbol ].length <= 1 );
@@ -847,17 +844,17 @@ function _equalAre_functor( fieldsGroupsMap )
     _.assert( it.strictTyping !== undefined );
     _.assert( it.containing !== undefined );
 
-    if( !it.src )
+    if( !it.srcEffective )
     return false;
 
-    if( !it.src2 )
+    if( !it.srcEffective2 )
     return false;
 
     if( it.strictTyping )
-    if( it.src.constructor !== it.src2.constructor )
+    if( it.srcEffective.constructor !== it.srcEffective2.constructor )
     return false;
 
-    if( it.src === it.src2 )
+    if( it.srcEffective === it.srcEffective2 )
     return end( true );
 
     /* */
@@ -873,8 +870,8 @@ function _equalAre_functor( fieldsGroupsMap )
     {
       if( !it.continue || !it.iterator.continue )
       break;
-      var newIt = it.iterationMake().choose( it.src[ f ], f );
-      if( !_.mapHas( it.src, f ) )
+      var newIt = it.iterationMake().choose( it.srcEffective[ f ], f );
+      if( !_.mapHas( it.srcEffective, f ) )
       return end( false );
       if( !_.equaler._equal.body( newIt ) )
       return end( false );
@@ -884,13 +881,13 @@ function _equalAre_functor( fieldsGroupsMap )
 
     if( !it.containing )
     {
-      if( !( it.src2 instanceof this.constructor ) )
-      if( _.mapKeys( _.mapBut( it.src, fieldsMap ) ).length )
+      if( !( it.srcEffective2 instanceof this.constructor ) )
+      if( _.mapKeys( _.mapBut( it.srcEffective, fieldsMap ) ).length )
       return end( false );
     }
 
-    if( !( it.src instanceof this.constructor ) )
-    if( _.mapKeys( _.mapBut( it.src, fieldsMap ) ).length )
+    if( !( it.srcEffective instanceof this.constructor ) )
+    if( _.mapKeys( _.mapBut( it.srcEffective, fieldsMap ) ).length )
     return end( false );
 
     /* */
@@ -950,6 +947,13 @@ function identicalWith( src, opts )
 
   var args = [ self, src, opts ];
   var it = self[ equalAreSymbol ].pre.call( self, self.identicalWith, args );
+
+  _.assert( it.srcEffective === null );
+  _.assert( it.srcEffective2 === null );
+
+  it.srcEffective = it.src;
+  it.srcEffective2 = it.src2;
+
   var result = this[ equalAreSymbol ]( it );
 
   return result;
@@ -977,6 +981,13 @@ function equivalentWith( src, opts )
 
   var args = [ self, src, opts ];
   var it = self[ equalAreSymbol ].pre.call( self, self.equivalentWith, args );
+
+  _.assert( it.srcEffective === null );
+  _.assert( it.srcEffective2 === null );
+
+  it.srcEffective = it.src;
+  it.srcEffective2 = it.src2;
+
   var result = this[ equalAreSymbol ]( it );
 
   return result;
@@ -1004,6 +1015,13 @@ function contains( src, opts )
 
   var args = [ self, src, opts ];
   var it = self[ equalAreSymbol ].pre.call( self, self.contains, args );
+
+  _.assert( it.srcEffective === null );
+  _.assert( it.srcEffective2 === null );
+
+  it.srcEffective = it.src;
+  it.srcEffective2 = it.src2;
+
   var result = this[ equalAreSymbol ]( it );
 
   return result;
