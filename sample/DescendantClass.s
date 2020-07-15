@@ -13,12 +13,7 @@ var _ = wTools;
 var Parent = BaseClass;
 var Self = function DescendantClass()
 {
-  if( !( this instanceof Self ) )
-  if( o instanceof Self )
-  return o;
-  else
-  return new( _.routineJoin( Self, Self, arguments ) );
-  return Self.prototype.init.apply( this,arguments );
+  return _.workpiece.construct( Self, this, arguments );
 }
 
 // --
