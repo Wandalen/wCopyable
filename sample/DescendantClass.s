@@ -9,9 +9,9 @@ require( './BaseClass.s' );
 // constructor
 // --
 
-var _ = wTools;
-var Parent = BaseClass;
-var Self = function DescendantClass()
+let _ = wTools;
+let Parent = BaseClass;
+let Self = function DescendantClass()
 {
   return _.workpiece.construct( Self, this, arguments );
 }
