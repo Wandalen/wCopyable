@@ -546,7 +546,7 @@ function hasField( test )
     field0 : null,
   }
 
-  let Extend =
+  let Extension =
   {
     init,
     Associates,
@@ -555,7 +555,7 @@ function hasField( test )
   _.classDeclare
   ({
     cls : SampleClass,
-    extend : Extend,
+    extend : Extension,
   });
 
   _.Copyable.mixin( SampleClass );
@@ -674,7 +674,7 @@ function testClass( o )
 let Self =
 {
 
-  name : 'Tools.base.CopyableMixin',
+  name : 'Tools.CopyableMixin',
   silencing : 1,
 
   tests :
