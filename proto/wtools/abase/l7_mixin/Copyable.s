@@ -8,8 +8,7 @@
 */
 
 /**
- * @file Copyable.s.
- */
+ *  */
 
  /**
  * @classdesc Copyable mixin add copyability and clonability to your class.
