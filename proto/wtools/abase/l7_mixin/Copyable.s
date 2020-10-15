@@ -455,7 +455,7 @@ function _cloneData( it )
 
 //
 
-function _traverseAct_pre( routine, args )
+function _traverseAct_head( routine, args )
 {
   let self = this;
   let it = args[ 0 ];
@@ -567,7 +567,7 @@ function _traverseAct_body( it )
 _traverseAct_body.iterationDefaults = Object.create( _._cloner.iterationDefaults );
 _traverseAct_body.defaults = _.mapSupplementOwn( Object.create( _._cloner.defaults ) , _traverseAct_body.iterationDefaults );
 
-let _traverseAct = _.routineFromPreAndBody( _traverseAct_pre, _traverseAct_body );
+let _traverseAct = _.routineUnite( _traverseAct_head, _traverseAct_body );
 
 //
 
@@ -945,7 +945,7 @@ function identicalWith( src, opts )
   _.assert( !opts || _.mapIs( opts ), 'not tested' );
 
   var args = [ self, src, opts ];
-  var it = self[ equalAreSymbol ].pre.call( self, self.identicalWith, args );
+  var it = self[ equalAreSymbol ].head.call( self, self.identicalWith, args );
 
   _.assert( it.srcEffective === null );
   _.assert( it.srcEffective2 === null );
@@ -979,7 +979,7 @@ function equivalentWith( src, opts )
   _.assert( !opts || _.mapIs( opts ), 'not tested' );
 
   var args = [ self, src, opts ];
-  var it = self[ equalAreSymbol ].pre.call( self, self.equivalentWith, args );
+  var it = self[ equalAreSymbol ].head.call( self, self.equivalentWith, args );
 
   _.assert( it.srcEffective === null );
   _.assert( it.srcEffective2 === null );
@@ -1013,7 +1013,7 @@ function contains( src, opts )
   _.assert( !opts || _.mapIs( opts ), 'not tested' );
 
   var args = [ self, src, opts ];
-  var it = self[ equalAreSymbol ].pre.call( self, self.contains, args );
+  var it = self[ equalAreSymbol ].head.call( self, self.contains, args );
 
   _.assert( it.srcEffective === null );
   _.assert( it.srcEffective2 === null );
