@@ -586,7 +586,7 @@ function hasField( test )
 
 function constructUsingSetter( test )
 { 
-  let _ = _testerGlobal_.wTools;
+  let _ = _globals_.testing.wTools;
   
   let Self = testClass;
 function testClass( o ) 
