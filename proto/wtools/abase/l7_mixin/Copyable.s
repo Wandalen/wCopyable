@@ -135,6 +135,14 @@ function onMixinApply( mixinDescriptor, dstClass )
     enumerable : 0,
   });
 
+  /* xxx : temp workaround */
+
+  if( mixinDescriptor.supplement && mixinDescriptor.supplement[ equalAreSymbol ] !== undefined )
+  if( dstPrototype[ equalAreSymbol ] === undefined )
+  dstPrototype[ equalAreSymbol ] = mixinDescriptor.supplement[ equalAreSymbol ];
+  if( mixinDescriptor.extend && mixinDescriptor.extend[ equalAreSymbol ] !== undefined )
+  dstPrototype[ equalAreSymbol ] = mixinDescriptor.extend[ equalAreSymbol ];
+
   /* */
 
   if( !Config.debug )
@@ -163,6 +171,10 @@ function onMixinApply( mixinDescriptor, dstClass )
   _.assert( dstPrototype.constructor.FieldsOfCopyableGroupsGet === FieldsOfCopyableGroupsGet );
   _.assert( dstPrototype.constructor.FieldsOfTightGroupsGet === FieldsOfTightGroupsGet );
   _.assert( dstPrototype.constructor.FieldsOfInputGroupsGet === FieldsOfInputGroupsGet );
+
+  _.assert( _.routineIs( dstPrototype[ equalAreSymbol ] ), `Lack of method ${String( equalAreSymbol )}` );
+  _.assert( _.routineIs( dstPrototype[ equalAreSymbol ].head ), `Lack of method ${String( equalAreSymbol )}.head` );
+  _.assert( _.routineIs( dstPrototype[ equalAreSymbol ].body ), `Lack of method ${String( equalAreSymbol )}.body` );
 
   _.assert( dstPrototype.finit.name !== 'finitEventHandler', 'wEventHandler mixin should goes after wCopyable mixin.' );
   _.assert( !_.mixinHas( dstPrototype, 'wEventHandler' ), 'wEventHandler mixin should goes after wCopyable mixin.' );
@@ -944,7 +956,7 @@ function identicalWith( src, opts )
   _.assert( arguments.length === 1 || arguments.length === 2 );
   _.assert( !opts || _.mapIs( opts ), 'not tested' );
 
-  var args = [ self, src, opts ];
+  var args = [ self, src, opts ]; debugger;
   var it = self[ equalAreSymbol ].head.call( self, self.identicalWith, args );
 
   _.assert( it.srcEffective === null );

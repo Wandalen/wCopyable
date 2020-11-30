@@ -16,6 +16,12 @@ if( typeof module !== 'undefined' )
 let _global = _global_;
 let _ = _global_.wTools;
 
+/* qqq :
+
+  - split cases by delimeter / * * /
+
+*/
+
 // --
 // test
 // --
@@ -188,6 +194,8 @@ function fields( test )
 function equal( test )
 {
   var self = this;
+
+  /* */
 
   test.case = 'fieldsOfRelationsGroups and fieldsOfCopyableGroups should act differently with instance and prototype/constructor context';
 
@@ -585,55 +593,56 @@ function hasField( test )
 //
 
 function constructUsingSetter( test )
-{ 
+{
   let _ = _globals_.testing.wTools;
-  
+
   let Self = testClass;
-function testClass( o ) 
+
+  function testClass( o )
   {
     return _.workpiece.construct( Self, this, arguments );
   }
-  
+
   function init( o )
-  { 
+  {
     let self = this;
-    
+
     _.workpiece.initFields( self );
     Object.preventExtensions( self );
-    
+
     if( o )
     self.copy( o );
-    
+
     if( !self.state )
     self.state = State.construct();
   }
-  
-  let State = _.blueprint
+
+  let State = _.Blueprint
   ({
     property1 : _.define.shallow( [ 1,1,1 ] ),
     property2 : null
   })
-  
-  let Composes = 
+
+  let Composes =
   {
     state : null
   }
-  
-  let Accessors = 
+
+  let Accessors =
   {
     state : 'state',
   }
-  
-  let Proto = 
-  { 
+
+  let Proto =
+  {
     init,
-    
+
     '_stateSet' : _.accessor.setter.copyable({ name : 'state', maker : State.construct }),
-    
+
     Composes,
     Accessors
   }
-  
+
   _.classDeclare
   ({
     cls : Self,
@@ -641,11 +650,11 @@ function testClass( o )
     extend : Proto,
   });
   _.Copyable.mixin( Self );
-  
+
   let instance = new Self({ state : { property2 : 123 } });
   let expectedState = { property1 : [ 1,1,1 ], property2 : 123 }
   test.identical( instance.state, expectedState )
-  
+
   test.identical( _.blueprint.is( State ), true );
   test.identical( _.construction.isTyped( instance.state ), false );
   test.identical( _.construction.isInstanceOf( instance.state, State ), false );
@@ -664,7 +673,7 @@ function testClass( o )
   test.true( !_.instanceIs( instance.state ) );
   test.identical( _.mapKeys( instance.state ), [ 'property2', 'property1' ] );
   test.identical( _.mapAllKeys( instance.state ), [ 'property2', 'property1' ] );
-  
+
 }
 
 // --
@@ -684,7 +693,7 @@ let Self =
     equal,
 
     hasField,
-    
+
     constructUsingSetter
   },
 
