@@ -306,7 +306,7 @@ function copyCustom( o )
 }
 
 copyCustom.iterationDefaults = Object.create( _._cloner.iterationDefaults );
-copyCustom.defaults = _.mapSupplementOwn( Object.create( _._cloner.defaults ), copyCustom.iterationDefaults );
+copyCustom.defaults = _.mapExtendDstNotOwn( Object.create( _._cloner.defaults ), copyCustom.iterationDefaults );
 
 //
 
@@ -362,7 +362,7 @@ function cloneObject( o )
 }
 
 cloneObject.iterationDefaults = Object.create( _._cloner.iterationDefaults );
-cloneObject.defaults = _.mapSupplementOwn( Object.create( _._cloner.defaults ), cloneObject.iterationDefaults );
+cloneObject.defaults = _.mapExtendDstNotOwn( Object.create( _._cloner.defaults ), cloneObject.iterationDefaults );
 cloneObject.defaults.technique = 'object';
 
 //
@@ -441,7 +441,7 @@ cloneData.iterationDefaults = Object.create( _._cloner.iterationDefaults );
 cloneData.iterationDefaults.dst = null;
 cloneData.iterationDefaults.copyingAggregates = 3;
 cloneData.iterationDefaults.copyingAssociates = 0;
-cloneData.defaults = _.mapSupplementOwn( Object.create( _._cloner.defaults ), cloneData.iterationDefaults );
+cloneData.defaults = _.mapExtendDstNotOwn( Object.create( _._cloner.defaults ), cloneData.iterationDefaults );
 cloneData.defaults.technique = 'data';
 
 //
@@ -577,7 +577,7 @@ function _traverseAct_body( it )
 }
 
 _traverseAct_body.iterationDefaults = Object.create( _._cloner.iterationDefaults );
-_traverseAct_body.defaults = _.mapSupplementOwn( Object.create( _._cloner.defaults ) , _traverseAct_body.iterationDefaults );
+_traverseAct_body.defaults = _.mapExtendDstNotOwn( Object.create( _._cloner.defaults ) , _traverseAct_body.iterationDefaults );
 
 let _traverseAct = _.routineUnite( _traverseAct_head, _traverseAct_body );
 
