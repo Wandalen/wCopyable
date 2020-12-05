@@ -655,7 +655,7 @@ function constructUsingSetter( test )
   let expectedState = { property1 : [ 1,1,1 ], property2 : 123 }
   test.identical( instance.state, expectedState )
 
-  test.identical( _.blueprint.is( State ), true );
+  test.identical( _.blueprint.isDefinitive( State ), true );
   test.identical( _.construction.isTyped( instance.state ), false );
   test.identical( _.construction.isInstanceOf( instance.state, State ), false );
   test.identical( _.blueprint.isBlueprintOf( State, instance.state ), false );
