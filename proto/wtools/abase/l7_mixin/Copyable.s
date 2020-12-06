@@ -545,7 +545,7 @@ function _traverseAct_body( it )
   _.assert( _.numberIs( it.copyingDegree ) );
   _.assert( _.routineIs( self.__traverseAct ) );
 
-  if( _.instanceIsStandard( src ) )
+  if( _.workpiece.instanceIsStandard( src ) )
   _.assertMapOwnOnly( src, [ Composes, Aggregates, Associates, Restricts ], () => 'Options instance for ' + self.qualifiedName + ' should not have fields :' );
   else
   _.assertMapOwnOnly( src, [ Composes, Aggregates, Associates, Medials ], () => 'Options map for ' + self.qualifiedName + ' should not have fields :' );
@@ -1053,7 +1053,7 @@ function instanceIs()
 function prototypeIs()
 {
   _.assert( arguments.length === 0, 'Expects no arguments' );
-  return _.prototypeIs( this );
+  return _.workpiece.prototypeIs( this );
 }
 
 //
@@ -1186,7 +1186,7 @@ function FieldsOfInputGroupsGet()
 
 function hasField( fieldName )
 {
-  return _.prototypeHasField( this, fieldName );
+  return _.workpiece.prototypeHasField( this, fieldName );
 }
 
 // --
@@ -1203,7 +1203,7 @@ function hasField( fieldName )
 
 function _SelfGet()
 {
-  var result = _.constructorOf( this );
+  var result = _.workpiece.constructorOf( this );
   return result;
 }
 
@@ -1219,7 +1219,7 @@ function _SelfGet()
 
 function _ParentGet()
 {
-  var result = _.parentOf( this );
+  var result = _.workpiece.parentOf( this );
   return result;
 }
 
