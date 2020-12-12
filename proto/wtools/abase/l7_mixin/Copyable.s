@@ -1184,9 +1184,9 @@ function FieldsOfInputGroupsGet()
 
 //
 
-function hasField( fieldName )
+function hasField( propName )
 {
-  return _.workpiece.prototypeHasField( this, fieldName );
+  return _.workpiece.prototypeHasField( this, propName );
 }
 
 // --
