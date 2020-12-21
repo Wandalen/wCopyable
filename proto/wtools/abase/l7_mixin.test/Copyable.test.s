@@ -1,4 +1,5 @@
-( function _Copyable_test_s_( ) {
+( function _Copyable_test_s_( )
+{
 
 'use strict';
 
@@ -619,7 +620,7 @@ function constructUsingSetter( test )
 
   let State = _.Blueprint
   ({
-    property1 : _.define.shallow( [ 1,1,1 ] ),
+    property1 : _.define.shallow( [ 1, 1, 1 ] ),
     property2 : null
   })
 
@@ -652,7 +653,7 @@ function constructUsingSetter( test )
   _.Copyable.mixin( Self );
 
   let instance = new Self({ state : { property2 : 123 } });
-  let expectedState = { property1 : [ 1,1,1 ], property2 : 123 }
+  let expectedState = { property1 : [ 1, 1, 1 ], property2 : 123 }
   test.identical( instance.state, expectedState )
 
   test.identical( _.blueprint.isDefinitive( State ), true );

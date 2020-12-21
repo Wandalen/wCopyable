@@ -1,4 +1,5 @@
-( function _DescendantClass_s_(){
+( function _DescendantClass_s_()
+{
 
 'use strict';
 
@@ -11,7 +12,8 @@ require( './BaseClass.s' );
 
 let _ = wTools;
 let Parent = BaseClass;
-let Self = function DescendantClass()
+let Self = DescendantClass;
+function DescendantClass()
 {
   return _.workpiece.construct( Self, this, arguments );
 }
@@ -20,13 +22,15 @@ let Self = function DescendantClass()
 // routines
 // --
 
+console.log( 'DescendantClass' );
+
 /* optional method to initialize instance with options */
 
 function init( o )
 {
   var self = this; /* context */
 
-  Parent.prototype.init.call( self,o ); /* ancesotr will take care */
+  Parent.prototype.init.call( self, o ); /* ancesotr will take care */
 
 }
 
@@ -42,7 +46,7 @@ function print()
 
   Parent.prototype.print.call( self );
 
-  console.log( self.name,'descendant','b :',self.b );
+  console.log( self.name, 'descendant', 'b :', self.b );
 
 }
 
@@ -62,10 +66,10 @@ var Composes =
 var Proto =
 {
 
-  init : init,
-  print : print,
+  init,
+  print,
 
-  Composes : Composes,
+  Composes,
 
 }
 
