@@ -1,4 +1,5 @@
-( function _Copyable_s_() {
+( function _Copyable_s_()
+{
 
 'use strict';
 
@@ -10,7 +11,7 @@
 /**
  *  */
 
- /**
+/**
  * @classdesc Copyable mixin add copyability and clonability to your class.
  * @class wCopyable
  * @namespace Tools
@@ -295,7 +296,7 @@ function copyCustom( o )
   var self = this;
   var routine = ( self._traverseAct || _traverseAct );
 
-  _.assert( arguments.length == 1 );
+  _.assert( arguments.length === 1 );
 
   if( o.dst === undefined )
   o.dst = self;
@@ -316,7 +317,7 @@ function copyDeserializing( o )
 
   _.assertMapHasAll( o, copyDeserializing.defaults )
   _.assertMapHasNoUndefine( o );
-  _.assert( arguments.length == 1 );
+  _.assert( arguments.length === 1 );
   _.assert( _.objectIs( o ) );
 
   var optionsMerging = Object.create( null );
@@ -577,7 +578,7 @@ function _traverseAct_body( it )
 }
 
 _traverseAct_body.iterationDefaults = Object.create( _._cloner.iterationDefaults );
-_traverseAct_body.defaults = _.mapExtendDstNotOwn( Object.create( _._cloner.defaults ) , _traverseAct_body.iterationDefaults );
+_traverseAct_body.defaults = _.mapExtendDstNotOwn( Object.create( _._cloner.defaults ), _traverseAct_body.iterationDefaults );
 
 let _traverseAct = _.routineUnite( _traverseAct_head, _traverseAct_body );
 
@@ -757,7 +758,8 @@ cloneSerializing.defaults =
   copyingMedialRestricts : 1,
 }
 
-cloneSerializing.defaults.__proto__ = _.cloneDataSeparatingBuffers.defaults;
+// cloneSerializing.defaults.__proto__ = _.cloneDataSeparatingBuffers.defaults;
+Object.setPrototypeOf( cloneSerializing.defaults, _.cloneDataSeparatingBuffers.defaults )
 
 //
 
@@ -793,17 +795,17 @@ function cloneExtending( override )
   if( !override )
   {
     debugger;
-    var dst = new self.constructor( self );
-    _.assert( dst !== self );
-    return dst;
+    var dst0 = new self.constructor( self );
+    _.assert( dst0 !== self );
+    return dst0;
   }
   else
   {
     var src = _.mapOnly( self, self.Self.FieldsOfCopyableGroups );
     _.mapExtend( src, override );
-    var dst = new self.constructor( src );
-    _.assert( dst !== self && dst !== src );
-    return dst;
+    var dst1 = new self.constructor( src );
+    _.assert( dst1 !== self && dst1 !== src );
+    return dst1;
   }
 
 }
