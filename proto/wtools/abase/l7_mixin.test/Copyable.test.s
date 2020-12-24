@@ -638,8 +638,8 @@ function constructUsingSetter( test )
   {
     init,
 
-    '_stateSet' : _.accessor.setter.copyable({ name : 'state', maker : State.construct }),
-
+    // '_stateSet' : _.accessor.setter.copyable({ name : 'state', maker : State.construct }),
+    '_stateSet' : _.accessor.setter.copyable({ name : 'state', maker : State.Make }),
     Composes,
     Accessors
   }
@@ -658,10 +658,13 @@ function constructUsingSetter( test )
 
   test.identical( _.blueprint.isDefinitive( State ), true );
   test.identical( _.construction.isTyped( instance.state ), false );
-  test.identical( _.construction.isInstanceOf( instance.state, State ), false );
-  test.identical( _.blueprint.isBlueprintOf( State, instance.state ), false );
+  // test.identical( _.construction.isInstanceOf( instance.state, State ), false );
+  // test.identical( _.blueprint.isBlueprintOf( State, instance.state ), false );
+  test.identical( _.construction.isInstanceOf( instance.state, State ), _.maybe );
+  test.identical( _.blueprint.isBlueprintOf( State, instance.state ), _.maybe );
 
-  test.identical( instance.state instanceof State.construct, false );
+  // test.identical( instance.state instanceof State.construct, false );
+  test.identical( instance.state instanceof State.Make, false );
   test.identical( Object.getPrototypeOf( instance.state ), null );
   test.identical( instance.state.constructor, undefined );
   var prototypes = _.prototype.each( instance.state );
