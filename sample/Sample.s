@@ -1,31 +1,67 @@
 
 if( typeof module !== 'undefined' )
-require( './BaseClass.s' );
+require( 'wCopyable' );
+const _ = wTools;
 
-var base1 = new BaseClass({ name : 'base1', a : 11 });
+/* declare classes */
 
-base1.print();
-// base1 a : 11
-base1.staticFunction();
-// base1 static function called as method
-BaseClass.staticFunction();
-// BaseClass static function called as static
-console.log();
+function SampleClass( o )
+{
+  return _.workpiece.construct( SampleClass, this, arguments );
+}
 
-var base2 = base1.clone();
-base2.name = 'base2';
-base1.a = 13;
+function init( o )
+{
+  _.workpiece.initFields( this );
+}
 
-base1.print();
-// base1 a : 13
-base2.print();
-// base2 a : 11
-console.log();
+let Associates =
+{
+  field0 : null,
+}
 
-base2.copy( base1 );
+let Extension =
+{
+  init,
+  Associates,
+}
 
-base1.print();
-// base1 a : 13
-base2.print();
-// base1 a : 13
-console.log();
+_.classDeclare
+({
+  cls : SampleClass,
+  extend : Extension,
+});
+
+_.Copyable.mixin( SampleClass );
+
+/* test instance */
+
+var sample = new SampleClass();
+
+console.log( 'Check new instance.' );
+console.log( 'Instance has field "field0" : ', sample.hasField( 'field0' ) );
+/* log : Instance has field "field0" : true */
+console.log( 'Instance field Self has field "field0" : ', sample.Self.hasField( 'field0' ) );
+/* log : Instance field Self has field "field0" : true */
+console.log( 'Instance has field "field1" : ', sample.hasField( 'field1' ) );
+/* log : Instance has field "field1" : false */
+
+console.log( '\nAfter assigning to field0.' );
+sample.field0 = 1;
+console.log( 'Instance has field "field0" : ', sample.hasField( 'field0' ) );
+/* log : Instance has field "field0" : true */
+console.log( 'Instance field Self has field "field0" : ', sample.Self.hasField( 'field0' ) );
+/* log : Instance field Self has field "field0" : true */
+console.log( 'Instance has field "field1" : ', sample.hasField( 'field1' ) );
+/* log : Instance has field "field1" : false */
+
+console.log( '\nAfter assigning to field1' );
+sample.field1 = 1;
+console.log( 'Instance has field "field0" : ', sample.hasField( 'field0' ) );
+/* log : Instance has field "field0" : true */
+console.log( 'Instance field Self has field "field0" : ', sample.Self.hasField( 'field0' ) );
+/* log : Instance field Self has field "field0" : true */
+console.log( 'Instance has field "field1" : ', sample.hasField( 'field1' ) );
+/* log : Instance has field "field1" : false */
+
+
