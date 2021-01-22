@@ -13,6 +13,9 @@ submodule :
   wLooker :
     path : npm:///wlooker
     enabled : 0 # submodule
+  wStringer :
+    path : npm:///wstringer
+    enabled : 0 # submodule
   wEqualer :
     path : npm:///wequaler
     enabled : 0 # submodule
