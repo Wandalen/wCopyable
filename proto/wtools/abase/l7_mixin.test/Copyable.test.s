@@ -664,7 +664,7 @@ function constructUsingSetter( test )
   test.identical( _.blueprint.isBlueprintOf( State, instance.state ), _.maybe );
 
   // test.identical( instance.state instanceof State.construct, false );
-  test.identical( instance.state instanceof State.Make, false );
+  // test.identical( instance.state instanceof State.Make, false ); /* Error if a prototype of the object to be checked is not an object : "Function has non-object prototype 'null' in instanceof check" */
   test.identical( Object.getPrototypeOf( instance.state ), null );
   test.identical( instance.state.constructor, undefined );
   var prototypes = _.prototype.each( instance.state );
