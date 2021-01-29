@@ -858,17 +858,21 @@ function _equalAre_functor( fieldsGroupsMap )
     _.assert( it.containing !== undefined );
 
     if( !it.srcEffective )
-    return false;
+    return end( false );
+    // return false;
 
     if( !it.srcEffective2 )
-    return false;
+    return end( false );
+    // return false;
 
     if( it.strictTyping )
     if( it.srcEffective.constructor !== it.srcEffective2.constructor )
-    return false;
+    return end( false );
+    // return false;
 
     if( it.srcEffective === it.srcEffective2 )
-    return end( true );
+    return end( false );
+    // return end( true );
 
     /* */
 
@@ -886,8 +890,10 @@ function _equalAre_functor( fieldsGroupsMap )
       var newIt = it.iterationMake().choose( it.srcEffective[ f ], f );
       if( !_.mapOwn( it.srcEffective, f ) )
       return end( false );
+      // return end( false );
       if( !_.equaler._equal.body( newIt ) )
       return end( false );
+      // return end( false );
     }
 
     /* */
@@ -897,22 +903,32 @@ function _equalAre_functor( fieldsGroupsMap )
       if( !( it.srcEffective2 instanceof this.constructor ) )
       if( _.mapKeys( _.mapBut( it.srcEffective, fieldsMap ) ).length )
       return end( false );
+      // return end( false );
     }
 
     if( !( it.srcEffective instanceof this.constructor ) )
     if( _.mapKeys( _.mapBut( it.srcEffective, fieldsMap ) ).length )
     return end( false );
+    // return end( false );
 
     /* */
 
     return end( true );
+    // return end( true );
 
     /* */
+
+    // function end( result )
+    // {
+    //   it.continue = false;
+    //   return result;
+    // }
 
     function end( result )
     {
       it.continue = false;
-      return result;
+      it.tesult = result;
+      // return result;
     }
 
   }
@@ -967,9 +983,9 @@ function identicalWith( src, opts )
   it.srcEffective = it.src;
   it.srcEffective2 = it.src2;
 
-  var result = this[ equalAreSymbol ]( it );
+  var r = this[ equalAreSymbol ]( it );
 
-  return result;
+  return it.result;
 }
 
 _.routineExtend( identicalWith, _.entityIdentical );
@@ -1001,9 +1017,9 @@ function equivalentWith( src, opts )
   it.srcEffective = it.src;
   it.srcEffective2 = it.src2;
 
-  var result = this[ equalAreSymbol ]( it );
+  var r = this[ equalAreSymbol ]( it );
 
-  return result;
+  return it.result;
 }
 
 _.routineExtend( equivalentWith, _.entityEquivalent );
