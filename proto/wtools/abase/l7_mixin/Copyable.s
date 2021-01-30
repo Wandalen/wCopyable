@@ -927,7 +927,7 @@ function _equalAre_functor( fieldsGroupsMap )
     function end( result )
     {
       it.continue = false;
-      it.tesult = result;
+      it.result = result;
       // return result;
     }
 
