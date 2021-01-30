@@ -871,7 +871,7 @@ function _equalAre_functor( fieldsGroupsMap )
     // return false;
 
     if( it.srcEffective === it.srcEffective2 )
-    return end( false );
+    return end( true );
     // return end( true );
 
     /* */
@@ -1051,9 +1051,9 @@ function contains( src, opts )
   it.srcEffective = it.src;
   it.srcEffective2 = it.src2;
 
-  var result = this[ equalAreSymbol ]( it );
+  var r = this[ equalAreSymbol ]( it );
 
-  return result;
+  return it.result;
 }
 
 _.routineExtend( contains, _.entityContains );
