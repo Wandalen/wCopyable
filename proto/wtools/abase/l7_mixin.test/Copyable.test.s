@@ -639,7 +639,7 @@ function constructUsingSetter( test )
     init,
 
     // '_stateSet' : _.accessor.setter.copyable({ name : 'state', maker : State.construct }),
-    '_stateSet' : _.accessor.setter.copyable({ name : 'state', maker : State.Make }),
+    '_stateSet' : _.accessor.setter.copyable({ name : 'state', maker : State.make }),
     Composes,
     Accessors
   }
