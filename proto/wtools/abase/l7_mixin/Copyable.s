@@ -386,25 +386,34 @@ function _cloneObject( it )
 
   /* */
 
-  if( !it.dst )
+
+  if( it.dst )
   {
-
-    dst = it.dst = new it.src.constructor( it.src );
-    if( it.dst === it.src )
-    {
-      debugger;
-      dst = it.dst = new it.src.constructor();
-      it.dst._traverseAct( it );
-    }
-
+    it.dst._traverseAct( it );
   }
   else
   {
-
-    debugger;
-    it.dst._traverseAct( it );
-
+    dst = it.dst = new it.src.constructor( it.src );
+    if( it.dst === it.src )
+    {
+      dst = it.dst = new it.src.constructor();
+      it.dst._traverseAct( it );
+    }
   }
+
+  // if( !it.dst )
+  // {
+  //   dst = it.dst = new it.src.constructor( it.src );
+  //   if( it.dst === it.src )
+  //   {
+  //     dst = it.dst = new it.src.constructor();
+  //     it.dst._traverseAct( it );
+  //   }
+  // }
+  // else
+  // {
+  //   it.dst._traverseAct( it );
+  // }
 
   return it.dst;
 }
@@ -792,20 +801,30 @@ function cloneExtending( override )
 
   _.assert( arguments.length <= 1 );
 
-  if( !override )
-  {
-    debugger;
-    var dst0 = new self.constructor( self );
-    _.assert( dst0 !== self );
-    return dst0;
-  }
-  else
+  // if( !override )
+  if( override )
   {
     var src = _.mapOnly( self, self.Self.FieldsOfCopyableGroups );
     _.mapExtend( src, override );
     var dst1 = new self.constructor( src );
     _.assert( dst1 !== self && dst1 !== src );
     return dst1;
+
+    // var dst0 = new self.constructor( self );
+    // _.assert( dst0 !== self );
+    // return dst0;
+  }
+  else
+  {
+    var dst0 = new self.constructor( self );
+    _.assert( dst0 !== self );
+    return dst0;
+
+    // var src = _.mapOnly( self, self.Self.FieldsOfCopyableGroups );
+    // _.mapExtend( src, override );
+    // var dst1 = new self.constructor( src );
+    // _.assert( dst1 !== self && dst1 !== src );
+    // return dst1;
   }
 
 }
