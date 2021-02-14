@@ -642,12 +642,11 @@ function __traverseAct( it )
     if( !copyingDegree )
     return;
 
-    _.assert( _.mapIsHeritated( screen ) );
+    _.assert( _.mapIs( screen ) || _.mapIsPrototyped( screen ) );
     let screen2 = _.mapExtend( null, screen );
-
     _.assert( _.numberIs( copyingDegree ) );
     _.assert( it.dst === dst );
-    _.assert( _.mapIsHeritated( screen2 ) || !copyingDegree );
+    _.assert( _.mapIs( screen2 ) || _.mapIsPrototyped( screen2 ) || !copyingDegree );
 
     let newIt2 = Object.create( null );
     newIt2.screenFields = screen2;

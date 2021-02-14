@@ -673,7 +673,7 @@ function constructUsingSetter( test )
   test.true( !_.prototype.hasPrototype( instance.state, State ) );
   test.true( _.objectIs( instance.state ) );
   test.true( _.mapIs( instance.state ) );
-  test.true( _.mapLike_( instance.state ) );
+  test.true( _.mapLike( instance.state ) );
   test.true( !_.instanceIs( instance.state ) );
   test.identical( _.mapKeys( instance.state ), [ 'property2', 'property1' ] );
   test.identical( _.mapAllKeys( instance.state ), [ 'property2', 'property1' ] );
