@@ -61,7 +61,7 @@ function onMixinApply( mixinDescriptor, dstClass )
   }
 
   _.assert( arguments.length === 2, 'Expects exactly two arguments' );
-  _.assert( _.routineIs( dstClass ), () => 'mixin expects constructor, but got ' + _.strPrimitiveType( dstClass ) );
+  _.assert( _.routineIs( dstClass ), () => 'mixin expects constructor, but got ' + _.strTypeSecondary( dstClass ) );
   _.assertMapOwnAll( dstPrototype, has );
   _.assert( _ObjectHasOwnProperty.call( dstPrototype, 'constructor' ), 'prototype of object should has own constructor' );
 
@@ -642,11 +642,11 @@ function __traverseAct( it )
     if( !copyingDegree )
     return;
 
-    _.assert( _.mapIs( screen ) || _.mapIsPrototyped( screen ) );
+    _.assert( _.mapIs( screen ) || _.mapLikePrototyped( screen ) );
     let screen2 = _.mapExtend( null, screen );
     _.assert( _.numberIs( copyingDegree ) );
     _.assert( it.dst === dst );
-    _.assert( _.mapIs( screen2 ) || _.mapIsPrototyped( screen2 ) || !copyingDegree );
+    _.assert( _.mapIs( screen2 ) || _.mapLikePrototyped( screen2 ) || !copyingDegree );
 
     let newIt2 = Object.create( null );
     newIt2.screenFields = screen2;
