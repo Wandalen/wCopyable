@@ -670,10 +670,10 @@ function constructUsingSetter( test )
   var prototypes = _.prototype.each( instance.state );
   test.identical( prototypes.length, 1 );
   test.true( prototypes[ 0 ] === instance.state );
-  test.true( !_.prototype.hasPrototype( instance.state, State ) );
+  test.true( !/*_.prototype.hasPrototype*/_.prototype.has( instance.state, State ) );
   test.true( _.objectIs( instance.state ) );
   test.true( _.mapIs( instance.state ) );
-  test.true( _.mapLike( instance.state ) );
+  test.true( _.auxiliary.is( instance.state ) );
   test.true( !_.instanceIs( instance.state ) );
   test.identical( _.mapKeys( instance.state ), [ 'property2', 'property1' ] );
   test.identical( _.mapAllKeys( instance.state ), [ 'property2', 'property1' ] );
