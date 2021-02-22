@@ -61,7 +61,7 @@ function onMixinApply( mixinDescriptor, dstClass )
   }
 
   _.assert( arguments.length === 2, 'Expects exactly two arguments' );
-  _.assert( _.routineIs( dstClass ), () => 'mixin expects constructor, but got ' + _.strTypeSecondary( dstClass ) );
+  _.assert( _.routineIs( dstClass ), () => 'mixin expects constructor, but got ' + _.entity.strTypeSecondary( dstClass ) );
   _.assertMapOwnAll( dstPrototype, has );
   _.assert( _ObjectHasOwnProperty.call( dstPrototype, 'constructor' ), 'prototype of object should has own constructor' );
 
@@ -549,7 +549,7 @@ function _traverseAct_body( it )
   _.assert( src !== dst );
   _.assert( !!src );
   _.assert( _.strIs( it.path ) );
-  _.assert( !_.primitiveIs( proto ), 'Expects object {-proto-}, but got', _.strType( proto ) );
+  _.assert( !_.primitiveIs( proto ), 'Expects object {-proto-}, but got', _.entity.strType( proto ) );
   _.assert( !it.customFields || _.objectIs( it.customFields ) );
   _.assert( it.level >= 0 );
   _.assert( _.numberIs( it.copyingDegree ) );
