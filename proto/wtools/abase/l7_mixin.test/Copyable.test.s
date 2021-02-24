@@ -535,6 +535,22 @@ function equal( test )
 
 //
 
+function identicalWithEntityIsFileProvider( test )
+{
+  test.case = 'two instances of provider Extract, not identical';
+  var provider1 = _globals_.testing.wTools.FileProvider.Extract();
+  var provider2 = _globals_.testing.wTools.FileProvider.Extract();
+  var got = provider1.identicalWith( provider2 );
+  test.identical( got, false );
+
+  test.case = 'instance of provider Extract, identical';
+  var provider1 = _globals_.testing.wTools.FileProvider.Extract();
+  var got = provider1.identicalWith( provider1 );
+  test.identical( got, true );
+}
+
+//
+
 function hasField( test )
 {
 
@@ -695,6 +711,7 @@ let Self =
 
     fields,
     equal,
+    identicalWithEntityIsFileProvider,
 
     hasField,
 
