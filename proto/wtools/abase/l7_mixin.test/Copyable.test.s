@@ -542,11 +542,13 @@ function identicalWithEntityIsFileProvider( test )
   var provider2 = _globals_.testing.wTools.FileProvider.Extract();
   var got = provider1.identicalWith( provider2 );
   test.identical( got, false );
+  test.notIdentical( provider1, provider2 );
 
   test.case = 'instance of provider Extract, identical';
   var provider1 = _globals_.testing.wTools.FileProvider.Extract();
   var got = provider1.identicalWith( provider1 );
   test.identical( got, true );
+  test.identical( provider1, provider1 );
 }
 
 //
