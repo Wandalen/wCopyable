@@ -910,7 +910,9 @@ function _equalAre_functor( fieldsGroupsMap )
     }
 
     if( !it.iterator.continue )
-    return it.result;
+    return;
+    // yyy
+    // return it.result;
 
     /* */
 
