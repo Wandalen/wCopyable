@@ -875,17 +875,17 @@ function _equalAre_functor( fieldsGroupsMap )
     _.assert( it.strictTyping !== undefined );
     _.assert( it.containing !== undefined );
 
-    if( !it./*srcEffective*/src )
+    if( !it.src )
     return end( false );
 
-    if( !it./*srcEffective2*/src2 )
+    if( !it.src2 )
     return end( false );
 
     if( it.strictTyping )
-    if( it./*srcEffective*/src.constructor !== it./*srcEffective2*/src2.constructor )
+    if( it.src.constructor !== it.src2.constructor )
     return end( false );
 
-    if( it./*srcEffective*/src === it./*srcEffective2*/src2 )
+    if( it.src === it.src2 )
     return end( true );
 
     /* */
@@ -901,8 +901,8 @@ function _equalAre_functor( fieldsGroupsMap )
     {
       if( !it.continue || !it.iterator.continue )
       break;
-      var newIt = it.iterationMake().choose( it./*srcEffective*/src[ f ], f );
-      if( !_.property.own( it./*srcEffective*/src, f ) )
+      var newIt = it.iterationMake().choose( it.src[ f ], f );
+      if( !_.property.own( it.src, f ) )
       return end( false );
       newIt.iterate();
       // if( !_.equaler._equal.body( newIt ) )
@@ -918,13 +918,13 @@ function _equalAre_functor( fieldsGroupsMap )
 
     if( !it.containing )
     {
-      if( !( it./*srcEffective2*/src2 instanceof this.constructor ) )
-      if( _.mapKeys( _.mapBut( it./*srcEffective*/src, fieldsMap ) ).length )
+      if( !( it.src2 instanceof this.constructor ) )
+      if( _.mapKeys( _.mapBut( it.src, fieldsMap ) ).length )
       return end( false );
     }
 
-    if( !( it./*srcEffective*/src instanceof this.constructor ) )
-    if( _.mapKeys( _.mapBut( it./*srcEffective*/src, fieldsMap ) ).length )
+    if( !( it.src instanceof this.constructor ) )
+    if( _.mapKeys( _.mapBut( it.src, fieldsMap ) ).length )
     return end( false );
 
     /* */
@@ -985,11 +985,11 @@ function identicalWith( src, opts )
   var args = [ self, src, opts ];
   var it = self[ equalAreSymbol ].head.call( self, self.identicalWith, args );
 
-  // _.assert( it./*srcEffective*/src === null );
-  // _.assert( it./*srcEffective2*/src2 === null );
+  // _.assert( it.src === null );
+  // _.assert( it.src2 === null );
   //
-  // it./*srcEffective*/src = it.src;
-  // it./*srcEffective2*/src2 = it.src2;
+  // it.src = it.src;
+  // it.src2 = it.src2;
 
   var r = this[ equalAreSymbol ]( it );
 
@@ -1019,11 +1019,11 @@ function equivalentWith( src, opts )
   var args = [ self, src, opts ];
   var it = self[ equalAreSymbol ].head.call( self, self.equivalentWith, args );
 
-  // _.assert( it./*srcEffective*/src === null );
-  // _.assert( it./*srcEffective2*/src2 === null );
+  // _.assert( it.src === null );
+  // _.assert( it.src2 === null );
   //
-  // it./*srcEffective*/src = it.src;
-  // it./*srcEffective2*/src2 = it.src2;
+  // it.src = it.src;
+  // it.src2 = it.src2;
 
   var r = this[ equalAreSymbol ]( it );
 
@@ -1053,11 +1053,11 @@ function contains( src, opts )
   var args = [ self, src, opts ];
   var it = self[ equalAreSymbol ].head.call( self, self.contains, args );
 
-  // _.assert( it./*srcEffective*/src === null );
-  // _.assert( it./*srcEffective2*/src2 === null );
+  // _.assert( it.src === null );
+  // _.assert( it.src2 === null );
   //
-  // it./*srcEffective*/src = it.src;
-  // it./*srcEffective2*/src2 = it.src2;
+  // it.src = it.src;
+  // it.src2 = it.src2;
 
   var r = this[ equalAreSymbol ]( it );
 
