@@ -1,6 +1,6 @@
 {
   "name": "wCopyable",
-  "version": "0.4.325",
+  "version": "0.4.326",
   "engine": "node >= 10.0.0",
   "description": "Copyable mixin adds copyability and clonability to your class. The module uses defined relation to deduce how to copy / clone the instance.",
   "license": "MIT",
@@ -34,16 +34,16 @@
     "url": "https://github.com/Wandalen/wCopyable/issues"
   },
   "dependencies": {
-    "wTools": "alpha",
-    "wProto": "alpha",
-    "wcloner": "alpha",
-    "wlooker": "alpha",
-    "wstringer": "alpha",
-    "wequaler": "alpha"
+    "wTools": "gamma",
+    "wProto": "gamma",
+    "wcloner": "gamma",
+    "wlooker": "gamma",
+    "wstringer": "gamma",
+    "wequaler": "gamma"
   },
   "devDependencies": {
     "eslint": "7.1.0",
-    "wTesting": "alpha"
+    "wTesting": "gamma"
   },
   "keywords": [
     "wTools",
