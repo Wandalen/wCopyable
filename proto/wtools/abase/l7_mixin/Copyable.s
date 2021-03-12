@@ -989,7 +989,7 @@ function identicalWith( src, opts )
   return it.result;
 }
 
-_.routine.extendReplacing( identicalWith, _.entityIdentical );
+_.routine.extendReplacing( identicalWith, { defaults : _.entityIdentical.defaults } );
 
 //
 
@@ -1016,7 +1016,7 @@ function equivalentWith( src, opts )
   return it.result;
 }
 
-_.routine.extendReplacing( equivalentWith, _.entityEquivalent );
+_.routine.extendReplacing( equivalentWith, { defaults : _.entityEquivalent.defaults } );
 
 //
 
@@ -1050,7 +1050,7 @@ function contains( src, opts )
   return it.result;
 }
 
-_.routineExtend( contains, _.entityContains );
+_.routine.extendReplacing( contains, { defaults : _.entityContains.defaults } );
 
 //
 
