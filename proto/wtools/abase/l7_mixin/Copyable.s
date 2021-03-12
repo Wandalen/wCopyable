@@ -984,19 +984,12 @@ function identicalWith( src, opts )
 
   var args = [ self, src, opts ];
   var it = self[ equalAreSymbol ].head.call( self, self.identicalWith, args );
-
-  // _.assert( it.src === null );
-  // _.assert( it.src2 === null );
-  //
-  // it.src = it.src;
-  // it.src2 = it.src2;
-
   var r = this[ equalAreSymbol ]( it );
 
   return it.result;
 }
 
-_.routineExtend( identicalWith, _.entityIdentical );
+_.routine.extendReplacing( identicalWith, _.entityIdentical );
 
 //
 
@@ -1018,19 +1011,12 @@ function equivalentWith( src, opts )
 
   var args = [ self, src, opts ];
   var it = self[ equalAreSymbol ].head.call( self, self.equivalentWith, args );
-
-  // _.assert( it.src === null );
-  // _.assert( it.src2 === null );
-  //
-  // it.src = it.src;
-  // it.src2 = it.src2;
-
   var r = this[ equalAreSymbol ]( it );
 
   return it.result;
 }
 
-_.routineExtend( equivalentWith, _.entityEquivalent );
+_.routine.extendReplacing( equivalentWith, _.entityEquivalent );
 
 //
 
