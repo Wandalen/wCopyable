@@ -589,7 +589,7 @@ function _traverseAct_body( it )
 _traverseAct_body.iterationDefaults = Object.create( _._cloner.iterationDefaults );
 _traverseAct_body.defaults = _.mapExtendDstNotOwn( Object.create( _._cloner.defaults ), _traverseAct_body.iterationDefaults );
 
-let _traverseAct = _.routineUnite( _traverseAct_head, _traverseAct_body );
+let _traverseAct = _.routine.uniteCloning_( _traverseAct_head, _traverseAct_body );
 
 //
 
