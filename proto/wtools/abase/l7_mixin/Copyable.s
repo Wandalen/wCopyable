@@ -901,7 +901,7 @@ function _equalAre_functor( fieldsGroupsMap )
     {
       if( !it.continue || !it.iterator.continue )
       break;
-      var newIt = it.iterationMake().choose( it.src[ f ], f );
+      var newIt = it.iterationMake().choose( it.src[ f ], f, true );
       if( !_.property.own( it.src, f ) )
       return end( false );
       newIt.iterate();
