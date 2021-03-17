@@ -327,7 +327,6 @@ function equal( test )
   test.case = 'identicalWith trivial';
 
   var expected = true;
-  debugger;
   var got = all1.identicalWith( all2 );
   test.identical( got, expected );
 

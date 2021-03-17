@@ -241,7 +241,6 @@ function From( src )
 
 function Froms( srcs )
 {
-  debugger;
   return _.workpiece.froms( src );
 }
 
@@ -489,8 +488,6 @@ function _traverseAct_head( routine, args )
   /* adjust */
 
   if( it.src === undefined )
-  debugger;
-  if( it.src === undefined )
   it.src = self;
 
   if( it.iterator.technique === 'data' )
@@ -568,7 +565,6 @@ function _traverseAct_body( it )
     dst = it.dst = new it.src.constructor( it.src );
     if( it.dst === it.src )
     {
-      debugger;
       dst = it.dst = new it.src.constructor();
       self.__traverseAct( it );
     }
