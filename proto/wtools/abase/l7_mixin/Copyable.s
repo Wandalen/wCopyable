@@ -35,7 +35,7 @@ if( typeof module !== 'undefined' )
 
 const _global = _global_;
 const _ = _global_.wTools;
-var _ObjectHasOwnProperty = Object.hasOwnProperty;
+const _ObjectHasOwnProperty = Object.hasOwnProperty;
 
 _.assert( !!_._cloner );
 
