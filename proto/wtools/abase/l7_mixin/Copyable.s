@@ -33,8 +33,8 @@ if( typeof module !== 'undefined' )
 
 //
 
-let _global = _global_;
-let _ = _global_.wTools;
+const _global = _global_;
+const _ = _global_.wTools;
 var _ObjectHasOwnProperty = Object.hasOwnProperty;
 
 _.assert( !!_._cloner );
@@ -62,7 +62,7 @@ function onMixinApply( mixinDescriptor, dstClass )
 
   _.assert( arguments.length === 2, 'Expects exactly two arguments' );
   _.assert( _.routineIs( dstClass ), () => 'mixin expects constructor, but got ' + _.entity.strTypeSecondary( dstClass ) );
-  _.assertMapOwnAll( dstPrototype, has );
+  _.map.assertOwnAll( dstPrototype, has );
   _.assert( _ObjectHasOwnProperty.call( dstPrototype, 'constructor' ), 'prototype of object should has own constructor' );
 
   /* */
@@ -314,8 +314,8 @@ function copyDeserializing( o )
 {
   var self = this;
 
-  _.assertMapHasAll( o, copyDeserializing.defaults )
-  _.assertMapHasNoUndefine( o );
+  _.map.assertHasAll( o, copyDeserializing.defaults )
+  _.map.assertHasNoUndefine( o );
   _.assert( arguments.length === 1 );
   _.assert( _.objectIs( o ) );
 
@@ -540,8 +540,8 @@ function _traverseAct_body( it )
 
   /* verification */
 
-  _.assertMapHasNoUndefine( it );
-  _.assertMapHasNoUndefine( it.iterator );
+  _.map.assertHasNoUndefine( it );
+  _.map.assertHasNoUndefine( it.iterator );
   _.assert( arguments.length === 1, 'Expects single argument' );
   _.assert( src !== dst );
   _.assert( !!src );
@@ -553,9 +553,9 @@ function _traverseAct_body( it )
   _.assert( _.routineIs( self.__traverseAct ) );
 
   if( _.workpiece.instanceIsStandard( src ) )
-  _.assertMapOwnOnly( src, [ Composes, Aggregates, Associates, Restricts ], () => 'Options instance for ' + self.qualifiedName + ' should not have fields :' );
+  _.map.assertOwnOnly( src, [ Composes, Aggregates, Associates, Restricts ], () => 'Options instance for ' + self.qualifiedName + ' should not have fields :' );
   else
-  _.assertMapOwnOnly( src, [ Composes, Aggregates, Associates, Medials ], () => 'Options map for ' + self.qualifiedName + ' should not have fields :' );
+  _.map.assertOwnOnly( src, [ Composes, Aggregates, Associates, Medials ], () => 'Options map for ' + self.qualifiedName + ' should not have fields :' );
 
   /* */
 
@@ -617,7 +617,7 @@ function __traverseAct( it )
   copyFacets( Composes, it.copyingComposes );
   copyFacets( Aggregates, it.copyingAggregates );
   copyFacets( Associates, it.copyingAssociates );
-  copyFacets( _.mapOnly( Medials, Restricts ), it.copyingMedialRestricts );
+  copyFacets( _.mapOnly_( null, Medials, Restricts ), it.copyingMedialRestricts );
   copyFacets( Restricts, it.copyingRestricts );
   copyFacets( it.customFields, it.copyingCustomFields );
 
@@ -799,7 +799,7 @@ function cloneExtending( override )
   // if( !override )
   if( override )
   {
-    var src = _.mapOnly( self, self.Self.FieldsOfCopyableGroups );
+    var src = _.mapOnly_( null, self, self.Self.FieldsOfCopyableGroups );
     _.mapExtend( src, override );
     var dst1 = new self.constructor( src );
     _.assert( dst1 !== self && dst1 !== src );
@@ -815,7 +815,7 @@ function cloneExtending( override )
     _.assert( dst0 !== self );
     return dst0;
 
-    // var src = _.mapOnly( self, self.Self.FieldsOfCopyableGroups );
+    // var src = _.mapOnly_( null, self, self.Self.FieldsOfCopyableGroups );
     // _.mapExtend( src, override );
     // var dst1 = new self.constructor( src );
     // _.assert( dst1 !== self && dst1 !== src );
@@ -915,12 +915,12 @@ function _equalAre_functor( fieldsGroupsMap )
     if( !it.containing )
     {
       if( !( it.src2 instanceof this.constructor ) )
-      if( _.mapKeys( _.mapBut( it.src, fieldsMap ) ).length )
+      if( _.mapKeys( _.mapBut_( null, it.src, fieldsMap ) ).length )
       return end( false );
     }
 
     if( !( it.src instanceof this.constructor ) )
-    if( _.mapKeys( _.mapBut( it.src, fieldsMap ) ).length )
+    if( _.mapKeys( _.mapBut_( null, it.src, fieldsMap ) ).length )
     return end( false );
 
     /* */
@@ -942,9 +942,9 @@ function _equalAre_functor( fieldsGroupsMap )
 _equalAre_functor.defaults = Object.create( null );
 
 var on = _.mapMake( _.DefaultFieldsGroupsCopyable );
-var off = _.mapBut( _.DefaultFieldsGroups, _.DefaultFieldsGroupsCopyable );
-_.mapValsSet( on, 1 );
-_.mapValsSet( off, 0 );
+var off = _.mapBut_( null, _.DefaultFieldsGroups, _.DefaultFieldsGroupsCopyable );
+_.mapAllValsSet( on, 1 );
+_.mapAllValsSet( off, 0 );
 _.mapExtend( _equalAre_functor.defaults, on, off );
 
 //
@@ -1424,7 +1424,7 @@ var Supplement =
 
 //
 
-let Self = _.mixinDelcare
+const Self = _.mixinDelcare
 ({
   supplement : Supplement,
   onMixinApply,

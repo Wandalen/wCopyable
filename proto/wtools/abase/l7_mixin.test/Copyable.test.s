@@ -14,8 +14,8 @@ if( typeof module !== 'undefined' )
 
 }
 
-let _global = _global_;
-let _ = _global_.wTools;
+const _global = _global_;
+const _ = _global_.wTools;
 
 /* qqq :
 
@@ -596,7 +596,7 @@ function constructUsingSetter( test )
 {
   let _ = _globals_.testing.wTools;
 
-  let Self = testClass;
+  const Proto = testClass;
 
   function testClass( o )
   {
@@ -683,7 +683,7 @@ function constructUsingSetter( test )
 // declare
 // --
 
-let Self =
+const Proto =
 {
 
   name : 'Tools.CopyableMixin',
@@ -704,7 +704,7 @@ let Self =
 
 //
 
-Self = wTestSuite( Self );
+const Self = wTestSuite( Proto );
 if( typeof module !== 'undefined' && !module.parent )
 wTester.test( Self.name );
 
