@@ -1,6 +1,6 @@
 {
   "name" : "wCopyable",
-  "version" : "0.4.340",
+  "version" : "0.4.341",
   "engine" : "node >= 10.0.0",
   "description" : "Copyable mixin adds copyability and clonability to your class. The module uses defined relation to deduce how to copy / clone the instance.",
   "license" : "MIT",
@@ -10,7 +10,7 @@
     { "name" : "Kostiantyn Wandalen", "email" : "wanalen@01.school" },
     { "name" : "Volodymyr M.", "email" : "volodymyr.migdal@gmail.com" }
   ],
-  "main" : "/pro/module/wCopyable/proto/node_modules/wCopyable",
+  "main" : "proto/node_modules/wCopyable",
   "files" : [ "proto/wtools/abase/l7_mixin/Copyable.s", "proto/wtools/abase/layer3", "proto/wtools/Tools.s", "out", "proto/node_modules" ],
   "scripts" : { "test" : "wtest .run 'proto/**' rapidity:-3", "docgen" : "wdocgen proto" },
   "repository" :
