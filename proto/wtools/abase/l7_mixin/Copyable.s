@@ -354,7 +354,7 @@ function cloneObject( o )
   var o = o || Object.create( null );
 
   _.assert( arguments.length === 0 || arguments.length === 1 );
-  _.routineOptions( cloneObject, o );
+  _.routine.options_( cloneObject, o );
 
   var it = _._cloner( cloneObject, o );
 
@@ -585,7 +585,7 @@ function _traverseAct_body( it )
 _traverseAct_body.iterationDefaults = Object.create( _._cloner.iterationDefaults );
 _traverseAct_body.defaults = _.mapExtendDstNotOwn( Object.create( _._cloner.defaults ), _traverseAct_body.iterationDefaults );
 
-let _traverseAct = _.routine.uniteCloning_( _traverseAct_head, _traverseAct_body );
+let _traverseAct = _.routine.uniteCloning_replaceByUnite( _traverseAct_head, _traverseAct_body );
 
 //
 
@@ -639,7 +639,7 @@ function __traverseAct( it )
     return;
 
     _.assert( _.mapIs( screen ) || _.aux.isPrototyped( screen ) );
-    let screen2 = _.mapExtend( null, screen );
+    let screen2 = _.props.extend( null, screen );
     _.assert( _.numberIs( copyingDegree ) );
     _.assert( it.dst === dst );
     _.assert( _.mapIs( screen2 ) || _.aux.isPrototyped( screen2 ) || !copyingDegree );
@@ -663,7 +663,7 @@ function __traverseAct( it )
       if( _.definitionIs( e ) )
       if( e.order < 0 || e.order > 0 )
       {
-        let newIt3 = _.mapExtend( null, newIt2 );
+        let newIt3 = _.props.extend( null, newIt2 );
         newIt3.screenFields = Object.create( null );
         newIt3.screenFields[ s ] = screen2[ s ];
         delete screen2[ s ];
@@ -701,7 +701,7 @@ function __traverseAct( it )
       let its = ordersHash.get( order );
       its.forEach( ( newIt2 ) =>
       {
-        _.mapExtend( newIt, newIt2 );
+        _.props.extend( newIt, newIt2 );
         _._traverseMap( newIt );
       });
     });
@@ -800,7 +800,7 @@ function cloneExtending( override )
   if( override )
   {
     var src = _.mapOnly_( null, self, self.Self.FieldsOfCopyableGroups );
-    _.mapExtend( src, override );
+    _.props.extend( src, override );
     var dst1 = new self.constructor( src );
     _.assert( dst1 !== self && dst1 !== src );
     return dst1;
@@ -816,7 +816,7 @@ function cloneExtending( override )
     return dst0;
 
     // var src = _.mapOnly_( null, self, self.Self.FieldsOfCopyableGroups );
-    // _.mapExtend( src, override );
+    // _.props.extend( src, override );
     // var dst1 = new self.constructor( src );
     // _.assert( dst1 !== self && dst1 !== src );
     // return dst1;
@@ -850,14 +850,14 @@ function toStr( o )
 }
 
 // --
-// checker
+// dichotomy
 // --
 
 function _equalAre_functor( fieldsGroupsMap )
 {
   _.assert( arguments.length <= 1 );
 
-  fieldsGroupsMap = _.routineOptions( _equalAre_functor, fieldsGroupsMap );
+  fieldsGroupsMap = _.routine.options_( _equalAre_functor, fieldsGroupsMap || null );
 
   _.routineExtend( _equalAre, _.equaler._equal );
 
@@ -889,7 +889,7 @@ function _equalAre_functor( fieldsGroupsMap )
     var fieldsMap = Object.create( null );
     for( var g in fieldsGroupsMap )
     if( fieldsGroupsMap[ g ] )
-    _.mapExtend( fieldsMap, this[ g ] );
+    _.props.extend( fieldsMap, this[ g ] );
 
     /* */
 
@@ -898,7 +898,7 @@ function _equalAre_functor( fieldsGroupsMap )
       if( !it.continue || !it.iterator.continue )
       break;
       var newIt = it.iterationMake().choose( it.src[ f ], f, true );
-      if( !_.property.own( it.src, f ) )
+      if( !_.props.own( it.src, f ) )
       return end( false );
       newIt.iterate();
       // if( !_.equaler._equal.body( newIt ) )
@@ -915,12 +915,12 @@ function _equalAre_functor( fieldsGroupsMap )
     if( !it.containing )
     {
       if( !( it.src2 instanceof this.constructor ) )
-      if( _.mapKeys( _.mapBut_( null, it.src, fieldsMap ) ).length )
+      if( _.props.keys( _.mapBut_( null, it.src, fieldsMap ) ).length )
       return end( false );
     }
 
     if( !( it.src instanceof this.constructor ) )
-    if( _.mapKeys( _.mapBut_( null, it.src, fieldsMap ) ).length )
+    if( _.props.keys( _.mapBut_( null, it.src, fieldsMap ) ).length )
     return end( false );
 
     /* */
@@ -941,11 +941,11 @@ function _equalAre_functor( fieldsGroupsMap )
 
 _equalAre_functor.defaults = Object.create( null );
 
-var on = _.mapMake( _.DefaultFieldsGroupsCopyable );
+var on = _.map.make( _.DefaultFieldsGroupsCopyable );
 var off = _.mapBut_( null, _.DefaultFieldsGroups, _.DefaultFieldsGroupsCopyable );
 _.mapAllValsSet( on, 1 );
 _.mapAllValsSet( off, 0 );
-_.mapExtend( _equalAre_functor.defaults, on, off );
+_.props.extend( _equalAre_functor.defaults, on, off );
 
 //
 
@@ -1379,7 +1379,7 @@ var Supplement =
 
   toStr,
 
-  // checker
+  // dichotomy
 
   _equalAre_functor,
   [ equalAreSymbol ] : _equalAre,

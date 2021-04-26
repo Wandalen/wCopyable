@@ -674,8 +674,8 @@ function constructUsingSetter( test )
   test.true( _.mapIs( instance.state ) );
   test.true( _.aux.is( instance.state ) );
   test.true( !_.instanceIs( instance.state ) );
-  test.identical( _.mapKeys( instance.state ), [ 'property2', 'property1' ] );
-  test.identical( _.mapAllKeys( instance.state ), [ 'property2', 'property1' ] );
+  test.identical( _.props.keys( instance.state ), [ 'property2', 'property1' ] );
+  test.identical( _.props.allKeys( instance.state ), [ 'property2', 'property1' ] );
 
 }
 
