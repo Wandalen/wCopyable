@@ -317,7 +317,7 @@ function copyDeserializing( o )
   _.map.assertHasAll( o, copyDeserializing.defaults )
   _.map.assertHasNoUndefine( o );
   _.assert( arguments.length === 1 );
-  _.assert( _.objectIs( o ) );
+  _.assert( _.object.isBasic( o ) );
 
   var optionsMerging = Object.create( null );
   optionsMerging.src = o;
@@ -481,7 +481,7 @@ function _traverseAct_head( routine, args )
   let self = this;
   let it = args[ 0 ];
 
-  _.assert( _.objectIs( it ) );
+  _.assert( _.object.isBasic( it ) );
   _.assert( arguments.length === 2, 'Expects single argument' );
   _.assert( args.length === 1, 'Expects single argument' );
 
@@ -547,7 +547,7 @@ function _traverseAct_body( it )
   _.assert( !!src );
   _.assert( _.strIs( it.path ) );
   _.assert( !_.primitiveIs( proto ), 'Expects object {-proto-}, but got', _.entity.strType( proto ) );
-  _.assert( !it.customFields || _.objectIs( it.customFields ) );
+  _.assert( !it.customFields || _.object.isBasic( it.customFields ) );
   _.assert( it.level >= 0 );
   _.assert( _.numberIs( it.copyingDegree ) );
   _.assert( _.routineIs( self.__traverseAct ) );
@@ -867,7 +867,7 @@ function _equalAre_functor( fieldsGroupsMap )
   {
 
     _.assert( arguments.length === 1, 'Expects single argument' );
-    _.assert( _.objectIs( it ) );
+    _.assert( _.object.isBasic( it ) );
     _.assert( it.strictTyping !== undefined );
     _.assert( it.containing !== undefined );
 
@@ -1437,7 +1437,7 @@ const Self = _.mixinDelcare
 _.assert( !Self.copy );
 _.assert( _.routineIs( Self.prototype.copy ) );
 _.assert( _.strIs( Self.shortName ) );
-_.assert( _.objectIs( Self.__mixin__ ) );
+_.assert( _.object.isBasic( Self.__mixin__ ) );
 _.assert( !Self.onMixinApply );
 _.assert( _.routineIs( Self.mixin ) );
 

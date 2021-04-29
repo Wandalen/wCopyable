@@ -670,7 +670,7 @@ function constructUsingSetter( test )
   test.identical( prototypes.length, 1 );
   test.true( prototypes[ 0 ] === instance.state );
   test.true( !/*_.prototype.hasPrototype*/_.prototype.has( instance.state, State ) );
-  test.true( _.objectIs( instance.state ) );
+  test.true( _.object.isBasic( instance.state ) );
   test.true( _.mapIs( instance.state ) );
   test.true( _.aux.is( instance.state ) );
   test.true( !_.instanceIs( instance.state ) );
