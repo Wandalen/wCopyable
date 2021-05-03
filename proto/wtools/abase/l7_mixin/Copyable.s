@@ -604,7 +604,7 @@ function __traverseAct( it )
   var Restricts = proto.Restricts || _empty;
   var Medials = proto.Medials || _empty;
 
-  var ordersHash = new Map;
+  var ordersHash = new HashMap;
   var standardOrder = true;
 
   /* */
@@ -893,11 +893,13 @@ function _equalAre_functor( fieldsGroupsMap )
 
     /* */
 
+    let c = 0;
     for( var f in fieldsMap )
     {
       if( !it.continue || !it.iterator.continue )
       break;
-      var newIt = it.iterationMake().choose( it.src[ f ], f, true );
+      var newIt = it.iterationMake().choose( it.src[ f ], f, c, true );
+      c += 1;
       if( !_.props.own( it.src, f ) )
       return end( false );
       newIt.iterate();
