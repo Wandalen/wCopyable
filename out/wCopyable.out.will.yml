@@ -2,12 +2,9 @@ format: outwillfile-2.0
 root:
   - wCopyable.out
 consistency:
-  ../.ex.will.yml: &ref_0
-    hash: c16452f2f306c83fc85ebc83dd2744d9
-    size: 1953
-  ../.im.will.yml: &ref_1
-    hash: 79712b2b6a39f4513f5ffbfefc6a1326
-    size: 5257
+  ../will.yml: &ref_0
+    hash: 70720b7cb27d0ca1a25fc5766a7ece1b
+    size: 6992
 module:
   wCopyable.out:
     about:
@@ -18,11 +15,10 @@ module:
         module uses defined relation to deduce how to copy / clone the instance.
       enabled: 1
       version: 0.5.0
-      interpreters: &ref_2
-        - njs >= 10.0.0
-        - chrome >= 60.0.0
-        - firefox >= 60.0.0
-      keywords: &ref_3
+      license: MIT
+      npm.name: wCopyable
+      author: Kostiantyn Wandalen <wanalen@01.school>
+      keywords: &ref_1
         - wTools
         - wCopyable
         - copy
@@ -33,13 +29,14 @@ module:
         - destructor
         - init
         - finit
-      license: MIT
-      author: Kostiantyn Wandalen <wanalen@01.school>
-      contributors: &ref_4
+      contributors: &ref_2
         - Kostiantyn Wandalen <wanalen@01.school>
         - Volodymyr M. <volodymyr.migdal@gmail.com>
-      npm.name: wCopyable
-      npm.scripts: &ref_5
+      interpreters: &ref_3
+        - njs >= 10.0.0
+        - chrome >= 60.0.0
+        - firefox >= 60.0.0
+      npm.scripts: &ref_4
         test: wtest .run proto/**
         docgen: wdocgen .build proto
     path:
@@ -54,15 +51,11 @@ module:
       module.original.willfiles:
         criterion:
           predefined: 1
-        path:
-          - ../.ex.will.yml
-          - ../.im.will.yml
+        path: ../will.yml
       module.peer.willfiles:
         criterion:
           predefined: 1
-        path:
-          - ../.ex.will.yml
-          - ../.im.will.yml
+        path: ../will.yml
       module.peer.in:
         criterion:
           predefined: 1
@@ -189,19 +182,19 @@ module:
         path: 'npm:///wProto'
         autoExporting: 0
         enabled: 0
-      wCloner:
+      wcloner:
         path: 'npm:///wcloner'
         autoExporting: 0
         enabled: 0
-      wLooker:
+      wlooker:
         path: 'npm:///wlooker'
         autoExporting: 0
         enabled: 0
-      wStringer:
+      wstringer:
         path: 'npm:///wstringer'
         autoExporting: 0
         enabled: 0
-      wEqualer:
+      wequaler:
         path: 'npm:///wequaler'
         autoExporting: 0
         enabled: 0
@@ -818,8 +811,7 @@ module:
           content: proto
           export: 1
     consistency:
-      ../.ex.will.yml: *ref_0
-      ../.im.will.yml: *ref_1
+      ../will.yml: *ref_0
   ../:
     about:
       name: wCopyable
@@ -829,26 +821,22 @@ module:
         module uses defined relation to deduce how to copy / clone the instance.
       enabled: 1
       version: 0.5.0
-      interpreters: *ref_2
-      keywords: *ref_3
       license: MIT
-      author: Kostiantyn Wandalen <wanalen@01.school>
-      contributors: *ref_4
       npm.name: wCopyable
-      npm.scripts: *ref_5
+      author: Kostiantyn Wandalen <wanalen@01.school>
+      keywords: *ref_1
+      contributors: *ref_2
+      interpreters: *ref_3
+      npm.scripts: *ref_4
     path:
       module.willfiles:
         criterion:
           predefined: 1
-        path:
-          - .ex.will.yml
-          - .im.will.yml
+        path: will.yml
       module.original.willfiles:
         criterion:
           predefined: 1
-        path:
-          - .ex.will.yml
-          - .im.will.yml
+        path: will.yml
       module.peer.willfiles:
         criterion:
           predefined: 1
@@ -958,19 +946,19 @@ module:
         path: 'npm:///wProto'
         autoExporting: 0
         enabled: 0
-      wCloner:
+      wcloner:
         path: 'npm:///wcloner'
         autoExporting: 0
         enabled: 0
-      wLooker:
+      wlooker:
         path: 'npm:///wlooker'
         autoExporting: 0
         enabled: 0
-      wStringer:
+      wstringer:
         path: 'npm:///wstringer'
         autoExporting: 0
         enabled: 0
-      wEqualer:
+      wequaler:
         path: 'npm:///wequaler'
         autoExporting: 0
         enabled: 0
@@ -1523,9 +1511,6 @@ module:
           - 'build::release'
           - 'build::npm'
     consistency:
-      ../.ex.will.yml:
-        hash: c16452f2f306c83fc85ebc83dd2744d9
-        size: 1953
-      ../.im.will.yml:
-        hash: 79712b2b6a39f4513f5ffbfefc6a1326
-        size: 5257
+      ../will.yml:
+        hash: 70720b7cb27d0ca1a25fc5766a7ece1b
+        size: 6992
