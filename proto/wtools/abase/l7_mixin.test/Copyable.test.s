@@ -596,26 +596,7 @@ function constructUsingSetter( test )
 {
   let _ = _globals_.testing.wTools;
 
-  const Proto = testClass;
-
-  function testClass( o )
-  {
-    return _.workpiece.construct( Self, this, arguments );
-  }
-
-  function init( o )
-  {
-    let self = this;
-
-    _.workpiece.initFields( self );
-    Object.preventExtensions( self );
-
-    if( o )
-    self.copy( o );
-
-    if( !self.state )
-    self.state = State.construct();
-  }
+  let Self = testClass;
 
   let State = _.Blueprint
   ({
@@ -633,10 +614,9 @@ function constructUsingSetter( test )
     state : 'state',
   }
 
-  let Proto =
+  let Extension =
   {
     init,
-
     // '_stateSet' : _.accessor.setter.copyable({ name : 'state', maker : State.construct }),
     '_stateSet' : _.accessor.setter.copyable({ name : 'state', maker : State.make }),
     Composes,
@@ -647,7 +627,7 @@ function constructUsingSetter( test )
   ({
     cls : Self,
     parent : null,
-    extend : Proto,
+    extend : Extension,
   });
   _.Copyable.mixin( Self );
 
@@ -676,6 +656,22 @@ function constructUsingSetter( test )
   test.true( !_.instanceIs( instance.state ) );
   test.identical( _.props.keys( instance.state ), [ 'property2', 'property1' ] );
   test.identical( _.props.allKeys( instance.state ), [ 'property2', 'property1' ] );
+
+  function testClass( o )
+  {
+    return _.workpiece.construct( Self, this, arguments );
+  }
+
+  function init( o )
+  {
+    let self = this;
+    _.workpiece.initFields( self );
+    Object.preventExtensions( self );
+    if( o )
+    self.copy( o );
+    if( !self.state )
+    self.state = State.construct();
+  }
 
 }
 
