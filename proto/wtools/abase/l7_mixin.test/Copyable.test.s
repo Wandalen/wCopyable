@@ -6,7 +6,7 @@
 if( typeof module !== 'undefined' )
 {
 
-  let _ = require( '../../../wtools/Tools.s' );
+  const _ = require( '../../../node_modules/Tools' );
 
   _.include( 'wTesting' );
 
@@ -14,8 +14,8 @@ if( typeof module !== 'undefined' )
 
 }
 
-let _global = _global_;
-let _ = _global_.wTools;
+const _global = _global_;
+const _ = _global_.wTools;
 
 /* qqq :
 
@@ -327,7 +327,6 @@ function equal( test )
   test.case = 'identicalWith trivial';
 
   var expected = true;
-  debugger;
   var got = all1.identicalWith( all2 );
   test.identical( got, expected );
 
@@ -617,25 +616,6 @@ function constructUsingSetter( test )
 
   let Self = testClass;
 
-  function testClass( o )
-  {
-    return _.workpiece.construct( Self, this, arguments );
-  }
-
-  function init( o )
-  {
-    let self = this;
-
-    _.workpiece.initFields( self );
-    Object.preventExtensions( self );
-
-    if( o )
-    self.copy( o );
-
-    if( !self.state )
-    self.state = State.construct();
-  }
-
   let State = _.Blueprint
   ({
     property1 : _.define.shallow( [ 1, 1, 1 ] ),
@@ -652,10 +632,9 @@ function constructUsingSetter( test )
     state : 'state',
   }
 
-  let Proto =
+  let Extension =
   {
     init,
-
     // '_stateSet' : _.accessor.setter.copyable({ name : 'state', maker : State.construct }),
     '_stateSet' : _.accessor.setter.copyable({ name : 'state', maker : State.make }),
     Composes,
@@ -666,7 +645,7 @@ function constructUsingSetter( test )
   ({
     cls : Self,
     parent : null,
-    extend : Proto,
+    extend : Extension,
   });
   _.Copyable.mixin( Self );
 
@@ -689,12 +668,28 @@ function constructUsingSetter( test )
   test.identical( prototypes.length, 1 );
   test.true( prototypes[ 0 ] === instance.state );
   test.true( !/*_.prototype.hasPrototype*/_.prototype.has( instance.state, State ) );
-  test.true( _.objectIs( instance.state ) );
+  test.true( _.object.isBasic( instance.state ) );
   test.true( _.mapIs( instance.state ) );
   test.true( _.aux.is( instance.state ) );
   test.true( !_.instanceIs( instance.state ) );
-  test.identical( _.mapKeys( instance.state ), [ 'property2', 'property1' ] );
-  test.identical( _.mapAllKeys( instance.state ), [ 'property2', 'property1' ] );
+  test.identical( _.props.keys( instance.state ), [ 'property2', 'property1' ] );
+  test.identical( _.props.allKeys( instance.state ), [ 'property2', 'property1' ] );
+
+  function testClass( o )
+  {
+    return _.workpiece.construct( Self, this, arguments );
+  }
+
+  function init( o )
+  {
+    let self = this;
+    _.workpiece.initFields( self );
+    Object.preventExtensions( self );
+    if( o )
+    self.copy( o );
+    if( !self.state )
+    self.state = State.construct();
+  }
 
 }
 
@@ -702,7 +697,7 @@ function constructUsingSetter( test )
 // declare
 // --
 
-let Self =
+const Proto =
 {
 
   name : 'Tools.CopyableMixin',
@@ -724,7 +719,7 @@ let Self =
 
 //
 
-Self = wTestSuite( Self );
+const Self = wTestSuite( Proto );
 if( typeof module !== 'undefined' && !module.parent )
 wTester.test( Self.name );
 

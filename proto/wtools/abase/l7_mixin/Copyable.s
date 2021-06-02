@@ -21,7 +21,7 @@
 if( typeof module !== 'undefined' )
 {
 
-  let _ = require( '../../../wtools/Tools.s' );
+  const _ = require( '../../../node_modules/Tools' );
 
   _.include( 'wProto' );
   _.include( 'wCloner' );
@@ -33,9 +33,9 @@ if( typeof module !== 'undefined' )
 
 //
 
-let _global = _global_;
-let _ = _global_.wTools;
-var _ObjectHasOwnProperty = Object.hasOwnProperty;
+const _global = _global_;
+const _ = _global_.wTools;
+const _ObjectHasOwnProperty = Object.hasOwnProperty;
 
 _.assert( !!_._cloner );
 
@@ -62,7 +62,7 @@ function onMixinApply( mixinDescriptor, dstClass )
 
   _.assert( arguments.length === 2, 'Expects exactly two arguments' );
   _.assert( _.routineIs( dstClass ), () => 'mixin expects constructor, but got ' + _.entity.strTypeSecondary( dstClass ) );
-  _.assertMapOwnAll( dstPrototype, has );
+  _.map.assertOwnAll( dstPrototype, has );
   _.assert( _ObjectHasOwnProperty.call( dstPrototype, 'constructor' ), 'prototype of object should has own constructor' );
 
   /* */
@@ -241,7 +241,6 @@ function From( src )
 
 function Froms( srcs )
 {
-  debugger;
   return _.workpiece.froms( src );
 }
 
@@ -315,10 +314,10 @@ function copyDeserializing( o )
 {
   var self = this;
 
-  _.assertMapHasAll( o, copyDeserializing.defaults )
-  _.assertMapHasNoUndefine( o );
+  _.map.assertHasAll( o, copyDeserializing.defaults )
+  _.map.assertHasNoUndefine( o );
   _.assert( arguments.length === 1 );
-  _.assert( _.objectIs( o ) );
+  _.assert( _.object.isBasic( o ) );
 
   var optionsMerging = Object.create( null );
   optionsMerging.src = o;
@@ -355,7 +354,7 @@ function cloneObject( o )
   var o = o || Object.create( null );
 
   _.assert( arguments.length === 0 || arguments.length === 1 );
-  _.routineOptions( cloneObject, o );
+  _.routine.options_( cloneObject, o );
 
   var it = _._cloner( cloneObject, o );
 
@@ -482,14 +481,12 @@ function _traverseAct_head( routine, args )
   let self = this;
   let it = args[ 0 ];
 
-  _.assert( _.objectIs( it ) );
+  _.assert( _.object.isBasic( it ) );
   _.assert( arguments.length === 2, 'Expects single argument' );
   _.assert( args.length === 1, 'Expects single argument' );
 
   /* adjust */
 
-  if( it.src === undefined )
-  debugger;
   if( it.src === undefined )
   it.src = self;
 
@@ -543,22 +540,22 @@ function _traverseAct_body( it )
 
   /* verification */
 
-  _.assertMapHasNoUndefine( it );
-  _.assertMapHasNoUndefine( it.iterator );
+  _.map.assertHasNoUndefine( it );
+  _.map.assertHasNoUndefine( it.iterator );
   _.assert( arguments.length === 1, 'Expects single argument' );
   _.assert( src !== dst );
   _.assert( !!src );
   _.assert( _.strIs( it.path ) );
   _.assert( !_.primitiveIs( proto ), 'Expects object {-proto-}, but got', _.entity.strType( proto ) );
-  _.assert( !it.customFields || _.objectIs( it.customFields ) );
+  _.assert( !it.customFields || _.object.isBasic( it.customFields ) );
   _.assert( it.level >= 0 );
   _.assert( _.numberIs( it.copyingDegree ) );
   _.assert( _.routineIs( self.__traverseAct ) );
 
   if( _.workpiece.instanceIsStandard( src ) )
-  _.assertMapOwnOnly( src, [ Composes, Aggregates, Associates, Restricts ], () => 'Options instance for ' + self.qualifiedName + ' should not have fields :' );
+  _.map.assertOwnOnly( src, [ Composes, Aggregates, Associates, Restricts ], () => 'Options instance for ' + self.qualifiedName + ' should not have fields :' );
   else
-  _.assertMapOwnOnly( src, [ Composes, Aggregates, Associates, Medials ], () => 'Options map for ' + self.qualifiedName + ' should not have fields :' );
+  _.map.assertOwnOnly( src, [ Composes, Aggregates, Associates, Medials ], () => 'Options map for ' + self.qualifiedName + ' should not have fields :' );
 
   /* */
 
@@ -568,7 +565,6 @@ function _traverseAct_body( it )
     dst = it.dst = new it.src.constructor( it.src );
     if( it.dst === it.src )
     {
-      debugger;
       dst = it.dst = new it.src.constructor();
       self.__traverseAct( it );
     }
@@ -589,7 +585,7 @@ function _traverseAct_body( it )
 _traverseAct_body.iterationDefaults = Object.create( _._cloner.iterationDefaults );
 _traverseAct_body.defaults = _.mapExtendDstNotOwn( Object.create( _._cloner.defaults ), _traverseAct_body.iterationDefaults );
 
-let _traverseAct = _.routineUnite( _traverseAct_head, _traverseAct_body );
+let _traverseAct = _.routine.uniteCloning_replaceByUnite( _traverseAct_head, _traverseAct_body );
 
 //
 
@@ -608,7 +604,7 @@ function __traverseAct( it )
   var Restricts = proto.Restricts || _empty;
   var Medials = proto.Medials || _empty;
 
-  var ordersHash = new Map;
+  var ordersHash = new HashMap;
   var standardOrder = true;
 
   /* */
@@ -621,7 +617,7 @@ function __traverseAct( it )
   copyFacets( Composes, it.copyingComposes );
   copyFacets( Aggregates, it.copyingAggregates );
   copyFacets( Associates, it.copyingAssociates );
-  copyFacets( _.mapOnly( Medials, Restricts ), it.copyingMedialRestricts );
+  copyFacets( _.mapOnly_( null, Medials, Restricts ), it.copyingMedialRestricts );
   copyFacets( Restricts, it.copyingRestricts );
   copyFacets( it.customFields, it.copyingCustomFields );
 
@@ -643,7 +639,7 @@ function __traverseAct( it )
     return;
 
     _.assert( _.mapIs( screen ) || _.aux.isPrototyped( screen ) );
-    let screen2 = _.mapExtend( null, screen );
+    let screen2 = _.props.extend( null, screen );
     _.assert( _.numberIs( copyingDegree ) );
     _.assert( it.dst === dst );
     _.assert( _.mapIs( screen2 ) || _.aux.isPrototyped( screen2 ) || !copyingDegree );
@@ -667,7 +663,7 @@ function __traverseAct( it )
       if( _.definitionIs( e ) )
       if( e.order < 0 || e.order > 0 )
       {
-        let newIt3 = _.mapExtend( null, newIt2 );
+        let newIt3 = _.props.extend( null, newIt2 );
         newIt3.screenFields = Object.create( null );
         newIt3.screenFields[ s ] = screen2[ s ];
         delete screen2[ s ];
@@ -705,7 +701,7 @@ function __traverseAct( it )
       let its = ordersHash.get( order );
       its.forEach( ( newIt2 ) =>
       {
-        _.mapExtend( newIt, newIt2 );
+        _.props.extend( newIt, newIt2 );
         _._traverseMap( newIt );
       });
     });
@@ -803,8 +799,8 @@ function cloneExtending( override )
   // if( !override )
   if( override )
   {
-    var src = _.mapOnly( self, self.Self.FieldsOfCopyableGroups );
-    _.mapExtend( src, override );
+    var src = _.mapOnly_( null, self, self.Self.FieldsOfCopyableGroups );
+    _.props.extend( src, override );
     var dst1 = new self.constructor( src );
     _.assert( dst1 !== self && dst1 !== src );
     return dst1;
@@ -819,8 +815,8 @@ function cloneExtending( override )
     _.assert( dst0 !== self );
     return dst0;
 
-    // var src = _.mapOnly( self, self.Self.FieldsOfCopyableGroups );
-    // _.mapExtend( src, override );
+    // var src = _.mapOnly_( null, self, self.Self.FieldsOfCopyableGroups );
+    // _.props.extend( src, override );
     // var dst1 = new self.constructor( src );
     // _.assert( dst1 !== self && dst1 !== src );
     // return dst1;
@@ -854,14 +850,14 @@ function toStr( o )
 }
 
 // --
-// checker
+// dichotomy
 // --
 
 function _equalAre_functor( fieldsGroupsMap )
 {
   _.assert( arguments.length <= 1 );
 
-  fieldsGroupsMap = _.routineOptions( _equalAre_functor, fieldsGroupsMap );
+  fieldsGroupsMap = _.routine.options_( _equalAre_functor, fieldsGroupsMap || null );
 
   _.routineExtend( _equalAre, _.equaler._equal );
 
@@ -871,82 +867,74 @@ function _equalAre_functor( fieldsGroupsMap )
   {
 
     _.assert( arguments.length === 1, 'Expects single argument' );
-    _.assert( _.objectIs( it ) );
+    _.assert( _.object.isBasic( it ) );
     _.assert( it.strictTyping !== undefined );
     _.assert( it.containing !== undefined );
 
-    if( !it.srcEffective )
+    if( !it.src )
     return end( false );
-    // return false;
 
-    if( !it.srcEffective2 )
+    if( !it.src2 )
     return end( false );
-    // return false;
 
     if( it.strictTyping )
-    if( it.srcEffective.constructor !== it.srcEffective2.constructor )
+    if( it.src.constructor !== it.src2.constructor )
     return end( false );
-    // return false;
 
-    if( it.srcEffective === it.srcEffective2 )
+    if( it.src === it.src2 )
     return end( true );
-    // return end( true );
 
     /* */
 
     var fieldsMap = Object.create( null );
     for( var g in fieldsGroupsMap )
     if( fieldsGroupsMap[ g ] )
-    _.mapExtend( fieldsMap, this[ g ] );
+    _.props.extend( fieldsMap, this[ g ] );
 
     /* */
 
+    let c = 0;
     for( var f in fieldsMap )
     {
       if( !it.continue || !it.iterator.continue )
       break;
-      var newIt = it.iterationMake().choose( it.srcEffective[ f ], f );
-      if( !_.mapOwn( it.srcEffective, f ) )
+      var newIt = it.iterationMake().choose( it.src[ f ], f, c, true );
+      c += 1;
+      if( !_.props.own( it.src, f ) )
       return end( false );
-      // return end( false );
-      if( !_.equaler._equal.body( newIt ) )
-      return end( false );
+      newIt.iterate();
+      // if( !_.equaler._equal.body( newIt ) )
       // return end( false );
     }
+
+    if( !it.iterator.continue )
+    return;
+    // yyy
+    // return it.result;
 
     /* */
 
     if( !it.containing )
     {
-      if( !( it.srcEffective2 instanceof this.constructor ) )
-      if( _.mapKeys( _.mapBut( it.srcEffective, fieldsMap ) ).length )
+      if( !( it.src2 instanceof this.constructor ) )
+      if( _.props.keys( _.mapBut_( null, it.src, fieldsMap ) ).length )
       return end( false );
-      // return end( false );
     }
 
-    if( !( it.srcEffective instanceof this.constructor ) )
-    if( _.mapKeys( _.mapBut( it.srcEffective, fieldsMap ) ).length )
+    if( !( it.src instanceof this.constructor ) )
+    if( _.props.keys( _.mapBut_( null, it.src, fieldsMap ) ).length )
     return end( false );
-    // return end( false );
 
     /* */
 
     return end( true );
-    // return end( true );
 
     /* */
-
-    // function end( result )
-    // {
-    //   it.continue = false;
-    //   return result;
-    // }
 
     function end( result )
     {
       it.continue = false;
       it.result = result;
-      // return result;
     }
 
   }
@@ -955,11 +943,11 @@ function _equalAre_functor( fieldsGroupsMap )
 
 _equalAre_functor.defaults = Object.create( null );
 
-var on = _.mapMake( _.DefaultFieldsGroupsCopyable );
-var off = _.mapBut( _.DefaultFieldsGroups, _.DefaultFieldsGroupsCopyable );
-_.mapValsSet( on, 1 );
-_.mapValsSet( off, 0 );
-_.mapExtend( _equalAre_functor.defaults, on, off );
+var on = _.map.make( _.DefaultFieldsGroupsCopyable );
+var off = _.mapBut_( null, _.DefaultFieldsGroups, _.DefaultFieldsGroupsCopyable );
+_.mapAllValsSet( on, 1 );
+_.mapAllValsSet( off, 0 );
+_.props.extend( _equalAre_functor.defaults, on, off );
 
 //
 
@@ -992,21 +980,14 @@ function identicalWith( src, opts )
   _.assert( arguments.length === 1 || arguments.length === 2 );
   _.assert( !opts || _.mapIs( opts ), 'not tested' );
 
-  var args = [ self, src, opts ]; debugger;
+  var args = [ self, src, opts ];
   var it = self[ equalAreSymbol ].head.call( self, self.identicalWith, args );
-
-  _.assert( it.srcEffective === null );
-  _.assert( it.srcEffective2 === null );
-
-  it.srcEffective = it.src;
-  it.srcEffective2 = it.src2;
-
   var r = this[ equalAreSymbol ]( it );
 
   return it.result;
 }
 
-_.routineExtend( identicalWith, _.entityIdentical );
+_.routine.extendReplacing( identicalWith, { defaults : _.entityIdentical.defaults } );
 
 //
 
@@ -1028,19 +1009,12 @@ function equivalentWith( src, opts )
 
   var args = [ self, src, opts ];
   var it = self[ equalAreSymbol ].head.call( self, self.equivalentWith, args );
-
-  _.assert( it.srcEffective === null );
-  _.assert( it.srcEffective2 === null );
-
-  it.srcEffective = it.src;
-  it.srcEffective2 = it.src2;
-
   var r = this[ equalAreSymbol ]( it );
 
   return it.result;
 }
 
-_.routineExtend( equivalentWith, _.entityEquivalent );
+_.routine.extendReplacing( equivalentWith, { defaults : _.entityEquivalent.defaults } );
 
 //
 
@@ -1063,18 +1037,18 @@ function contains( src, opts )
   var args = [ self, src, opts ];
   var it = self[ equalAreSymbol ].head.call( self, self.contains, args );
 
-  _.assert( it.srcEffective === null );
-  _.assert( it.srcEffective2 === null );
-
-  it.srcEffective = it.src;
-  it.srcEffective2 = it.src2;
+  // _.assert( it.src === null );
+  // _.assert( it.src2 === null );
+  //
+  // it.src = it.src;
+  // it.src2 = it.src2;
 
   var r = this[ equalAreSymbol ]( it );
 
   return it.result;
 }
 
-_.routineExtend( contains, _.entityContains );
+_.routine.extendReplacing( contains, { defaults : _.entityContains.defaults } );
 
 //
 
@@ -1407,7 +1381,7 @@ var Supplement =
 
   toStr,
 
-  // checker
+  // dichotomy
 
   _equalAre_functor,
   [ equalAreSymbol ] : _equalAre,
@@ -1452,7 +1426,7 @@ var Supplement =
 
 //
 
-let Self = _.mixinDelcare
+const Self = _.mixinDelcare
 ({
   supplement : Supplement,
   onMixinApply,
@@ -1465,7 +1439,7 @@ let Self = _.mixinDelcare
 _.assert( !Self.copy );
 _.assert( _.routineIs( Self.prototype.copy ) );
 _.assert( _.strIs( Self.shortName ) );
-_.assert( _.objectIs( Self.__mixin__ ) );
+_.assert( _.object.isBasic( Self.__mixin__ ) );
 _.assert( !Self.onMixinApply );
 _.assert( _.routineIs( Self.mixin ) );
 
