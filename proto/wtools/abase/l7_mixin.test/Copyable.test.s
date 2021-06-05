@@ -534,20 +534,76 @@ function equal( test )
 
 //
 
-function identicalWithEntityIsFileProvider( test )
+function identicalWithEntityIsInstanceOfClass( test )
 {
-  test.case = 'two instances of provider Extract, not identical';
-  var provider1 = _globals_.testing.wTools.FileProvider.Extract();
-  var provider2 = _globals_.testing.wTools.FileProvider.Extract();
-  var got = provider1.identicalWith( provider2 );
-  test.identical( got, false );
-  test.notIdentical( provider1, provider2 );
+  function BasicConstructor( o )
+  {
+    return _.workpiece.construct( BasicConstructor, this, arguments );
+  }
 
-  test.case = 'instance of provider Extract, identical';
-  var provider1 = _globals_.testing.wTools.FileProvider.Extract();
-  var got = provider1.identicalWith( provider1 );
+  var Composes =
+  {
+    co : 0,
+  };
+
+  var Associates =
+  {
+    as : 0,
+  };
+
+  var Aggregates =
+  {
+    ag : 0,
+  };
+
+  var Restricts =
+  {
+    re : 0,
+  };
+
+  var Medials =
+  {
+    re : 10,
+    me : 0,
+  };
+
+  var Statics =
+  {
+    st : 0,
+  };
+
+  var extend =
+  {
+    Composes,
+    Aggregates,
+    Associates,
+    Medials,
+    Restricts,
+    Statics,
+  };
+
+  _.classDeclare
+  ({
+    cls : BasicConstructor,
+    extend,
+  });
+
+  _.Copyable.mixin( BasicConstructor );
+
+  /* */
+
+  test.case = 'two instances of class, not identical';
+  var instance1 = new BasicConstructor();
+  var instance2 = new BasicConstructor();
+  var got = instance1.identicalWith( instance2 );
   test.identical( got, true );
-  test.identical( provider1, provider1 );
+  test.identical( instance1, instance2 );
+
+  test.case = 'instance of provider class, identical';
+  var instance1 = new BasicConstructor();
+  var got = instance1.identicalWith( instance1 );
+  test.identical( got, true );
+  test.identical( instance1, instance1 );
 }
 
 //
@@ -708,7 +764,7 @@ const Proto =
 
     fields,
     equal,
-    identicalWithEntityIsFileProvider,
+    identicalWithEntityIsInstanceOfClass,
 
     hasField,
 
