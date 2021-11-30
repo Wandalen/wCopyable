@@ -3,8 +3,8 @@ root:
   - wCopyable.out
 consistency:
   ../will.yml: &ref_0
-    hash: c2f250524e82573567287f3599fb7c84
-    size: 6851
+    hash: 836bd693356ee669572c5fd447176128
+    size: 6859
 module:
   wCopyable.out:
     about:
@@ -1494,5 +1494,5 @@ module:
           - 'build::npm'
     consistency:
       ../will.yml:
-        hash: c2f250524e82573567287f3599fb7c84
-        size: 6851
+        hash: 836bd693356ee669572c5fd447176128
+        size: 6859
