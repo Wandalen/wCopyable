@@ -7,7 +7,7 @@ about:
   enabled: 1
   license: MIT
   npm.name: wCopyable
-  author: Kostiantyn Wandalen <wanalen@01.school>
+  author: Kostiantyn Wandalen <wandalen@obox.systems>
   keywords:
     - wTools
     - wCopyable
@@ -20,7 +20,7 @@ about:
     - init
     - finit
   contributors:
-    - Kostiantyn Wandalen <wanalen@01.school>
+    - Kostiantyn Wandalen <wandalen@obox.systems>
     - Volodymyr M. <volodymyr.migdal@gmail.com>
   interpreters:
     - njs >= 10.0.0
